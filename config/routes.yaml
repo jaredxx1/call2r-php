@@ -1,11 +1,9 @@
-list_posts:
-  path: /posts/{id}
-  controller: App\Blog\Presentation\Http\Action\ListPostAction
-  methods:    GET
-  requirements:
-      id: '\d+'
-
 alive:
   path: /alive
   controller: App\Core\Presentation\Http\Action\AliveAction
+  methods:    GET
+
+list_companies:
+  path: /api/v1/companies
+  controller: App\Company\Presentation\Http\Action\ListCompaniesAction
   methods:    GET
