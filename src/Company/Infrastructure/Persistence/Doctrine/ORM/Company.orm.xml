@@ -1,0 +1,16 @@
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                          https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+    <entity name="App\Company\Domain\Entity\Company" table="tb_company">
+        <id name="id" type="integer" column="id_company">
+            <generator strategy="AUTO"/>
+        </id>
+        <field name="active" column="active" type="boolean"/>
+        <field name="cnpj" column="cnpj" type="string" column-definition="CHAR(14)"/>
+        <field name="description" column="description" type="string"/>
+        <field name="mother" column="mother" type="boolean"/>
+        <field name="name" column="name" type="string"/>
+    </entity>
+
+</doctrine-mapping>
