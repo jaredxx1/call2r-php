@@ -26,8 +26,6 @@ class ListCompaniesAction
     {
         $companies = $this->service->getAll();
 
-        dd($companies);
-
-        return new JsonResponse([], 200);
+        return new JsonResponse($companies, 200);
     }
 }
