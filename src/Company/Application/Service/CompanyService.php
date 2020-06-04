@@ -6,6 +6,7 @@ namespace App\Company\Application\Service;
 
 use App\Company\Domain\Entity\Company;
 use App\Company\Domain\Repository\CompanyRepository;
+use Symfony\Component\Config\Definition\Exception\Exception;
 
 final class CompanyService
 {
@@ -42,4 +43,13 @@ final class CompanyService
         return $command;
     }
 
+    public function fromId(int $id){
+        $data = $this->companyRepository->fromId($id);
+
+        if (empty($data)) {
+            throw new Exception('Company not found');
+        }
+
+        return $data;
+    }
 }

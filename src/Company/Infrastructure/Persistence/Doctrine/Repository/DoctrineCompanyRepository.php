@@ -30,7 +30,7 @@ class DoctrineCompanyRepository implements CompanyRepository
 
     public function fromId(int $id)
     {
-        // TODO: Implement fromId() method.
+        return $this->repository->find($id);
     }
 
     public function getAll()
