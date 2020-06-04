@@ -4,18 +4,30 @@
 namespace App\Company\Presentation\Http\Action;
 
 
-use App\Company\Domain\Repository\CompanyRepository;
-use App\Company\Infrastructure\Persistence\Doctrine\Repository\DoctrineCompanyRepository;
+use App\Company\Application\Service\CompanyService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 class ListCompaniesAction
 {
 
+    /**
+     * @var CompanyService
+     */
+    private $service;
+
+    public function __construct(
+        CompanyService $service
+    )
+    {
+        $this->service = $service;
+    }
+
     public function __invoke()
     {
-        $companyRepository = new DoctrineCompanyRepository();
-        $companies = $companyRepository->getAll();
+        $companies = $this->service->getAll();
+
         dd($companies);
-        return new JsonResponse($companies, 200);
+
+        return new JsonResponse([], 200);
     }
 }
