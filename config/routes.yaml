@@ -7,3 +7,8 @@ list_companies:
   path: /api/v1/companies
   controller: App\Company\Presentation\Http\Action\ListCompaniesAction
   methods:    GET
+
+create_company:
+  path: /api/v1/companies
+  controller: App\Company\Presentation\Http\Action\CreateCompanyAction
+  methods:    POST

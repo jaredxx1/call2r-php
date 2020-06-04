@@ -42,13 +42,35 @@ class Company implements JsonSerializable
     private $active;
 
     /**
+     * Company constructor.
+     * @param string $name
+     * @param string $cnpj
+     * @param string $description
+     * @param bool $mother
+     * @param bool $active
+     */
+    public function __construct(
+        string $name,
+        string $cnpj,
+        string $description,
+        bool $mother,
+        bool $active
+    )
+    {
+        $this->name = $name;
+        $this->cnpj = $cnpj;
+        $this->description = $description;
+        $this->mother = $mother;
+        $this->active = $active;
+    }
+
+    /**
      * @return array|mixed
      */
     public function jsonSerialize()
     {
         return $this->toArray();
     }
-
 
     /**
      * @return array

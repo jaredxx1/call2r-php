@@ -15,11 +15,17 @@ class DoctrineCompanyRepository implements CompanyRepository
      */
     private $repository;
 
+    /**
+     * @var EntityManagerInterface
+     */
+    private $entityManager;
+
     public function __construct(
         EntityManagerInterface $entityManager
     )
     {
         $this->repository = $entityManager->getRepository(Company::class);
+        $this->entityManager = $entityManager;
     }
 
     public function fromId(int $id)
@@ -35,5 +41,10 @@ class DoctrineCompanyRepository implements CompanyRepository
     public function getMother()
     {
         // TODO: Implement getMother() method.
+    }
+
+    public function create(Company $company)
+    {
+        $this->entityManager->persist($company);
     }
 }
