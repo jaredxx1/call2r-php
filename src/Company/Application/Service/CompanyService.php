@@ -38,7 +38,8 @@ final class CompanyService
             $command['active']
         );
 
-        return $this->companyRepository->create($company);
+        $this->companyRepository->create($company);
+        return $command;
     }
 
 }

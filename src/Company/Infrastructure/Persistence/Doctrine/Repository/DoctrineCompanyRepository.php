@@ -46,5 +46,6 @@ class DoctrineCompanyRepository implements CompanyRepository
     public function create(Company $company)
     {
         $this->entityManager->persist($company);
+        $this->entityManager->flush();
     }
 }
