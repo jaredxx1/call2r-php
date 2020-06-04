@@ -7,6 +7,7 @@ namespace App\Company\Presentation\Http\Action;
 use App\Company\Application\Command\CreateCompanyCommand;
 use App\Company\Application\Service\CompanyService;
 use ErrorException;
+use InvalidArgumentException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -35,8 +36,7 @@ class CreateCompanyAction
 
             $company = $this->service->create($command);
 
-
-        } catch (ErrorException $exception) {
+        }catch (InvalidArgumentException $exception){
             return new JsonResponse(['error' => $exception->getMessage()], 400);
         }
 
