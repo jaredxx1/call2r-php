@@ -10,6 +10,54 @@ use Webmozart\Assert\Assert;
 class CreateCompanyCommand implements CommandInterface
 {
 
+    /**
+     * @var string
+     */
+    private $name;
+
+    /**
+     * @var string
+     */
+    private $description;
+
+    /**
+     * @var string
+     */
+    private $cnpj;
+
+    /**
+     * @var bool
+     */
+    private $mother;
+
+    /**
+     * @var bool
+     */
+    private $active;
+
+    /**
+     * CreateCompanyCommand constructor.
+     * @param string $name
+     * @param string $description
+     * @param string $cnpj
+     * @param bool $mother
+     * @param bool $active
+     */
+    public function __construct(
+        string $name,
+        string $description,
+        string $cnpj,
+        bool $mother,
+        bool $active
+    )
+    {
+        $this->name = $name;
+        $this->description =  $description;
+        $this->cnpj =  $cnpj;
+        $this->mother =  $mother;
+        $this->active =  $active;
+    }
+
     public static function fromArray($data)
     {
         Assert::notNull($data['name'], 'Name is required');
@@ -28,19 +76,59 @@ class CreateCompanyCommand implements CommandInterface
         Assert::stringNotEmpty($data['description'], 'Description is empty');
         Assert::stringNotEmpty($data['cnpj'], 'CNPJ is empty');
 
-        Assert::length($data['cnpj'],14, "CNPJ dont have 14 digits");
+        Assert::length($data['cnpj'], 13, "CNPJ dont have 14 digits");
 
-        return [
-            'name' => $data['name'],
-            'description' => $data['description'],
-            'cnpj' => $data['cnpj'],
-            'mother' => $data['mother'],
-            'active' => $data['active']
-        ];
+        return new self(
+            $data['name'],
+            $data['description'],
+            $data['cnpj'],
+            $data['mother'],
+            $data['active']
+        );
     }
 
     public function toArray(): array
     {
         // TODO: Implement toArray() method.
+    }
+
+    /**
+     * @return string
+     */
+    public function name(): string
+    {
+        return $this->name;
+    }
+
+    /**
+     * @return string
+     */
+    public function description(): string
+    {
+        return $this->description;
+    }
+
+    /**
+     * @return string
+     */
+    public function cnpj(): string
+    {
+        return $this->cnpj;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isMother(): bool
+    {
+        return $this->mother;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isActive(): bool
+    {
+        return $this->active;
     }
 }

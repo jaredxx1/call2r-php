@@ -36,9 +36,11 @@ class CreateCompanyAction
 
             $company = $this->service->create($command);
 
-        } catch (Exception $exception){
+        } catch (Exception $exception) {
             return new JsonResponse(['error' => $exception->getMessage()], 400);
         } catch (InvalidArgumentException $exception) {
+            return new JsonResponse(['error' => $exception->getMessage()], 400);
+        } catch (ErrorException $exception) {
             return new JsonResponse(['error' => $exception->getMessage()], 400);
         }
 
