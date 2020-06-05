@@ -8,12 +8,12 @@ namespace App\Core\Infrastructure\Container\Application\Utils\Query;
 interface QueryInterface
 {
     /**
-     * @param integer $data
+     * @param array $data
      */
-    public static function fromId($data);
+    public static function fromArray($data);
 
     /**
-     * @param String $data
+     * @return array
      */
-    public static function convertId($data);
+    public function toArray(): array;
 }

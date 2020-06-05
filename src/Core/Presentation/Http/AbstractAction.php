@@ -14,7 +14,7 @@ class AbstractAction
      * @param int $code
      * @return JsonResponse
      */
-    public function errorResponse(string $message, int $code)
+    public function errorResponse(string $message, int $code = 400)
     {
         return new JsonResponse([
             'error' => $message,

@@ -9,17 +9,39 @@ use Webmozart\Assert\Assert;
 
 class FindCompanyByIdQuery implements QueryInterface
 {
+    /**
+     * @var int
+     */
+    private $id;
 
-    public static function fromId($data)
+    public function __construct(int $id)
     {
-        Assert::integer($data, "Id must be a integer");
-
-        return $data;
+        $this->id = $id;
     }
 
-    public static function convertId($data){
-        Assert::string($data, 'error');
+    /**
+     * @param array $data
+     * @return FindCompanyByIdQuery
+     */
+    public static function fromArray($data)
+    {
+        Assert::integer($data['id'], "Id must be a integer");
 
-        return intval($data);
+        return new self(
+            $data['id']
+        );
+    }
+
+    public function toArray(): array
+    {
+        // TODO: Implement toArray() method.
+    }
+
+    /**
+     * @return int
+     */
+    public function id(): int
+    {
+        return $this->id;
     }
 }

@@ -5,6 +5,8 @@ namespace App\Company\Application\Service;
 
 
 use App\Company\Application\Command\CreateCompanyCommand;
+use App\Company\Application\Exception\CompanyNotFoundException;
+use App\Company\Application\Query\FindCompanyByIdQuery;
 use App\Company\Domain\Entity\Company;
 use App\Company\Domain\Repository\CompanyRepository;
 use Symfony\Component\Config\Definition\Exception\Exception;
@@ -45,12 +47,13 @@ final class CompanyService
         return $company;
     }
 
-    public function fromId(int $id)
+    public function fromId(FindCompanyByIdQuery $query)
     {
+        $id = $query->id();
         $company = $this->companyRepository->fromId($id);
 
         if (empty($company)) {
-            throw new Exception('Company not found');
+            throw new CompanyNotFoundException();
         }
 
         return $company;
