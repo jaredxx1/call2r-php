@@ -46,12 +46,12 @@ final class CompanyService
 
     public function fromId(int $id)
     {
-        $data = $this->companyRepository->fromId($id);
+        $company = $this->companyRepository->fromId($id);
 
-        if (empty($data)) {
+        if (empty($company)) {
             throw new Exception('Company not found');
         }
 
-        return $data;
+        return $company;
     }
 }

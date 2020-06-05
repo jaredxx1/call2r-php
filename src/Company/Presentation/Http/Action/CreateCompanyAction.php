@@ -6,12 +6,12 @@ namespace App\Company\Presentation\Http\Action;
 
 use App\Company\Application\Command\CreateCompanyCommand;
 use App\Company\Application\Service\CompanyService;
-use InvalidArgumentException;
+use App\Core\Presentation\Http\AbstractAction;
 use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
-class CreateCompanyAction
+class CreateCompanyAction extends AbstractAction
 {
 
     /**
@@ -37,11 +37,7 @@ class CreateCompanyAction
             $company = $this->service->create($command);
 
         } catch (Exception $exception) {
-            return new JsonResponse(['error' => $exception->getMessage()], 400);
-        } catch (InvalidArgumentException $exception) {
-            return new JsonResponse(['error' => $exception->getMessage()], 400);
-        } catch (ErrorException $exception) {
-            return new JsonResponse(['error' => $exception->getMessage()], 400);
+            return $this->errorResponse($exception->getMessage(), $exception->getCode());
         }
 
         return new JsonResponse($company, 200);

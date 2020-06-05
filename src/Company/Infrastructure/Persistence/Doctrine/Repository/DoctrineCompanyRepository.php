@@ -4,8 +4,10 @@ namespace App\Company\Infrastructure\Persistence\Doctrine\Repository;
 
 use App\Company\Domain\Entity\Company;
 use App\Company\Domain\Repository\CompanyRepository;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ObjectRepository;
+use Symfony\Component\Config\Definition\Exception\Exception;
 
 class DoctrineCompanyRepository implements CompanyRepository
 {
@@ -45,7 +47,11 @@ class DoctrineCompanyRepository implements CompanyRepository
 
     public function create(Company $company)
     {
-        $this->entityManager->persist($company);
-        $this->entityManager->flush();
+        try {
+            $this->entityManager->persist($company);
+            $this->entityManager->flush();
+        } catch (UniqueConstraintViolationException $exception) {
+            throw new Exception('company already exists', 400);
+        }
     }
 }

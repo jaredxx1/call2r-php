@@ -12,7 +12,8 @@
     "symfony/framework-bundle": "5.0.*",
     "symfony/orm-pack": "^1.0",
     "symfony/yaml": "5.0.*",
-    "webmozart/assert": "^1.8"
+    "webmozart/assert": "^1.8",
+    "ext-pdo": "*"
   },
   "require-dev": {
     "symfony/maker-bundle": "^1.17"
