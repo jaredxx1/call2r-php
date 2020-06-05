@@ -2,6 +2,7 @@
 
 namespace App\Company\Infrastructure\Persistence\Doctrine\Repository;
 
+use App\Company\Application\Exception\DuplicatedCompanyException;
 use App\Company\Domain\Entity\Company;
 use App\Company\Domain\Repository\CompanyRepository;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
@@ -51,7 +52,7 @@ class DoctrineCompanyRepository implements CompanyRepository
             $this->entityManager->persist($company);
             $this->entityManager->flush();
         } catch (UniqueConstraintViolationException $exception) {
-            throw new Exception('company already exists', 400);
+            throw new DuplicatedCompanyException();
         }
     }
 }

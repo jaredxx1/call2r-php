@@ -41,7 +41,8 @@ final class CompanyService
         );
 
         $this->companyRepository->create($company);
-        return $command;
+
+        return $company;
     }
 
     public function fromId(int $id)
