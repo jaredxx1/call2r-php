@@ -26,3 +26,8 @@ update_company:
   methods:    PUT
   requirements:
     id: '\d+'
+
+get_mother_company:
+  path: /api/v1/companies/mother
+  controller: App\Company\Presentation\Http\Action\FindMotherCompanyAction
+  methods:    GET

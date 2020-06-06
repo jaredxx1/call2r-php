@@ -77,4 +77,11 @@ final class CompanyService
 
         return $company;
     }
+
+    public function getMother(): Company
+    {
+        $company = $this->companyRepository->getMother();
+
+        return $company;
+    }
 }

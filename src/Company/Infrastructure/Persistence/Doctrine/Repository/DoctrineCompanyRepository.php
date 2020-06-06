@@ -3,10 +3,12 @@
 namespace App\Company\Infrastructure\Persistence\Doctrine\Repository;
 
 use App\Company\Application\Exception\DuplicatedCompanyException;
+use App\Company\Application\Exception\NonUniqueMotherCompanyException;
 use App\Company\Domain\Entity\Company;
 use App\Company\Domain\Repository\CompanyRepository;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\Persistence\ObjectRepository;
 
 class DoctrineCompanyRepository implements CompanyRepository
@@ -42,7 +44,15 @@ class DoctrineCompanyRepository implements CompanyRepository
 
     public function getMother(): Company
     {
-        // TODO: Implement getMother() method.
+        $query = $this->entityManager->createQuery('SELECT c FROM App\Company\Domain\Entity\Company c WHERE c.mother = TRUE');
+
+        try {
+            $company = $query->getOneOrNullResult();
+        } catch (NonUniqueResultException $exception) {
+            throw new NonUniqueMotherCompanyException();
+        }
+
+        return $company;
     }
 
     public function create(Company $company): Company
