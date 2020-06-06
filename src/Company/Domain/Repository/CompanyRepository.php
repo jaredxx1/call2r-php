@@ -12,9 +12,9 @@ interface CompanyRepository
 
     public function getAll();
 
-    public function getMother();
+    public function getMother(): Company;
 
-    public function create(Company $company);
+    public function create(Company $company): Company;
 
-    public function update(Company $company);
+    public function update(Company $company): Company;
 }

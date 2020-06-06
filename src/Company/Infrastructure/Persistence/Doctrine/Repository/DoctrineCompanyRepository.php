@@ -40,12 +40,12 @@ class DoctrineCompanyRepository implements CompanyRepository
         return $this->repository->findAll();
     }
 
-    public function getMother()
+    public function getMother(): Company
     {
         // TODO: Implement getMother() method.
     }
 
-    public function create(Company $company)
+    public function create(Company $company): Company
     {
         try {
             $this->entityManager->persist($company);
@@ -55,7 +55,7 @@ class DoctrineCompanyRepository implements CompanyRepository
         }
     }
 
-    public function update(Company $company)
+    public function update(Company $company): Company
     {
         $this->entityManager->flush();
     }

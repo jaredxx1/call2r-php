@@ -32,7 +32,7 @@ final class CompanyService
         return $this->companyRepository->getAll();
     }
 
-    public function create(CreateCompanyCommand $command)
+    public function create(CreateCompanyCommand $command): Company
     {
         $company = new Company(
             $command->name(),
