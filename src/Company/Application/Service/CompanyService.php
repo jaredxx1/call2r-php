@@ -7,6 +7,7 @@ namespace App\Company\Application\Service;
 use App\Company\Application\Command\CreateCompanyCommand;
 use App\Company\Application\Command\UpdateCompanyCommand;
 use App\Company\Application\Exception\CompanyNotFoundException;
+use App\Company\Application\Exception\NonUniqueMotherCompanyException;
 use App\Company\Application\Query\FindCompanyByIdQuery;
 use App\Company\Domain\Entity\Company;
 use App\Company\Domain\Repository\CompanyRepository;
@@ -42,7 +43,15 @@ final class CompanyService
             $command->isActive()
         );
 
-        $this->companyRepository->create($company);
+        if ($company->isMother()) {
+            $motherCompany = $this->companyRepository->getMother();
+
+            if (!is_null($motherCompany)) {
+                throw new NonUniqueMotherCompanyException();
+            }
+        }
+
+        $company = $this->companyRepository->create($company);
 
         return $company;
     }

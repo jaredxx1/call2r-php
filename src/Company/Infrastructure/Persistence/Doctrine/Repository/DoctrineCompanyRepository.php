@@ -32,9 +32,11 @@ class DoctrineCompanyRepository implements CompanyRepository
         $this->entityManager = $entityManager;
     }
 
-    public function fromId(int $id): Company
+    public function fromId(int $id): ?Company
     {
-        return $this->repository->find($id);
+        $company = $this->repository->find($id);
+
+        return $company;
     }
 
     public function getAll()
@@ -42,7 +44,7 @@ class DoctrineCompanyRepository implements CompanyRepository
         return $this->repository->findAll();
     }
 
-    public function getMother(): Company
+    public function getMother(): ?Company
     {
         $query = $this->entityManager->createQuery('SELECT c FROM App\Company\Domain\Entity\Company c WHERE c.mother = TRUE');
 
@@ -55,7 +57,7 @@ class DoctrineCompanyRepository implements CompanyRepository
         return $company;
     }
 
-    public function create(Company $company): Company
+    public function create(Company $company): ?Company
     {
         try {
             $this->entityManager->persist($company);
@@ -63,10 +65,14 @@ class DoctrineCompanyRepository implements CompanyRepository
         } catch (UniqueConstraintViolationException $exception) {
             throw new DuplicatedCompanyException();
         }
+
+        return $company;
     }
 
-    public function update(Company $company): Company
+    public function update(Company $company): ?Company
     {
         $this->entityManager->flush();
+
+        return $company;
     }
 }

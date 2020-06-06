@@ -46,10 +46,10 @@ class UpdateCompanyCommand implements CommandInterface
         Assert::keyExists($data, 'id', 'field id is required');
         Assert::keyExists($data, 'name', 'field name is required');
         Assert::keyExists($data, 'description', 'field description is required');
-        Assert::keyExists($data, 'isActive', 'field active is required');
+        Assert::keyExists($data, 'isActive', 'field isActive is required');
 
         Assert::string($data['description'], ' Field description is not a string');
-        Assert::boolean($data['active'], ' Field active is not a boolean');
+        Assert::boolean($data['isActive'], ' Field isActive is not a boolean');
 
         Assert::stringNotEmpty($data['name'], 'Field name is empty');
 
