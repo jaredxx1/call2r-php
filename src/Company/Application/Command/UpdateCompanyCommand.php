@@ -40,6 +40,7 @@ class UpdateCompanyCommand implements CommandInterface
 
     /**
      * @param array $data
+     * @return UpdateCompanyCommand
      */
     public static function fromArray($data)
     {

@@ -33,7 +33,7 @@ final class CompanyService
         return $this->companyRepository->getAll();
     }
 
-    public function create(CreateCompanyCommand $command): Company
+    public function create(CreateCompanyCommand $command): ?Company
     {
         $company = new Company(
             $command->name(),
@@ -56,7 +56,7 @@ final class CompanyService
         return $company;
     }
 
-    public function fromId(FindCompanyByIdQuery $query): Company
+    public function fromId(FindCompanyByIdQuery $query): ?Company
     {
         $id = $query->id();
         $company = $this->companyRepository->fromId($id);
@@ -69,7 +69,7 @@ final class CompanyService
     }
 
 
-    public function update(UpdateCompanyCommand $command): Company
+    public function update(UpdateCompanyCommand $command): ?Company
     {
         $id = $command->id();
         $company = $this->companyRepository->fromId($id);
@@ -87,9 +87,13 @@ final class CompanyService
         return $company;
     }
 
-    public function getMother(): Company
+    public function getMother(): ?Company
     {
         $company = $this->companyRepository->getMother();
+
+        if (empty($company)) {
+            throw new CompanyNotFoundException();
+        }
 
         return $company;
     }
