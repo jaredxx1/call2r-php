@@ -19,3 +19,10 @@ create_company:
   path: /api/v1/companies
   controller: App\Company\Presentation\Http\Action\CreateCompanyAction
   methods:    POST
+
+update_company:
+  path: /api/v1/companies/{id}
+  controller: App\Company\Presentation\Http\Action\UpdateCompanyAction
+  methods:    PUT
+  requirements:
+    id: '\d+'

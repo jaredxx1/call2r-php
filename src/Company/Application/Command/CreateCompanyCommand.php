@@ -60,23 +60,22 @@ class CreateCompanyCommand implements CommandInterface
 
     public static function fromArray($data)
     {
-        Assert::notNull($data['name'], 'Name is required');
-        Assert::notNull($data['description'], 'Description is required');
-        Assert::notNull($data['cnpj'], 'CNPJ is required');
-        Assert::notNull($data['mother'], 'Mother is required');
-        Assert::notNull($data['active'], 'Active is required');
+        Assert::keyExists($data, 'description', 'Field escription is required');
+        Assert::keyExists($data, 'name', 'Field name is required');
+        Assert::keyExists($data, 'cnpj', 'Field CNPJ is required');
+        Assert::keyExists($data, 'mother', 'Field mother is required');
+        Assert::keyExists($data, 'active', 'Field active is required');
 
-        Assert::string($data['name'], 'Name is not a string');
-        Assert::string($data['description'], 'Description is not a string');
-        Assert::string($data['cnpj'], 'CNPJ is not a string');
-        Assert::boolean($data['mother'], 'Mother is not a boolean');
-        Assert::boolean($data['active'], 'Active is not a boolean');
+        Assert::string($data['name'], ' Field name is not a string');
+        Assert::string($data['description'], ' Field description is not a string');
+        Assert::string($data['cnpj'], ' Field CNPJ is not a string');
+        Assert::boolean($data['mother'], ' Field mother is not a boolean');
+        Assert::boolean($data['active'], ' Field active is not a boolean');
 
-        Assert::stringNotEmpty($data['name'], 'Name is empty');
-        Assert::stringNotEmpty($data['description'], 'Description is empty');
-        Assert::stringNotEmpty($data['cnpj'], 'CNPJ is empty');
+        Assert::stringNotEmpty($data['name'], 'Field name is empty');
+        Assert::stringNotEmpty($data['cnpj'], 'Field CNPJ is empty');
 
-        Assert::length($data['cnpj'], 13, "CNPJ dont have 14 digits");
+        Assert::length($data['cnpj'], 13, "Field CNPJ don't have 14 digits");
 
         return new self(
             $data['name'],

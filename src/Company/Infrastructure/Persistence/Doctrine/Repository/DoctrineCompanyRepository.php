@@ -8,7 +8,6 @@ use App\Company\Domain\Repository\CompanyRepository;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ObjectRepository;
-use Symfony\Component\Config\Definition\Exception\Exception;
 
 class DoctrineCompanyRepository implements CompanyRepository
 {
@@ -31,7 +30,7 @@ class DoctrineCompanyRepository implements CompanyRepository
         $this->entityManager = $entityManager;
     }
 
-    public function fromId(int $id)
+    public function fromId(int $id): Company
     {
         return $this->repository->find($id);
     }
@@ -54,5 +53,10 @@ class DoctrineCompanyRepository implements CompanyRepository
         } catch (UniqueConstraintViolationException $exception) {
             throw new DuplicatedCompanyException();
         }
+    }
+
+    public function update(Company $company)
+    {
+        $this->entityManager->flush();
     }
 }

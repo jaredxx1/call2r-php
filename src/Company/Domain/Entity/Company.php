@@ -134,4 +134,53 @@ class Company implements JsonSerializable
     {
         return $this->active;
     }
+
+    /**
+     * @param int $id
+     */
+    public function setId(int $id): void
+    {
+        $this->id = $id;
+    }
+
+    /**
+     * @param string $cnpj
+     */
+    public function setCnpj(string $cnpj): void
+    {
+        $this->cnpj = $cnpj;
+    }
+
+    /**
+     * @param string $name
+     */
+    public function setName(string $name): void
+    {
+        $this->name = $name;
+    }
+
+    /**
+     * @param string $description
+     */
+    public function setDescription(string $description): void
+    {
+        $this->description = $description;
+    }
+
+    /**
+     * @param bool $mother
+     */
+    public function setMother(bool $mother): void
+    {
+        $this->mother = $mother;
+    }
+
+    /**
+     * @param bool $active
+     */
+    public function setActive(bool $active): void
+    {
+        $this->active = $active;
+    }
+
 }
