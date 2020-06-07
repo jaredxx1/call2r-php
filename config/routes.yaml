@@ -31,15 +31,3 @@ get_mother_company:
   path: /api/v1/companies/mother
   controller: App\Company\Presentation\Http\Action\FindMotherCompanyAction
   methods:    GET
-
-get_all_slas:
-  path: /api/v1/slas
-  controller: App\Company\Presentation\Http\Action\FindAllSlaAction
-  methods:    GET
-
-update_sla:
-  path: /api/v1/slas/{id}
-  controller: App\Company\Presentation\Http\Action\UpdateSlaAction
-  methods:    PUT
-  requirements:
-    id: '\d+'

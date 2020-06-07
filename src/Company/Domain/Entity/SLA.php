@@ -40,14 +40,16 @@ class SLA implements JsonSerializable
 
     /**
      * SLA constructor.
+     * @param int|null $id
      * @param int $p1
      * @param int $p2
      * @param int $p3
      * @param int $p4
      * @param int $p5
      */
-    public function __construct(int $p1, int $p2, int $p3, int $p4, int $p5)
+    public function __construct(?int $id, int $p1, int $p2, int $p3, int $p4, int $p5)
     {
+        $this->id = $id;
         $this->p1 = $p1;
         $this->p2 = $p2;
         $this->p3 = $p3;

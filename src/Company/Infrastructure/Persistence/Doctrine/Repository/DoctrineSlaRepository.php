@@ -48,8 +48,13 @@ class DoctrineSlaRepository implements SlaRepository
         return $this->repository->find($id);
     }
 
+    /**
+     * @param SLA $sla
+     * @return SLA|null
+     */
     public function update(SLA $sla): ?SLA
     {
+
         $this->entityManager->flush();
 
         return $sla;

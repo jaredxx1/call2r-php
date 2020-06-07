@@ -12,6 +12,7 @@ use App\Company\Application\Query\FindCompanyByIdQuery;
 use App\Company\Domain\Entity\Company;
 use App\Company\Domain\Entity\SLA;
 use App\Company\Domain\Repository\CompanyRepository;
+use App\Company\Domain\Repository\SlaRepository;
 
 final class CompanyService
 {
@@ -21,11 +22,18 @@ final class CompanyService
      */
     private $companyRepository;
 
+    /**
+     * @var $SlaRepository
+     */
+    private $slaRepository;
+
     public function __construct(
-        CompanyRepository $companyRepository
+        CompanyRepository $companyRepository,
+        SlaRepository $slaRepository
     )
     {
         $this->companyRepository = $companyRepository;
+        $this->slaRepository = $slaRepository;
     }
 
 
@@ -37,6 +45,7 @@ final class CompanyService
     public function create(CreateCompanyCommand $command): ?Company
     {
         $sla = new SLA(
+            null,
             $command->sla()['p1'],
             $command->sla()['p2'],
             $command->sla()['p3'],
@@ -86,12 +95,23 @@ final class CompanyService
             throw new CompanyNotFoundException();
         }
 
+        $sla = new SLA(
+            $command->sla()['id'],
+            $command->sla()['p1'],
+            $command->sla()['p2'],
+            $command->sla()['p3'],
+            $command->sla()['p4'],
+            $command->sla()['p5']
+        );
+
         $company->setName($command->name());
         $company->setDescription($command->description());
         $company->setActive($command->isActive());
 
-        $this->companyRepository->update($company);
+        $sla = $this->slaRepository->update($sla);
+        //$this->companyRepository->update($company);
 
+        $company->setSla($sla);
         return $company;
     }
 

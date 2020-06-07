@@ -4,6 +4,7 @@
 namespace App\Company\Application\Command;
 
 
+use App\Company\Domain\Entity\SLA;
 use App\Core\Infrastructure\Container\Application\Utils\Command\CommandInterface;
 use Webmozart\Assert\Assert;
 
@@ -30,12 +31,18 @@ class UpdateCompanyCommand implements CommandInterface
      */
     private $active;
 
-    public function __construct(int $id, string $name, string $description, bool $active)
+    /**
+     * @var array
+     */
+    private $sla;
+
+    public function __construct(int $id, string $name, string $description, bool $active, array $sla)
     {
         $this->id = $id;
         $this->name = $name;
         $this->description = $description;
         $this->active = $active;
+        $this->sla = $sla;
     }
 
     /**
@@ -58,7 +65,8 @@ class UpdateCompanyCommand implements CommandInterface
             $data['id'],
             $data['name'],
             $data['description'],
-            $data['isActive']
+            $data['isActive'],
+            $data['sla']
         );
     }
 
@@ -101,4 +109,14 @@ class UpdateCompanyCommand implements CommandInterface
     {
         return $this->active;
     }
+
+    /**
+     * @return array
+     */
+    public function sla(): array
+    {
+        return $this->sla;
+    }
+
+
 }
