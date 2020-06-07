@@ -1,11 +1,13 @@
-CREATE DATABASE blog;
+create database call2r;
 
-USE blog;
+use call2r;
 
-SHOW TABLES;
-
-CREATE TABLE posts(
-    id integer AUTO_INCREMENT PRIMARY KEY,
-    title varchar(255),
-    content varchar(255)
+create table tb_company(
+        id_company int auto_increment primary key ,
+        active boolean,
+        cnpj char(14),
+        description varchar(255),
+        mother boolean,
+        name varchar(255),
+        UNIQUE KEY (cnpj)
 );

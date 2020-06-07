@@ -1,11 +1,33 @@
-list_posts:
-  path: /posts/{id}
-  controller: App\Blog\Presentation\Http\Action\ListPostAction
-  methods:    GET
-  requirements:
-      id: '\d+'
-
 alive:
   path: /alive
   controller: App\Core\Presentation\Http\Action\AliveAction
+  methods:    GET
+
+list_companies:
+  path: /api/v1/companies
+  controller: App\Company\Presentation\Http\Action\ListCompaniesAction
+  methods:    GET
+
+get_company_by_id:
+  path: /api/v1/companies/{id}
+  controller: App\Company\Presentation\Http\Action\FindCompanyByIdAction
+  methods:    GET|HEAD
+  requirements:
+    id: '\d+'
+
+create_company:
+  path: /api/v1/companies
+  controller: App\Company\Presentation\Http\Action\CreateCompanyAction
+  methods:    POST
+
+update_company:
+  path: /api/v1/companies/{id}
+  controller: App\Company\Presentation\Http\Action\UpdateCompanyAction
+  methods:    PUT
+  requirements:
+    id: '\d+'
+
+get_mother_company:
+  path: /api/v1/companies/mother
+  controller: App\Company\Presentation\Http\Action\FindMotherCompanyAction
   methods:    GET
