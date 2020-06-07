@@ -69,6 +69,14 @@ class CreateCompanyCommand implements CommandInterface
 
     public static function fromArray($data)
     {
+        //Company object validation
+
+        Assert::keyExists($data, 'description', 'Field description is required');
+        Assert::keyExists($data, 'name', 'Field name is required');
+        Assert::keyExists($data, 'cnpj', 'Field CNPJ is required');
+        Assert::keyExists($data, 'mother', 'Field mother is required');
+        Assert::keyExists($data, 'active', 'Field active is required');
+
         Assert::keyExists($data, 'description', 'Field escription is required');
         Assert::keyExists($data, 'name', 'Field name is required');
         Assert::keyExists($data, 'cnpj', 'Field CNPJ is required');
@@ -83,8 +91,31 @@ class CreateCompanyCommand implements CommandInterface
 
         Assert::stringNotEmpty($data['name'], 'Field name is empty');
         Assert::stringNotEmpty($data['cnpj'], 'Field CNPJ is empty');
+        Assert::stringNotEmpty($data['description'], 'Field description is empty');
 
         Assert::length($data['cnpj'], 13, "Field CNPJ don't have 14 digits");
+
+        //SLA object validation
+
+        $sla = $data['sla'];
+
+        Assert::keyExists($sla, 'p1', 'Field sla p1 is required');
+        Assert::keyExists($sla, 'p2', 'Field sla p2 is required');
+        Assert::keyExists($sla, 'p3', 'Field sla p3 is required');
+        Assert::keyExists($sla, 'p4', 'Field sla p4 is required');
+        Assert::keyExists($sla, 'p5', 'Field sla p5 is required');
+
+        Assert::integer($sla['p1'], 'Field sla p1 is not a integer');
+        Assert::integer($sla['p2'], 'Field sla p2 is not a integer');
+        Assert::integer($sla['p3'], 'Field sla p3 is not a integer');
+        Assert::integer($sla['p4'], 'Field sla p4 is not a integer');
+        Assert::integer($sla['p5'], 'Field sla p5 is not a integer');
+
+        Assert::notEq($sla['p1'], 0, 'Field sla p1 not be 0');
+        Assert::notEq($sla['p2'], 0, 'Field sla p2 not be 0');
+        Assert::notEq($sla['p3'], 0, 'Field sla p3 not be 0');
+        Assert::notEq($sla['p4'], 0, 'Field sla p4 not be 0');
+        Assert::notEq($sla['p5'], 0, 'Field sla p5 not be 0');
 
         return new self(
             $data['name'],
