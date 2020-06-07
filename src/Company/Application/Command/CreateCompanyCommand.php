@@ -4,6 +4,7 @@
 namespace App\Company\Application\Command;
 
 
+use App\Company\Domain\Entity\SLA;
 use App\Core\Infrastructure\Container\Application\Utils\Command\CommandInterface;
 use Webmozart\Assert\Assert;
 
@@ -36,19 +37,26 @@ class CreateCompanyCommand implements CommandInterface
     private $active;
 
     /**
+     * @var SLA
+     */
+    private $sla;
+
+    /**
      * CreateCompanyCommand constructor.
      * @param string $name
      * @param string $description
      * @param string $cnpj
      * @param bool $mother
      * @param bool $active
+     * @param array $sla
      */
     public function __construct(
         string $name,
         string $description,
         string $cnpj,
         bool $mother,
-        bool $active
+        bool $active,
+        array $sla
     )
     {
         $this->name = $name;
@@ -56,6 +64,7 @@ class CreateCompanyCommand implements CommandInterface
         $this->cnpj =  $cnpj;
         $this->mother =  $mother;
         $this->active =  $active;
+        $this->sla = $sla;
     }
 
     public static function fromArray($data)
@@ -82,7 +91,8 @@ class CreateCompanyCommand implements CommandInterface
             $data['description'],
             $data['cnpj'],
             $data['mother'],
-            $data['active']
+            $data['active'],
+            $data['sla']
         );
     }
 
@@ -129,5 +139,13 @@ class CreateCompanyCommand implements CommandInterface
     public function isActive(): bool
     {
         return $this->active;
+    }
+
+    /**
+     * @return array
+     */
+    public function sla(): array
+    {
+        return $this->sla;
     }
 }

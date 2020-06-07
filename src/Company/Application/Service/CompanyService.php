@@ -10,6 +10,7 @@ use App\Company\Application\Exception\CompanyNotFoundException;
 use App\Company\Application\Exception\NonUniqueMotherCompanyException;
 use App\Company\Application\Query\FindCompanyByIdQuery;
 use App\Company\Domain\Entity\Company;
+use App\Company\Domain\Entity\SLA;
 use App\Company\Domain\Repository\CompanyRepository;
 
 final class CompanyService
@@ -35,14 +36,22 @@ final class CompanyService
 
     public function create(CreateCompanyCommand $command): ?Company
     {
+        $sla = new SLA(
+            $command->sla()['p1'],
+            $command->sla()['p2'],
+            $command->sla()['p3'],
+            $command->sla()['p4'],
+            $command->sla()['p5']
+        );
+
         $company = new Company(
             $command->name(),
             $command->cnpj(),
             $command->description(),
             $command->isMother(),
-            $command->isActive()
+            $command->isActive(),
+            $sla
         );
-
         if ($company->isMother()) {
             $motherCompany = $this->companyRepository->getMother();
 

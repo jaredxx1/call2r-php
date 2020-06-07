@@ -60,6 +60,7 @@ class DoctrineCompanyRepository implements CompanyRepository
     public function create(Company $company): ?Company
     {
         try {
+            $this->entityManager->persist($company->sla());
             $this->entityManager->persist($company);
             $this->entityManager->flush();
         } catch (UniqueConstraintViolationException $exception) {

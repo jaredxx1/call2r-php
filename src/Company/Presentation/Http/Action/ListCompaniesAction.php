@@ -27,9 +27,7 @@ class ListCompaniesAction extends AbstractAction
 
     public function __invoke()
     {
-
         try {
-
             $companies = $this->service->getAll();
         } catch (Exception $exception) {
             return $this->errorResponse($exception->getMessage(), $exception->getCode() ? $exception->getCode() : 400);
