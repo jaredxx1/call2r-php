@@ -34,12 +34,12 @@ get_mother_company:
 
 get_all_slas:
   path: /api/v1/slas
-  controller: App\Company\Presentation\Http\Action\FindAllSLAAction
+  controller: App\Company\Presentation\Http\Action\FindAllSlaAction
   methods:    GET
 
 update_sla:
   path: /api/v1/slas/{id}
-  controller: App\Company\Presentation\Http\Action\UpdateSLAAction
+  controller: App\Company\Presentation\Http\Action\UpdateSlaAction
   methods:    PUT
   requirements:
     id: '\d+'

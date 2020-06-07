@@ -4,24 +4,24 @@
 namespace App\Company\Presentation\Http\Action;
 
 
-use App\Company\Application\Service\SLAService;
+use App\Company\Application\Service\SlaService;
 use App\Core\Presentation\Http\AbstractAction;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Throwable;
 
-class FindAllSLAAction extends AbstractAction
+class FindAllSlaAction extends AbstractAction
 {
     /**
-     * @var SLAService
+     * @var SlaService
      */
     private $service;
 
     /**
-     * FindAllSLAAction constructor.
-     * @param SLAService $service
+     * FindAllSlaAction constructor.
+     * @param SlaService $service
      */
-    public function __construct(SLAService $service)
+    public function __construct(SlaService $service)
     {
         $this->service = $service;
     }

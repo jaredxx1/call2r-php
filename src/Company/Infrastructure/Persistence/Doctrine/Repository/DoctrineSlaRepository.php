@@ -5,11 +5,11 @@ namespace App\Company\Infrastructure\Persistence\Doctrine\Repository;
 
 
 use App\Company\Domain\Entity\SLA;
-use App\Company\Domain\Repository\SLARepository;
+use App\Company\Domain\Repository\SlaRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ObjectRepository;
 
-class DoctrineSLARepository implements SLARepository
+class DoctrineSlaRepository implements SlaRepository
 {
     /**
      * @var ObjectRepository
@@ -22,7 +22,7 @@ class DoctrineSLARepository implements SLARepository
     private $entityManager;
 
     /**
-     * DoctrineSLARepository constructor.
+     * DoctrineSlaRepository constructor.
      * @param EntityManagerInterface $entityManager
      */
     public function __construct(EntityManagerInterface $entityManager)

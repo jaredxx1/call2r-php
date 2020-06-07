@@ -7,7 +7,7 @@ namespace App\Company\Application\Exception;
 use Exception;
 use Throwable;
 
-class SLANotFound extends Exception
+class SlaNotFoundException extends Exception
 {
     public function __construct($message = "SLA not found", $code = 404, Throwable $previous = null)
     {

@@ -4,26 +4,26 @@
 namespace App\Company\Presentation\Http\Action;
 
 
-use App\Company\Application\Command\UpdateSLACommand;
-use App\Company\Application\Service\SLAService;
+use App\Company\Application\Command\UpdateSlaCommand;
+use App\Company\Application\Service\SlaService;
 use App\Core\Presentation\Http\AbstractAction;
 use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Throwable;
 
-class UpdateSLAAction extends AbstractAction
+class UpdateSlaAction extends AbstractAction
 {
     /**
-     * @var SLAService
+     * @var SlaService
      */
     private $service;
 
     /**
-     * FindAllSLAAction constructor.
-     * @param SLAService $service
+     * FindAllSlaAction constructor.
+     * @param SlaService $service
      */
-    public function __construct(SLAService $service)
+    public function __construct(SlaService $service)
     {
         $this->service = $service;
     }
@@ -32,7 +32,7 @@ class UpdateSLAAction extends AbstractAction
     {
        try{
            $data = json_decode($request->getContent(),true);
-           $command = UpdateSLACommand::fromArray($data);
+           $command = UpdateSlaCommand::fromArray($data);
            $sla = $this->service->update($command);
        } catch (Exception $exception) {
            return $this->errorResponse($exception->getMessage(), $exception->getCode() ? $exception->getCode() : 400);

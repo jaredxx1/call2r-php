@@ -7,7 +7,7 @@ namespace App\Company\Application\Command;
 use App\Core\Infrastructure\Container\Application\Utils\Command\CommandInterface;
 use Webmozart\Assert\Assert;
 
-class UpdateSLACommand implements CommandInterface
+class UpdateSlaCommand implements CommandInterface
 {
     /**
      * @var int
@@ -40,7 +40,7 @@ class UpdateSLACommand implements CommandInterface
     private $p5;
 
     /**
-     * UpdateSLACommand constructor.
+     * UpdateSlaCommand constructor.
      * @param int $id
      * @param int $p1
      * @param int $p2
@@ -60,7 +60,7 @@ class UpdateSLACommand implements CommandInterface
 
     /**
      * @param array $data
-     * @return UpdateSLACommand
+     * @return UpdateSlaCommand
      */
     public static function fromArray($data)
     {

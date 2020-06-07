@@ -5,7 +5,7 @@ namespace App\Company\Domain\Repository;
 
 use App\Company\Domain\Entity\SLA;
 
-interface SLARepository
+interface SlaRepository
 {
     public function fromId(int $id): ?SLA;
 
