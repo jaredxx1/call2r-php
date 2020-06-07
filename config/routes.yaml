@@ -36,3 +36,10 @@ get_all_slas:
   path: /api/v1/slas
   controller: App\Company\Presentation\Http\Action\FindAllSLAAction
   methods:    GET
+
+update_sla:
+  path: /api/v1/slas/{id}
+  controller: App\Company\Presentation\Http\Action\UpdateSLAAction
+  methods:    PUT
+  requirements:
+    id: '\d+'

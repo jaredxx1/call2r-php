@@ -38,4 +38,20 @@ class DoctrineSLARepository implements SLARepository
     {
         return $this->repository->findAll();
     }
+
+    /**
+     * @param int $id
+     * @return SLA|null
+     */
+    public function fromId(int $id): ?SLA
+    {
+        return $this->repository->find($id);
+    }
+
+    public function update(SLA $sla): ?SLA
+    {
+        $this->entityManager->flush();
+
+        return $sla;
+    }
 }
