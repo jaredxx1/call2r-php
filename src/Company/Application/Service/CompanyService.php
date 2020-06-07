@@ -8,6 +8,7 @@ use App\Company\Application\Command\CreateCompanyCommand;
 use App\Company\Application\Command\UpdateCompanyCommand;
 use App\Company\Application\Exception\CompanyNotFoundException;
 use App\Company\Application\Exception\NonUniqueMotherCompanyException;
+use App\Company\Application\Exception\SlaNotFoundException;
 use App\Company\Application\Query\FindCompanyByIdQuery;
 use App\Company\Domain\Entity\Company;
 use App\Company\Domain\Entity\SLA;
@@ -115,10 +116,14 @@ final class CompanyService
     {
         $id = $command->id();
         $company = $this->companyRepository->fromId($id);
-        $sla = $this->slaRepository->fromId($command->sla()['id']);
+        $sla = $this->slaRepository->fromId($company->sla()->id());
 
         if (empty($company)) {
             throw new CompanyNotFoundException();
+        }
+
+        if(is_null($sla)){
+            throw new SlaNotFoundException();
         }
 
         // Save sla
