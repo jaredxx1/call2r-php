@@ -3,9 +3,9 @@ alive:
   controller: App\Core\Presentation\Http\Action\AliveAction
   methods:    GET
 
-list_companies:
+get_all_companies:
   path: /api/v1/companies
-  controller: App\Company\Presentation\Http\Action\ListCompaniesAction
+  controller: App\Company\Presentation\Http\Action\FindAllCompaniesAction
   methods:    GET
 
 get_company_by_id:

@@ -7,15 +7,15 @@ namespace App\Company\Application\Exception;
 use Exception;
 use Throwable;
 
-class NonUniqueMotherCompanyException extends Exception
+class SlaNotFoundException extends Exception
 {
     /**
-     * NonUniqueMotherCompanyException constructor.
+     * CompanyNotFoundException constructor.
      * @param string $message
      * @param int $code
      * @param Throwable|null $previous
      */
-    public function __construct($message = "There is one more registered parent company", $code = 409, Throwable $previous = null)
+    public function __construct($message = "Sla not found", $code = 404, Throwable $previous = null)
     {
         parent::__construct($message, $code, $previous);
     }

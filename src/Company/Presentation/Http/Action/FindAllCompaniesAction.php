@@ -10,7 +10,7 @@ use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Throwable;
 
-class ListCompaniesAction extends AbstractAction
+class FindAllCompaniesAction extends AbstractAction
 {
 
     /**
@@ -18,6 +18,10 @@ class ListCompaniesAction extends AbstractAction
      */
     private $service;
 
+    /**
+     * FindAllCompaniesAction constructor.
+     * @param CompanyService $service
+     */
     public function __construct(
         CompanyService $service
     )
@@ -25,11 +29,12 @@ class ListCompaniesAction extends AbstractAction
         $this->service = $service;
     }
 
+    /**
+     * @return JsonResponse
+     */
     public function __invoke()
     {
-
         try {
-
             $companies = $this->service->getAll();
         } catch (Exception $exception) {
             return $this->errorResponse($exception->getMessage(), $exception->getCode() ? $exception->getCode() : 400);

@@ -20,11 +20,19 @@ class UpdateCompanyAction extends AbstractAction
      */
     private $service;
 
+    /**
+     * UpdateCompanyAction constructor.
+     * @param CompanyService $service
+     */
     public function __construct(CompanyService $service)
     {
         $this->service = $service;
     }
 
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
     public function __invoke(Request $request)
     {
         try {

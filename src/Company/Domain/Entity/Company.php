@@ -42,19 +42,26 @@ class Company implements JsonSerializable
     private $active;
 
     /**
+     * @var SLA
+     */
+    private $sla;
+
+    /**
      * Company constructor.
      * @param string $name
      * @param string $cnpj
      * @param string $description
      * @param bool $mother
      * @param bool $active
+     * @param SLA $sla
      */
     public function __construct(
         string $name,
         string $cnpj,
         string $description,
         bool $mother,
-        bool $active
+        bool $active,
+        SLA $sla
     )
     {
         $this->name = $name;
@@ -62,6 +69,7 @@ class Company implements JsonSerializable
         $this->description = $description;
         $this->mother = $mother;
         $this->active = $active;
+        $this->sla = $sla;
     }
 
     /**
@@ -83,7 +91,8 @@ class Company implements JsonSerializable
             'description' => $this->description(),
             'cnpj' => $this->cnpj(),
             'isMother' => $this->isMother(),
-            'isActive' => $this->isActive()
+            'isActive' => $this->isActive(),
+            'sla' => $this->sla()
         ];
     }
 
@@ -136,6 +145,15 @@ class Company implements JsonSerializable
     }
 
     /**
+     * @return SLA
+     */
+    public function sla(): SLA
+    {
+        return $this->sla;
+    }
+
+
+    /**
      * @param int $id
      */
     public function setId(int $id): void
@@ -182,5 +200,15 @@ class Company implements JsonSerializable
     {
         $this->active = $active;
     }
+
+    /**
+     * @param SLA $sla
+     */
+    public function setSla(SLA $sla): void
+    {
+        $this->sla = $sla;
+    }
+
+
 
 }

@@ -24,6 +24,10 @@ class DoctrineCompanyRepository implements CompanyRepository
      */
     private $entityManager;
 
+    /**
+     * DoctrineCompanyRepository constructor.
+     * @param EntityManagerInterface $entityManager
+     */
     public function __construct(
         EntityManagerInterface $entityManager
     )
@@ -32,18 +36,27 @@ class DoctrineCompanyRepository implements CompanyRepository
         $this->entityManager = $entityManager;
     }
 
+    /**
+     * @param int $id
+     * @return Company|null
+     */
     public function fromId(int $id): ?Company
     {
-        $company = $this->repository->find($id);
-
-        return $company;
+        return $this->repository->find($id);
     }
 
+    /**
+     * @return object[]
+     */
     public function getAll()
     {
         return $this->repository->findAll();
     }
 
+    /**
+     * @return Company|null
+     * @throws NonUniqueMotherCompanyException
+     */
     public function getMother(): ?Company
     {
         $query = $this->entityManager->createQuery('SELECT c FROM App\Company\Domain\Entity\Company c WHERE c.mother = TRUE');
@@ -57,9 +70,15 @@ class DoctrineCompanyRepository implements CompanyRepository
         return $company;
     }
 
+    /**
+     * @param Company $company
+     * @return Company|null
+     * @throws DuplicatedCompanyException
+     */
     public function create(Company $company): ?Company
     {
         try {
+            $this->entityManager->persist($company->sla());
             $this->entityManager->persist($company);
             $this->entityManager->flush();
         } catch (UniqueConstraintViolationException $exception) {
@@ -69,6 +88,10 @@ class DoctrineCompanyRepository implements CompanyRepository
         return $company;
     }
 
+    /**
+     * @param Company $company
+     * @return Company|null
+     */
     public function update(Company $company): ?Company
     {
         $this->entityManager->flush();

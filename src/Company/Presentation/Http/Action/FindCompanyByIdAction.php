@@ -19,6 +19,10 @@ class FindCompanyByIdAction extends AbstractAction
      */
     private $service;
 
+    /**
+     * FindCompanyByIdAction constructor.
+     * @param CompanyService $service
+     */
     public function __construct(
         CompanyService $service
     )
@@ -26,6 +30,11 @@ class FindCompanyByIdAction extends AbstractAction
         $this->service = $service;
     }
 
+    /**
+     * @param Request $request
+     * @param int $id
+     * @return JsonResponse
+     */
     public function __invoke(Request $request, int $id)
     {
         try {
