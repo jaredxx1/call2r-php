@@ -68,7 +68,6 @@ final class CompanyService
         return $company;
     }
 
-
     public function update(UpdateCompanyCommand $command): ?Company
     {
         $id = $command->id();

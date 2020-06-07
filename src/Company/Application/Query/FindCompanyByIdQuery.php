@@ -25,6 +25,7 @@ class FindCompanyByIdQuery implements QueryInterface
      */
     public static function fromArray($data)
     {
+        Assert::keyExists($data, 'id', "Id must be a integer");
         Assert::integer($data['id'], "Id must be a integer");
 
         return new self(

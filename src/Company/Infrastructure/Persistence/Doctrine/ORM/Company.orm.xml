@@ -7,7 +7,7 @@
             <generator strategy="AUTO"/>
         </id>
         <field name="active" column="active" type="boolean"/>
-        <field name="cnpj" column="cnpj" type="string" column-definition="CHAR(14)"/>
+        <field name="cnpj" column="cnpj" type="string" column-definition="CHAR(14)" unique="true"/>
         <field name="description" column="description" type="string"/>
         <field name="mother" column="mother" type="boolean"/>
         <field name="name" column="name" type="string"/>

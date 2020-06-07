@@ -33,9 +33,9 @@ class FindCompanyByIdAction extends AbstractAction
             $query = FindCompanyByIdQuery::fromArray($data);
             $company = $this->service->fromId($query);
         } catch (Exception $exception) {
-            return $this->errorResponse($exception->getMessage(), $exception->getCode());
+            return $this->errorResponse($exception->getMessage(), $exception->getCode() ? $exception->getCode() : 400);
         } catch (Throwable $exception) {
-            return $this->errorResponse($exception->getMessage(), $exception->getCode());
+            return $this->errorResponse($exception->getMessage(), $exception->getCode() ? $exception->getCode() : 400);
         }
 
         return new JsonResponse($company, 200);
