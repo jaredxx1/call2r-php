@@ -3,9 +3,9 @@ alive:
   controller: App\Core\Presentation\Http\Action\AliveAction
   methods:    GET
 
-list_companies:
+get_all_companies:
   path: /api/v1/companies
-  controller: App\Company\Presentation\Http\Action\ListCompaniesAction
+  controller: App\Company\Presentation\Http\Action\FindAllCompaniesAction
   methods:    GET
 
 get_company_by_id:
@@ -30,4 +30,9 @@ update_company:
 get_mother_company:
   path: /api/v1/companies/mother
   controller: App\Company\Presentation\Http\Action\FindMotherCompanyAction
+  methods:    GET
+
+get_all_slas:
+  path: /api/v1/slas
+  controller: App\Company\Presentation\Http\Action\FindAllSLAAction
   methods:    GET

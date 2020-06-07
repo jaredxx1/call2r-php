@@ -4,23 +4,24 @@
 namespace App\Company\Presentation\Http\Action;
 
 
-use App\Company\Application\Service\CompanyService;
+use App\Company\Application\Service\SLAService;
 use App\Core\Presentation\Http\AbstractAction;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Throwable;
 
-class ListCompaniesAction extends AbstractAction
+class FindAllSLAAction extends AbstractAction
 {
-
     /**
-     * @var CompanyService
+     * @var SLAService
      */
     private $service;
 
-    public function __construct(
-        CompanyService $service
-    )
+    /**
+     * FindAllSLAAction constructor.
+     * @param SLAService $service
+     */
+    public function __construct(SLAService $service)
     {
         $this->service = $service;
     }
@@ -37,4 +38,6 @@ class ListCompaniesAction extends AbstractAction
 
         return new JsonResponse($companies, 200);
     }
+
+
 }
