@@ -27,6 +27,11 @@ final class CompanyService
      */
     private $slaRepository;
 
+    /**
+     * CompanyService constructor.
+     * @param CompanyRepository $companyRepository
+     * @param SlaRepository $slaRepository
+     */
     public function __construct(
         CompanyRepository $companyRepository,
         SlaRepository $slaRepository
@@ -36,12 +41,19 @@ final class CompanyService
         $this->slaRepository = $slaRepository;
     }
 
-
+    /**
+     * @return mixed
+     */
     public function getAll()
     {
         return $this->companyRepository->getAll();
     }
 
+    /**
+     * @param CreateCompanyCommand $command
+     * @return Company|null
+     * @throws NonUniqueMotherCompanyException
+     */
     public function create(CreateCompanyCommand $command): ?Company
     {
         $sla = new SLA(
@@ -63,17 +75,25 @@ final class CompanyService
         );
         if ($company->isMother()) {
             $motherCompany = $this->companyRepository->getMother();
-
+            $sla->setP1(0);
+            $sla->setP2(0);
+            $sla->setP3(0);
+            $sla->setP4(0);
+            $sla->setP5(0);
+            $company->setSla($sla);
             if (!is_null($motherCompany)) {
                 throw new NonUniqueMotherCompanyException();
             }
         }
-
         $company = $this->companyRepository->create($company);
-
         return $company;
     }
 
+    /**
+     * @param FindCompanyByIdQuery $query
+     * @return Company|null
+     * @throws CompanyNotFoundException
+     */
     public function fromId(FindCompanyByIdQuery $query): ?Company
     {
         $id = $query->id();
@@ -86,35 +106,44 @@ final class CompanyService
         return $company;
     }
 
+    /**
+     * @param UpdateCompanyCommand $command
+     * @return Company|null
+     * @throws CompanyNotFoundException
+     */
     public function update(UpdateCompanyCommand $command): ?Company
     {
         $id = $command->id();
         $company = $this->companyRepository->fromId($id);
+        $sla = $this->slaRepository->fromId($command->sla()['id']);
 
         if (empty($company)) {
             throw new CompanyNotFoundException();
         }
 
-        $sla = new SLA(
-            $command->sla()['id'],
-            $command->sla()['p1'],
-            $command->sla()['p2'],
-            $command->sla()['p3'],
-            $command->sla()['p4'],
-            $command->sla()['p5']
-        );
+        // Save sla
+        $sla->setP1($command->sla()['p1']);
+        $sla->setP2($command->sla()['p2']);
+        $sla->setP3($command->sla()['p3']);
+        $sla->setP4($command->sla()['p4']);
+        $sla->setP5($command->sla()['p5']);
 
+        $this->slaRepository->update($sla);
+
+        // Save company
         $company->setName($command->name());
         $company->setDescription($command->description());
         $company->setActive($command->isActive());
 
-        $sla = $this->slaRepository->update($sla);
-        //$this->companyRepository->update($company);
+        $this->companyRepository->update($company);
 
-        $company->setSla($sla);
         return $company;
     }
 
+    /**
+     * @return Company|null
+     * @throws CompanyNotFoundException
+     */
     public function getMother(): ?Company
     {
         $company = $this->companyRepository->getMother();

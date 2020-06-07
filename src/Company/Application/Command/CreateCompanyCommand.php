@@ -67,6 +67,10 @@ class CreateCompanyCommand implements CommandInterface
         $this->sla = $sla;
     }
 
+    /**
+     * @param array $data
+     * @return CreateCompanyCommand
+     */
     public static function fromArray($data)
     {
         //Company object validation
@@ -129,7 +133,7 @@ class CreateCompanyCommand implements CommandInterface
 
     public function toArray(): array
     {
-        // TODO: Implement toArray() method.
+        return [];
     }
 
     /**

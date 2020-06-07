@@ -33,9 +33,12 @@ class FindCompanyByIdQuery implements QueryInterface
         );
     }
 
+    /**
+     * @return array
+     */
     public function toArray(): array
     {
-        // TODO: Implement toArray() method.
+        return [];
     }
 
     /**

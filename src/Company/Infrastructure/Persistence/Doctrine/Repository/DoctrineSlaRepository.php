@@ -32,16 +32,8 @@ class DoctrineSlaRepository implements SlaRepository
     }
 
     /**
-     * @return object[]
-     */
-    public function getAll()
-    {
-        return $this->repository->findAll();
-    }
-
-    /**
      * @param int $id
-     * @return SLA|null
+     * @return SLA
      */
     public function fromId(int $id): ?SLA
     {

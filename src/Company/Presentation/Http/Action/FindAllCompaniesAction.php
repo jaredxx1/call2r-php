@@ -18,6 +18,10 @@ class FindAllCompaniesAction extends AbstractAction
      */
     private $service;
 
+    /**
+     * FindAllCompaniesAction constructor.
+     * @param CompanyService $service
+     */
     public function __construct(
         CompanyService $service
     )
@@ -25,6 +29,9 @@ class FindAllCompaniesAction extends AbstractAction
         $this->service = $service;
     }
 
+    /**
+     * @return JsonResponse
+     */
     public function __invoke()
     {
         try {

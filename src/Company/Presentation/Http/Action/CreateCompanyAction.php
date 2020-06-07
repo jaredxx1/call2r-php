@@ -20,6 +20,10 @@ class CreateCompanyAction extends AbstractAction
      */
     private $service;
 
+    /**
+     * CreateCompanyAction constructor.
+     * @param CompanyService $service
+     */
     public function __construct(
         CompanyService $service
     )
@@ -27,6 +31,10 @@ class CreateCompanyAction extends AbstractAction
         $this->service = $service;
     }
 
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
     public function __invoke(Request $request)
     {
 

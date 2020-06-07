@@ -9,7 +9,5 @@ interface SlaRepository
 {
     public function fromId(int $id): ?SLA;
 
-    public function getAll();
-
     public function update(SLA $sla): ?SLA;
 }
