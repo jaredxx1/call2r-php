@@ -14,6 +14,7 @@ use App\Company\Domain\Entity\Company;
 use App\Company\Domain\Entity\Section;
 use App\Company\Domain\Entity\SLA;
 use App\Company\Domain\Repository\CompanyRepository;
+use App\Company\Domain\Repository\SectionRepository;
 use App\Company\Domain\Repository\SlaRepository;
 
 final class CompanyService
@@ -25,9 +26,14 @@ final class CompanyService
     private $companyRepository;
 
     /**
-     * @var $SlaRepository
+     * @var SlaRepository
      */
     private $slaRepository;
+
+    /**
+     * @var SectionRepository
+     */
+    private $sectionRepository;
 
     /**
      * CompanyService constructor.
@@ -36,11 +42,13 @@ final class CompanyService
      */
     public function __construct(
         CompanyRepository $companyRepository,
-        SlaRepository $slaRepository
+        SlaRepository $slaRepository,
+        SectionRepository $sectionRepository
     )
     {
         $this->companyRepository = $companyRepository;
         $this->slaRepository = $slaRepository;
+        $this->sectionRepository = $sectionRepository;
     }
 
     /**
@@ -70,11 +78,17 @@ final class CompanyService
         );
 
         foreach ($command->sections() as $section) {
-            $sections[] = new Section(
-                null,
-                $section['name'],
-                $section['priority']
-            );
+            $foundSection = $this->sectionRepository->fromName($section['name']);
+
+            if (is_null($foundSection)) {
+                $sections[] = new Section(
+                    null,
+                    $section['name'],
+                    $section['priority']
+                );
+            } else {
+                $sections[] = $foundSection;
+            }
         }
 
         $company = new Company(
@@ -129,7 +143,7 @@ final class CompanyService
     /**
      * @param UpdateCompanyCommand $command
      * @return Company|null
-     * @throws CompanyNotFoundException
+     * @throws CompanyNotFoundException|SlaNotFoundException
      */
     public function update(UpdateCompanyCommand $command): ?Company
     {
@@ -141,7 +155,7 @@ final class CompanyService
             throw new CompanyNotFoundException();
         }
 
-        if(is_null($sla)){
+        if (is_null($sla)) {
             throw new SlaNotFoundException();
         }
 

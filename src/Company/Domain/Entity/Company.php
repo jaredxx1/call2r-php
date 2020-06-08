@@ -8,6 +8,10 @@ namespace App\Company\Domain\Entity;
 
 use JsonSerializable;
 
+/**
+ * Class Company
+ * @package App\Company\Domain\Entity
+ */
 class Company implements JsonSerializable
 {
 
@@ -47,9 +51,10 @@ class Company implements JsonSerializable
     private $sla;
 
     /**
-     * @var Sections
+     * @var array
      */
     private $sections;
+
 
     /**
      * Company constructor.
@@ -59,7 +64,7 @@ class Company implements JsonSerializable
      * @param bool $mother
      * @param bool $active
      * @param SLA $sla
-     * @param $sections
+     * @param array $sections
      */
     public function __construct(
         string $name,
@@ -68,7 +73,7 @@ class Company implements JsonSerializable
         bool $mother,
         bool $active,
         SLA $sla,
-        Sections $sections
+        array $sections
     )
     {
         $this->name = $name;
@@ -162,7 +167,7 @@ class Company implements JsonSerializable
     }
 
     /**
-     * @return Sections
+     * @return array
      */
     public function sections()
     {
@@ -227,7 +232,7 @@ class Company implements JsonSerializable
     }
 
     /**
-     * @param Sections $sections
+     * @param array $sections
      */
     public function setSections($sections): void
     {

@@ -31,3 +31,8 @@ get_mother_company:
   path: /api/v1/companies/mother
   controller: App\Company\Presentation\Http\Action\FindMotherCompanyAction
   methods:    GET
+
+get_all_sections:
+  path: /api/v1/sections
+  controller: App\Company\Presentation\Http\Action\FindAllSectionsAction
+  methods:    GET
