@@ -9,6 +9,7 @@ use App\Company\Domain\Repository\CompanyRepository;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\PersistentCollection;
 use Doctrine\Persistence\ObjectRepository;
 
 class DoctrineCompanyRepository implements CompanyRepository
@@ -79,6 +80,11 @@ class DoctrineCompanyRepository implements CompanyRepository
     {
         try {
             $this->entityManager->persist($company->sla());
+
+            foreach ($company->sections() as $section) {
+                $this->entityManager->persist($section);
+            }
+
             $this->entityManager->persist($company);
             $this->entityManager->flush();
         } catch (UniqueConstraintViolationException $exception) {

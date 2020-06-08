@@ -41,6 +41,12 @@ class CreateCompanyCommand implements CommandInterface
      */
     private $sla;
 
+
+    /**
+     * @var array
+     */
+    private $sections;
+
     /**
      * CreateCompanyCommand constructor.
      * @param string $name
@@ -56,7 +62,8 @@ class CreateCompanyCommand implements CommandInterface
         string $cnpj,
         bool $mother,
         bool $active,
-        array $sla
+        array $sla,
+        array $sections
     )
     {
         $this->name = $name;
@@ -65,6 +72,7 @@ class CreateCompanyCommand implements CommandInterface
         $this->mother =  $mother;
         $this->active =  $active;
         $this->sla = $sla;
+        $this->sections = $sections;
     }
 
     /**
@@ -101,7 +109,6 @@ class CreateCompanyCommand implements CommandInterface
         Assert::length($data['cnpj'], 13, "Field CNPJ don't have 14 digits");
 
         //SLA object validation
-
         $sla = $data['sla'];
 
         Assert::keyExists($sla, 'p1', 'Field sla p1 is required');
@@ -128,7 +135,8 @@ class CreateCompanyCommand implements CommandInterface
             $data['cnpj'],
             $data['mother'],
             $data['active'],
-            $data['sla']
+            $data['sla'],
+            $data['sections']
         );
     }
 
@@ -184,4 +192,14 @@ class CreateCompanyCommand implements CommandInterface
     {
         return $this->sla;
     }
+
+    /**
+     * @return array
+     */
+    public function sections(): array
+    {
+        return $this->sections;
+    }
+
+
 }

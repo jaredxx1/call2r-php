@@ -11,6 +11,7 @@ use App\Company\Application\Exception\NonUniqueMotherCompanyException;
 use App\Company\Application\Exception\SlaNotFoundException;
 use App\Company\Application\Query\FindCompanyByIdQuery;
 use App\Company\Domain\Entity\Company;
+use App\Company\Domain\Entity\Section;
 use App\Company\Domain\Entity\SLA;
 use App\Company\Domain\Repository\CompanyRepository;
 use App\Company\Domain\Repository\SlaRepository;
@@ -47,7 +48,9 @@ final class CompanyService
      */
     public function getAll()
     {
-        return $this->companyRepository->getAll();
+        $companies = $this->companyRepository->getAll();
+
+        return $companies;
     }
 
     /**
@@ -66,27 +69,43 @@ final class CompanyService
             $command->sla()['p5']
         );
 
+        foreach ($command->sections() as $section) {
+            $sections[] = new Section(
+                null,
+                $section['name'],
+                $section['priority']
+            );
+        }
+
         $company = new Company(
             $command->name(),
             $command->cnpj(),
             $command->description(),
             $command->isMother(),
             $command->isActive(),
-            $sla
+            $sla,
+            $sections
         );
+
         if ($company->isMother()) {
             $motherCompany = $this->companyRepository->getMother();
+
+            if (!is_null($motherCompany)) {
+                throw new NonUniqueMotherCompanyException();
+            }
+
             $sla->setP1(0);
             $sla->setP2(0);
             $sla->setP3(0);
             $sla->setP4(0);
             $sla->setP5(0);
+
             $company->setSla($sla);
-            if (!is_null($motherCompany)) {
-                throw new NonUniqueMotherCompanyException();
-            }
+
         }
+
         $company = $this->companyRepository->create($company);
+
         return $company;
     }
 
