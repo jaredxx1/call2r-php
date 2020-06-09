@@ -36,3 +36,7 @@ get_all_sections:
   path: /api/v1/sections
   controller: App\Company\Presentation\Http\Action\FindAllSectionsAction
   methods:    GET
+update_section:
+  path: /api/v1/sections/{id}
+  controller: App\Company\Presentation\Http\Action\UpdateSectionAction
+  methods:    PUT

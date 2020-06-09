@@ -7,6 +7,8 @@ namespace App\Company\Infrastructure\Persistence\Doctrine\Repository;
 use App\Company\Domain\Entity\Section;
 use App\Company\Domain\Repository\SectionRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\NoResultException;
 
 /**
  * Class DoctrineSectionRepository
@@ -42,6 +44,8 @@ class DoctrineSectionRepository implements SectionRepository
     /**
      * @param string $name
      * @return Section|null
+     * @throws NoResultException
+     * @throws NonUniqueResultException
      */
     public function fromName(string $name): ?Section
     {
@@ -57,6 +61,17 @@ class DoctrineSectionRepository implements SectionRepository
      */
     public function update(Section $section): ?Section
     {
-        // TODO: Implement update() method.
+        $this->entityManager->flush();
+
+        return $section;
+    }
+
+    /**
+     * @param int $id
+     * @return Section|null
+     */
+    public function fromId(int $id): ?Section
+    {
+        return $this->entityManager->getRepository(Section::class)->find($id);
     }
 }

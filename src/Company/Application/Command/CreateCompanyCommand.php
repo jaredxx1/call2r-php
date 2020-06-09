@@ -55,6 +55,7 @@ class CreateCompanyCommand implements CommandInterface
      * @param bool $mother
      * @param bool $active
      * @param array $sla
+     * @param array $sections
      */
     public function __construct(
         string $name,
@@ -67,10 +68,10 @@ class CreateCompanyCommand implements CommandInterface
     )
     {
         $this->name = $name;
-        $this->description =  $description;
-        $this->cnpj =  $cnpj;
-        $this->mother =  $mother;
-        $this->active =  $active;
+        $this->description = $description;
+        $this->cnpj = $cnpj;
+        $this->mother = $mother;
+        $this->active = $active;
         $this->sla = $sla;
         $this->sections = $sections;
     }
@@ -88,7 +89,8 @@ class CreateCompanyCommand implements CommandInterface
         Assert::keyExists($data, 'cnpj', 'Field CNPJ is required');
         Assert::keyExists($data, 'mother', 'Field mother is required');
         Assert::keyExists($data, 'active', 'Field active is required');
-        Assert::keyExists($data, 'sla', 'Field sla is required');
+        Assert::keyExists($data, 'sla', 'Object sla is required');
+        Assert::keyExists($data, 'sections', 'Array sections is required');
 
         Assert::keyExists($data, 'description', 'Field escription is required');
         Assert::keyExists($data, 'name', 'Field name is required');
@@ -128,6 +130,19 @@ class CreateCompanyCommand implements CommandInterface
         Assert::notEq($sla['p3'], 0, 'Field sla p3 not be 0');
         Assert::notEq($sla['p4'], 0, 'Field sla p4 not be 0');
         Assert::notEq($sla['p5'], 0, 'Field sla p5 not be 0');
+
+        // Section array validation
+        $sections = $data['sections'];
+
+        Assert::isArray($sections, 'Field sections is not an array');
+
+        foreach ($sections as $section) {
+            Assert::keyExists($section, 'name', 'Field section name is required');
+            Assert::keyExists($section, 'priority', 'Field section priority is required');
+            Assert::stringNotEmpty($section['name'], 'Field section name is empty');
+            Assert::string($section['name'], 'Field section name is not a string');
+            Assert::integer($section['priority'], 'Field section priority is not an int');
+        }
 
         return new self(
             $data['name'],

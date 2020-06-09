@@ -6,7 +6,7 @@
         <id name="id" type="integer" column="id_section">
             <generator strategy="AUTO"/>
         </id>
-        <field name="name" column="name" type="string"/>
+        <field name="name" column="name" type="string" unique="true"/>
         <field name="priority" column="priority" type="integer"/>
     </entity>
 </doctrine-mapping>

@@ -26,7 +26,8 @@ create table tb_company(
 create table  tb_section(
     id_section int auto_increment primary key,
     name varchar(255),
-    priority int
+    priority int,
+    UNIQUE KEY (name)
 );
 
 create table tb_company_section(
