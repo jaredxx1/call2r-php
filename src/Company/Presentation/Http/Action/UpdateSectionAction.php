@@ -44,7 +44,8 @@ class UpdateSectionAction extends AbstractAction
     {
         try {
             $data = json_decode($request->getContent(), true);
-            $command = UpdateSectionCommand::fromArray($data,$id);
+            $data['url'] = $id;
+            $command = UpdateSectionCommand::fromArray($data);
             $section = $this->service->update($command);
         } catch (Exception $exception) {
             return $this->errorResponse($exception->getMessage(), $exception->getCode() ? $exception->getCode() : 400);

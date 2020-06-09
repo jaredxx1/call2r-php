@@ -44,11 +44,13 @@ class UpdateSectionCommand implements CommandInterface
 
     /**
      * @param array $data
-     * @param $id
      * @return UpdateSectionCommand
      */
-    public static function fromArray($data, $id)
+    public static function fromArray($data)
     {
+
+        Assert::eq($data['id'], $data['url'], 'Id is not equal');
+
         Assert::notSame($data['id'], $id, 'Id is not equal');
         Assert::keyExists($data, 'id', 'Field id is required');
         Assert::keyExists($data, 'name', 'Field name is required');
