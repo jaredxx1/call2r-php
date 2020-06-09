@@ -144,10 +144,12 @@ final class CompanyService
     /**
      * @param UpdateCompanyCommand $command
      * @return Company|null
-     * @throws CompanyNotFoundException|SlaNotFoundException|SectionNotFoundException
+     * @throws CompanyNotFoundException
+     * @throws SlaNotFoundException
      */
     public function update(UpdateCompanyCommand $command): ?Company
     {
+
         $id = $command->id();
         $company = $this->companyRepository->fromId($id);
         $sla = $this->slaRepository->fromId($company->sla()->id());
@@ -163,7 +165,11 @@ final class CompanyService
         foreach ($command->sections() as $section) {
             $foundSection = $this->sectionRepository->fromName($section['name']);
             if (is_null($foundSection)) {
-                throw new SectionNotFoundException();
+                $sections[] = new Section(
+                    null,
+                    $section['name'],
+                    $section['priority']
+                );
             } else {
                 $sections[] = $foundSection;
             }

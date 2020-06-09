@@ -100,6 +100,9 @@ class DoctrineCompanyRepository implements CompanyRepository
      */
     public function update(Company $company): ?Company
     {
+        foreach ($company->sections() as $section) {
+            $this->entityManager->persist($section);
+        }
         $this->entityManager->flush();
 
         return $company;
