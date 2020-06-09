@@ -8,6 +8,7 @@ use App\Company\Application\Command\CreateCompanyCommand;
 use App\Company\Application\Command\UpdateCompanyCommand;
 use App\Company\Application\Exception\CompanyNotFoundException;
 use App\Company\Application\Exception\NonUniqueMotherCompanyException;
+use App\Company\Application\Exception\SectionNotFoundException;
 use App\Company\Application\Exception\SlaNotFoundException;
 use App\Company\Application\Query\FindCompanyByIdQuery;
 use App\Company\Domain\Entity\Company;
@@ -39,6 +40,7 @@ final class CompanyService
      * CompanyService constructor.
      * @param CompanyRepository $companyRepository
      * @param SlaRepository $slaRepository
+     * @param SectionRepository $sectionRepository
      */
     public function __construct(
         CompanyRepository $companyRepository,
@@ -142,7 +144,7 @@ final class CompanyService
     /**
      * @param UpdateCompanyCommand $command
      * @return Company|null
-     * @throws CompanyNotFoundException|SlaNotFoundException
+     * @throws CompanyNotFoundException|SlaNotFoundException|SectionNotFoundException
      */
     public function update(UpdateCompanyCommand $command): ?Company
     {
@@ -158,6 +160,15 @@ final class CompanyService
             throw new SlaNotFoundException();
         }
 
+        foreach ($command->sections() as $section) {
+            $foundSection = $this->sectionRepository->fromName($section['name']);
+            if (is_null($foundSection)) {
+                throw new SectionNotFoundException();
+            } else {
+                $sections[] = $foundSection;
+            }
+        }
+
         // Save sla
         $sla->setP1($command->sla()['p1']);
         $sla->setP2($command->sla()['p2']);
@@ -166,6 +177,10 @@ final class CompanyService
         $sla->setP5($command->sla()['p5']);
 
         $this->slaRepository->update($sla);
+
+        // set new sections to company
+
+        $company->setSections($sections);
 
         // Save company
         $company->setName($command->name());

@@ -37,6 +37,11 @@ class UpdateCompanyCommand implements CommandInterface
     private $sla;
 
     /**
+     * @var array
+     */
+    private $sections;
+
+    /**
      * UpdateCompanyCommand constructor.
      * @param int $id
      * @param string $name
@@ -44,13 +49,14 @@ class UpdateCompanyCommand implements CommandInterface
      * @param bool $active
      * @param array $sla
      */
-    public function __construct(int $id, string $name, string $description, bool $active, array $sla)
+    public function __construct(int $id, string $name, string $description, bool $active, array $sla, array $sections)
     {
         $this->id = $id;
         $this->name = $name;
         $this->description = $description;
         $this->active = $active;
         $this->sla = $sla;
+        $this->sections = $sections;
     }
 
     /**
@@ -99,7 +105,8 @@ class UpdateCompanyCommand implements CommandInterface
             $data['name'],
             $data['description'],
             $data['isActive'],
-            $data['sla']
+            $data['sla'],
+            $data['sections']
         );
     }
 
@@ -151,5 +158,11 @@ class UpdateCompanyCommand implements CommandInterface
         return $this->sla;
     }
 
-
+    /**
+     * @return array
+     */
+    public function sections(): array
+    {
+        return $this->sections;
+    }
 }
