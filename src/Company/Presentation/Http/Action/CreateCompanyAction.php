@@ -40,7 +40,7 @@ class CreateCompanyAction extends AbstractAction
 
         try {
             $data = json_decode($request->getContent(), true);
-            $command = CreateCompanyCommand::fromArray($data);
+            $command = CreateCompanyCommand::fromArray($data, null);
             $company = $this->service->create($command);
 
         } catch (Exception $exception) {

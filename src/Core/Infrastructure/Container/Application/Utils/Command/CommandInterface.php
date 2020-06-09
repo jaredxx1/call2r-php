@@ -10,8 +10,9 @@ interface CommandInterface
 
     /**
      * @param array $data
+     * @param $id
      */
-    public static function fromArray($data);
+    public static function fromArray($data, ?int $id);
 
     /**
      * @return array

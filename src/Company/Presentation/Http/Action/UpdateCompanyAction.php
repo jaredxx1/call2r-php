@@ -31,13 +31,14 @@ class UpdateCompanyAction extends AbstractAction
 
     /**
      * @param Request $request
+     * @param int $id
      * @return JsonResponse
      */
-    public function __invoke(Request $request)
+    public function __invoke(Request $request, int $id)
     {
         try {
             $data = json_decode($request->getContent(), true);
-            $command = UpdateCompanyCommand::fromArray($data);
+            $command = UpdateCompanyCommand::fromArray($data,$id);
             $company = $this->service->update($command);
         } catch (Exception $exception) {
             return $this->errorResponse($exception->getMessage(), $exception->getCode() ? $exception->getCode() : 400);

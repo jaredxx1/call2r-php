@@ -61,11 +61,14 @@ class UpdateCompanyCommand implements CommandInterface
 
     /**
      * @param array $data
+     * @param $id
      * @return UpdateCompanyCommand
      */
-    public static function fromArray($data)
+    public static function fromArray($data,$id)
     {
         // Validation company
+
+        Assert::eq($data['id'], $id, 'Id is not equal');
 
         Assert::keyExists($data, 'id', 'field id is required');
         Assert::keyExists($data, 'name', 'field name is required');

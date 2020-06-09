@@ -78,12 +78,12 @@ class CreateCompanyCommand implements CommandInterface
 
     /**
      * @param array $data
+     * @param $id
      * @return CreateCompanyCommand
      */
-    public static function fromArray($data)
+    public static function fromArray($data, $id)
     {
         //Company object validation
-
         Assert::keyExists($data, 'description', 'Field description is required');
         Assert::keyExists($data, 'name', 'Field name is required');
         Assert::keyExists($data, 'cnpj', 'Field CNPJ is required');
