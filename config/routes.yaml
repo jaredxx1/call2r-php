@@ -31,3 +31,13 @@ get_mother_company:
   path: /api/v1/companies/mother
   controller: App\Company\Presentation\Http\Action\FindMotherCompanyAction
   methods:    GET
+
+get_all_wiki_category:
+  path: /api/v1/wikicategories
+  controller: App\Wiki\Presentation\Http\Action\FindAllWikiCategoryAction
+  methods:    GET
+
+create_wiki_category:
+    path: /api/v1/wikicategories
+    controller: App\Wiki\Presentation\Http\Action\CreateWikiCategoryAction
+    methods:    POST
