@@ -37,6 +37,11 @@ class UpdateCompanyCommand implements CommandInterface
     private $sla;
 
     /**
+     * @var array
+     */
+    private $sections;
+
+    /**
      * UpdateCompanyCommand constructor.
      * @param int $id
      * @param string $name
@@ -44,13 +49,14 @@ class UpdateCompanyCommand implements CommandInterface
      * @param bool $active
      * @param array $sla
      */
-    public function __construct(int $id, string $name, string $description, bool $active, array $sla)
+    public function __construct(int $id, string $name, string $description, bool $active, array $sla, array $sections)
     {
         $this->id = $id;
         $this->name = $name;
         $this->description = $description;
         $this->active = $active;
         $this->sla = $sla;
+        $this->sections = $sections;
     }
 
     /**
@@ -59,6 +65,8 @@ class UpdateCompanyCommand implements CommandInterface
      */
     public static function fromArray($data)
     {
+        Assert::eq($data['id'], $data['url'], 'Id is not equal');
+
         // Validation company
 
         Assert::keyExists($data, 'id', 'field id is required');
@@ -66,6 +74,7 @@ class UpdateCompanyCommand implements CommandInterface
         Assert::keyExists($data, 'description', 'field description is required');
         Assert::keyExists($data, 'isActive', 'field isActive is required');
         Assert::keyExists($data, 'sla', 'Field sla is required');
+        Assert::keyExists($data, 'sections', 'Array sections is required');
 
         Assert::string($data['description'], ' Field description is not a string');
         Assert::boolean($data['isActive'], ' Field isActive is not a boolean');
@@ -94,12 +103,27 @@ class UpdateCompanyCommand implements CommandInterface
         Assert::notEq($sla['p4'], 0, 'Field sla p4 not be 0');
         Assert::notEq($sla['p5'], 0, 'Field sla p5 not be 0');
 
+        // Section array validation
+        $sections = $data['sections'];
+
+        Assert::isArray($sections, 'Field sections is not an array');
+
+        foreach ($sections as $section) {
+            Assert::keyExists($section, 'name', 'Field section name is required');
+            Assert::keyExists($section, 'priority', 'Field section priority is required');
+            Assert::stringNotEmpty($section['name'], 'Field section name is empty');
+            Assert::string($section['name'], 'Field section name is not a string');
+            Assert::integer($section['priority'], 'Field section priority is not an int');
+            Assert::notEq($section['priority'], 0, 'Field sections priority not be 0');
+        }
+
         return new self(
             $data['id'],
             $data['name'],
             $data['description'],
             $data['isActive'],
-            $data['sla']
+            $data['sla'],
+            $data['sections']
         );
     }
 
@@ -151,5 +175,11 @@ class UpdateCompanyCommand implements CommandInterface
         return $this->sla;
     }
 
-
+    /**
+     * @return array
+     */
+    public function sections(): array
+    {
+        return $this->sections;
+    }
 }

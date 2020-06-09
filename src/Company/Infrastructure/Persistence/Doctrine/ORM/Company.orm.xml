@@ -12,7 +12,17 @@
         <field name="mother" column="mother" type="boolean"/>
         <field name="name" column="name" type="string"/>
         <one-to-one field="sla" target-entity="SLA">
-            <join-column name="sla_id" referenced-column-name="id_sla" />
+            <join-column name="sla_id" referenced-column-name="id_sla"/>
         </one-to-one>
+        <many-to-many field="sections" target-entity="Section" fetch="EAGER">
+            <join-table name="tb_company_section">
+                <join-columns>
+                    <join-column name="id_company" referenced-column-name="id_company" />
+                </join-columns>
+                <inverse-join-columns>
+                    <join-column name="id_section" referenced-column-name="id_section" />
+                </inverse-join-columns>
+            </join-table>
+        </many-to-many>
     </entity>
 </doctrine-mapping>

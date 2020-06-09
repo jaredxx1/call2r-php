@@ -6,7 +6,7 @@ namespace App\Core\Presentation\Http;
 
 use Symfony\Component\HttpFoundation\JsonResponse;
 
-class AbstractAction
+abstract class AbstractAction
 {
 
     /**

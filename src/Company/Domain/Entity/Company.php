@@ -8,6 +8,10 @@ namespace App\Company\Domain\Entity;
 
 use JsonSerializable;
 
+/**
+ * Class Company
+ * @package App\Company\Domain\Entity
+ */
 class Company implements JsonSerializable
 {
 
@@ -47,6 +51,12 @@ class Company implements JsonSerializable
     private $sla;
 
     /**
+     * @var array
+     */
+    private $sections;
+
+
+    /**
      * Company constructor.
      * @param string $name
      * @param string $cnpj
@@ -54,6 +64,7 @@ class Company implements JsonSerializable
      * @param bool $mother
      * @param bool $active
      * @param SLA $sla
+     * @param array $sections
      */
     public function __construct(
         string $name,
@@ -61,7 +72,8 @@ class Company implements JsonSerializable
         string $description,
         bool $mother,
         bool $active,
-        SLA $sla
+        SLA $sla,
+        array $sections
     )
     {
         $this->name = $name;
@@ -70,6 +82,7 @@ class Company implements JsonSerializable
         $this->mother = $mother;
         $this->active = $active;
         $this->sla = $sla;
+        $this->sections = $sections;
     }
 
     /**
@@ -92,7 +105,8 @@ class Company implements JsonSerializable
             'cnpj' => $this->cnpj(),
             'isMother' => $this->isMother(),
             'isActive' => $this->isActive(),
-            'sla' => $this->sla()
+            'sla' => $this->sla(),
+            'sections' => $this->sections()->getIterator()
         ];
     }
 
@@ -152,6 +166,14 @@ class Company implements JsonSerializable
         return $this->sla;
     }
 
+    /**
+     * @return array
+     */
+    public function sections()
+    {
+        return $this->sections;
+    }
+
 
     /**
      * @param int $id
@@ -209,6 +231,13 @@ class Company implements JsonSerializable
         $this->sla = $sla;
     }
 
+    /**
+     * @param array $sections
+     */
+    public function setSections($sections): void
+    {
+        $this->sections = $sections;
+    }
 
 
 }
