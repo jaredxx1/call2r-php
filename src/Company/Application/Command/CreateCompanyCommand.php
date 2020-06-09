@@ -92,7 +92,7 @@ class CreateCompanyCommand implements CommandInterface
         Assert::keyExists($data, 'sla', 'Object sla is required');
         Assert::keyExists($data, 'sections', 'Array sections is required');
 
-        Assert::keyExists($data, 'description', 'Field escription is required');
+        Assert::keyExists($data, 'description', 'Field description is required');
         Assert::keyExists($data, 'name', 'Field name is required');
         Assert::keyExists($data, 'cnpj', 'Field CNPJ is required');
         Assert::keyExists($data, 'mother', 'Field mother is required');
@@ -133,7 +133,6 @@ class CreateCompanyCommand implements CommandInterface
 
         // Section array validation
         $sections = $data['sections'];
-
         Assert::isArray($sections, 'Field sections is not an array');
 
         foreach ($sections as $section) {
@@ -142,6 +141,7 @@ class CreateCompanyCommand implements CommandInterface
             Assert::stringNotEmpty($section['name'], 'Field section name is empty');
             Assert::string($section['name'], 'Field section name is not a string');
             Assert::integer($section['priority'], 'Field section priority is not an int');
+            Assert::notEq($section['priority'], 0, 'Field sections priority not be 0');
         }
 
         return new self(
