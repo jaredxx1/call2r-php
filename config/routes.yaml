@@ -41,3 +41,14 @@ update_section:
   path: /api/v1/sections/{id}
   controller: App\Company\Presentation\Http\Action\UpdateSectionAction
   methods:    PUT
+
+get_all_wiki_category:
+  path: /api/v1/wikicategories
+  controller: App\Wiki\Presentation\Http\Action\FindAllWikiCategoryAction
+  methods:    GET
+
+create_wiki_category:
+    path: /api/v1/wikicategories
+    controller: App\Wiki\Presentation\Http\Action\CreateWikiCategoryAction
+    methods:    POST
+

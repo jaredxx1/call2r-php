@@ -16,6 +16,7 @@ doctrine:
                 dir: '%kernel.project_dir%/src/Company/Infrastructure/Persistence/Doctrine/ORM'
                 prefix: 'App\Company\Domain\Entity'
                 alias: Company
+                
             Wiki:
                 is_bundle: false
                 type: xml
