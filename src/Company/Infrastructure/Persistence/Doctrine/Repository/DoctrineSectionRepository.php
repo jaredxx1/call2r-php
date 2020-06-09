@@ -44,7 +44,6 @@ class DoctrineSectionRepository implements SectionRepository
     /**
      * @param string $name
      * @return Section|null
-     * @throws NoResultException
      * @throws NonUniqueResultException
      */
     public function fromName(string $name): ?Section
@@ -52,7 +51,7 @@ class DoctrineSectionRepository implements SectionRepository
         $query = $this->entityManager->createQuery("SELECT s FROM App\Company\Domain\Entity\Section s WHERE s.name = ?1");
         $query->setParameter(1, $name);
 
-        return $query->getSingleResult();
+        return $query->getOneOrNullResult();
     }
 
     /**

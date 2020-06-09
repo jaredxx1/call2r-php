@@ -79,7 +79,6 @@ final class CompanyService
 
         foreach ($command->sections() as $section) {
             $foundSection = $this->sectionRepository->fromName($section['name']);
-
             if (is_null($foundSection)) {
                 $sections[] = new Section(
                     null,
