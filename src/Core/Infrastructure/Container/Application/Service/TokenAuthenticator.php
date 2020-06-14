@@ -5,6 +5,9 @@ namespace App\Core\Infrastructure\Container\Application\Service;
 
 
 use App\Security\User;
+use Exception;
+use Firebase\JWT\JWT;
+use Firebase\JWT\SignatureInvalidException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,8 +23,7 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
     public function start(Request $request, AuthenticationException $authException = null)
     {
         $data = [
-            // you might translate this message
-            'message' => 'Authentication Required'
+            'error' => 'Authentication Required'
         ];
 
         return new JsonResponse($data, Response::HTTP_UNAUTHORIZED);
@@ -34,11 +36,23 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
 
     public function getCredentials(Request $request)
     {
-        return "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC9leGFtcGxlLm9yZyIsImF1ZCI6Imh0dHA6XC9cL2V4YW1wbGUuY29tIiwiaWF0IjoxMzU2OTk5NTI0LCJuYmYiOjEzNTcwMDAwMDAsImNwZiI6IjAwMDAwMDAwMDAwIn0.XQpLra446_CuxOZCKnQPtlJDlkIHxCLwLLmh53tbP-4";
+        $authorization = $request->headers->get('Authorization');
+        return str_replace(['Bearer', ' '], '', $authorization);
     }
 
     public function getUser($credentials, UserProviderInterface $userProvider)
     {
+        $key = "example_key";
+
+        try {
+            $jwtPayload = JWT::decode($credentials, $key, ['HS256']);
+        } catch (SignatureInvalidException $exception) {
+            throw new AuthenticationException('Token is invalid', 401);
+        }
+
+        // 2. Fetch user
+        // 3. Return user
+
         $user = new User();
         $user->setCpf('00000000000');
         $user->setRoles(['ROLE_USER']);
@@ -65,6 +79,6 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
 
     public function supportsRememberMe()
     {
-        // TODO: Implement supportsRememberMe() method.
+        return false;
     }
 }
