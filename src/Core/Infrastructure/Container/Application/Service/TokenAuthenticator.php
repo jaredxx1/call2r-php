@@ -65,11 +65,7 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
             throw new AuthenticationException('Token is invalid', 401);
         }
 
-        // 2. Fetch user
-        $user = $this->userService->fromCpf($jwtPayload->cpf);
-
-        // 3. Return user
-        return $user;
+        return $this->userService->fromCpf($jwtPayload->cpf);
     }
 
     public function checkCredentials($credentials, UserInterface $user)
