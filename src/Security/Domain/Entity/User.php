@@ -19,6 +19,11 @@ class User implements UserInterface, JsonSerializable
     private $cpf;
 
     /**
+     * @var string
+     */
+    private $password;
+
+    /**
      * @var array
      */
     private $roles = [];
@@ -27,28 +32,57 @@ class User implements UserInterface, JsonSerializable
      * User constructor.
      * @param int $id
      * @param string $cpf
+     * @param string $password
      * @param array $roles
      */
-    public function __construct(int $id, string $cpf, array $roles)
+    public function __construct(int $id, string $cpf, string $password, array $roles)
     {
         $this->id = $id;
         $this->cpf = $cpf;
+        $this->password = $password;
         $this->roles = $roles;
     }
 
     public function jsonSerialize()
     {
-        // TODO: Implement jsonSerialize() method.
+        return $this->toArray();
+    }
+
+    public function toArray()
+    {
+        return [
+            'id' => $this->getId(),
+            'cpf' => $this->getCpf(),
+            'roles' => $this->getRoles()
+        ];
     }
 
     /**
-     * A visual identifier that represents this user.
-     *
-     * @see UserInterface
+     * @return int
      */
-    public function getUsername(): string
+    public function getId(): int
     {
-        return (string)$this->cpf;
+        return $this->id;
+    }
+
+    /**
+     * @param int $id
+     */
+    public function setId(int $id): void
+    {
+        $this->id = $id;
+    }
+
+    public function getCpf(): ?string
+    {
+        return $this->cpf;
+    }
+
+    public function setCpf(string $cpf): self
+    {
+        $this->cpf = $cpf;
+
+        return $this;
     }
 
     /**
@@ -69,11 +103,13 @@ class User implements UserInterface, JsonSerializable
     }
 
     /**
+     * A visual identifier that represents this user.
+     *
      * @see UserInterface
      */
-    public function getPassword()
+    public function getUsername(): string
     {
-        // not needed for apps that do not check user passwords
+        return (string)$this->cpf;
     }
 
     /**
@@ -94,30 +130,18 @@ class User implements UserInterface, JsonSerializable
     }
 
     /**
-     * @return int
+     * @see UserInterface
      */
-    public function getId(): int
+    public function getPassword()
     {
-        return $this->id;
+        return $this->password;
     }
 
     /**
-     * @param int $id
+     * @param string $password
      */
-    public function setId(int $id): void
+    public function setPassword(string $password): void
     {
-        $this->id = $id;
-    }
-
-    public function cpf(): ?string
-    {
-        return $this->cpf;
-    }
-
-    public function setCpf(string $cpf): self
-    {
-        $this->cpf = $cpf;
-
-        return $this;
+        $this->password = $password;
     }
 }

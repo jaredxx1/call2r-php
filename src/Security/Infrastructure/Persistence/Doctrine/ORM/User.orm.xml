@@ -7,6 +7,7 @@
             <generator strategy="AUTO"/>
         </id>
         <field name="cpf" column="cpf" type="string"/>
+        <field name="password" column="password" type="string"/>
         <field name="roles" column="roles" type="json"/>
     </entity>
 </doctrine-mapping>

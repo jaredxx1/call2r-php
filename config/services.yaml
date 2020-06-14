@@ -23,6 +23,10 @@ services:
         resource: '../src/Company/Presentation/Http/Action'
         tags: ['controller.service_arguments']
 
+    App\Security\Presentation\Http\Action\:
+        resource: '../src/Security/Presentation/Http/Action'
+        tags: ['controller.service_arguments']
+
     # App\Wiki\Presentation\Http\Action\:
     #     resource: '../src/Wiki/Presentation/Http/Action'
     #     tags: ['controller.service_arguments']

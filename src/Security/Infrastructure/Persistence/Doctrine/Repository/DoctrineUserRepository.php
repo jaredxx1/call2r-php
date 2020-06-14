@@ -43,4 +43,20 @@ class DoctrineUserRepository implements UserRepository
         }
 
     }
+
+    public function fromLoginCredentials(string $cpf, string $password): ?User
+    {
+        try {
+            return $this->entityManager
+                ->createQueryBuilder()
+                ->select('u')
+                ->from('App\Security\Domain\Entity\User', 'u')
+                ->where('u.cpf = :cpf AND u.password = :password')
+                ->setParameter('cpf', $cpf)
+                ->setParameter('password', $password)
+                ->getQuery()
+                ->getOneOrNullResult();
+        } catch (NonUniqueResultException $e) {
+        }
+    }
 }

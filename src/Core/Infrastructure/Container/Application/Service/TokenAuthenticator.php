@@ -4,9 +4,7 @@
 namespace App\Core\Infrastructure\Container\Application\Service;
 
 
-use App\Security\Application\UserService;
-use App\Security\Domain\Entity\User;
-use Exception;
+use App\Security\Application\Service\UserService;
 use Firebase\JWT\JWT;
 use Firebase\JWT\SignatureInvalidException;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -46,7 +44,7 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
 
     public function supports(Request $request)
     {
-        return true;
+        return $request->headers->has('Authorization');
     }
 
     public function getCredentials(Request $request)
@@ -58,6 +56,8 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
     public function getUser($credentials, UserProviderInterface $userProvider)
     {
         $key = "example_key";
+
+        dd($credentials);
 
         try {
             $jwtPayload = JWT::decode($credentials, $key, ['HS256']);
