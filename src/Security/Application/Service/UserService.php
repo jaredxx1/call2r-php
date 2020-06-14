@@ -56,13 +56,16 @@ final class UserService
 
     public function generateAuthToken(User $user)
     {
-        $key = "example_key";
+        $now_seconds = time();
 
         $payload = [
+            "iat" => $now_seconds,
+            "exp" => $now_seconds + (60 * 60),
             "user_id" => $user->getId(),
-            'roles' => $user->getRoles()
+            'cpf' => $user->getCpf(),
+            'roles' => $user->getRoles(),
         ];
 
-        return JWT::encode($payload, $key);
+        return JWT::encode($payload, $_ENV['JWT_SECRET']);
     }
 }

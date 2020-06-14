@@ -36,7 +36,7 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
     public function start(Request $request, AuthenticationException $authException = null)
     {
         $data = [
-            'error' => $authException->getMessage(),
+            'error' => 'Invalid authentication',
         ];
 
         return new JsonResponse($data, Response::HTTP_UNAUTHORIZED);
@@ -55,12 +55,8 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
 
     public function getUser($credentials, UserProviderInterface $userProvider)
     {
-        $key = "example_key";
-
-        dd($credentials);
-
         try {
-            $jwtPayload = JWT::decode($credentials, $key, ['HS256']);
+            $jwtPayload = JWT::decode($credentials, $_ENV['JWT_SECRET'], ['HS256']);
         } catch (SignatureInvalidException $exception) {
             throw new AuthenticationException('Token is invalid', 401);
         }
