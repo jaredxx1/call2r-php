@@ -1,25 +1,44 @@
 <?php
 
-namespace App\Security;
+namespace App\Security\Domain\Entity;
 
+use JsonSerializable;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-class User implements UserInterface
+class User implements UserInterface, JsonSerializable
 {
+
+    /**
+     * @var int
+     */
+    private $id;
+
+    /**
+     * @var string
+     */
     private $cpf;
 
+    /**
+     * @var array
+     */
     private $roles = [];
 
-    public function getCpf(): ?string
+    /**
+     * User constructor.
+     * @param int $id
+     * @param string $cpf
+     * @param array $roles
+     */
+    public function __construct(int $id, string $cpf, array $roles)
     {
-        return $this->cpf;
+        $this->id = $id;
+        $this->cpf = $cpf;
+        $this->roles = $roles;
     }
 
-    public function setCpf(string $cpf): self
+    public function jsonSerialize()
     {
-        $this->cpf = $cpf;
-
-        return $this;
+        // TODO: Implement jsonSerialize() method.
     }
 
     /**
@@ -29,7 +48,7 @@ class User implements UserInterface
      */
     public function getUsername(): string
     {
-        return (string) $this->cpf;
+        return (string)$this->cpf;
     }
 
     /**
@@ -38,8 +57,6 @@ class User implements UserInterface
     public function getRoles(): array
     {
         $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
-        $roles[] = 'ROLE_USER';
 
         return array_unique($roles);
     }
@@ -74,5 +91,33 @@ class User implements UserInterface
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
+    }
+
+    /**
+     * @return int
+     */
+    public function getId(): int
+    {
+        return $this->id;
+    }
+
+    /**
+     * @param int $id
+     */
+    public function setId(int $id): void
+    {
+        $this->id = $id;
+    }
+
+    public function cpf(): ?string
+    {
+        return $this->cpf;
+    }
+
+    public function setCpf(string $cpf): self
+    {
+        $this->cpf = $cpf;
+
+        return $this;
     }
 }

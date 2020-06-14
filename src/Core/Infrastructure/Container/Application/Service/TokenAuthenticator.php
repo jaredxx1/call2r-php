@@ -4,7 +4,8 @@
 namespace App\Core\Infrastructure\Container\Application\Service;
 
 
-use App\Security\User;
+use App\Security\Application\UserService;
+use App\Security\Domain\Entity\User;
 use Exception;
 use Firebase\JWT\JWT;
 use Firebase\JWT\SignatureInvalidException;
@@ -20,10 +21,24 @@ use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
 class TokenAuthenticator extends AbstractGuardAuthenticator
 {
 
+    /**
+     * @var UserService
+     */
+    private $userService;
+
+    /**
+     * TokenAuthenticator constructor.
+     * @param UserService $userService
+     */
+    public function __construct(UserService $userService)
+    {
+        $this->userService = $userService;
+    }
+
     public function start(Request $request, AuthenticationException $authException = null)
     {
         $data = [
-            'error' => 'Authentication Required'
+            'error' => $authException->getMessage(),
         ];
 
         return new JsonResponse($data, Response::HTTP_UNAUTHORIZED);
@@ -51,12 +66,9 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
         }
 
         // 2. Fetch user
+        $user = $this->userService->fromCpf($jwtPayload->cpf);
+
         // 3. Return user
-
-        $user = new User();
-        $user->setCpf('00000000000');
-        $user->setRoles(['ROLE_USER']);
-
         return $user;
     }
 
