@@ -3,6 +3,11 @@ alive:
   controller: App\Core\Presentation\Http\Action\AliveAction
   methods:    GET
 
+login:
+  path: /login
+  controller: App\Security\Presentation\Http\Action\LoginAction
+  methods:    POST
+
 get_all_companies:
   path: /api/v1/companies
   controller: App\Company\Presentation\Http\Action\FindAllCompaniesAction

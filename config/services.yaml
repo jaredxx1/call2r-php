@@ -19,8 +19,16 @@ services:
 
     # controllers are imported separately to make sure services can be injected
     # as action arguments even if you don't extend any base controller class
+    App\Core\Presentation\Http\Action\:
+        resource: '../src/Core/Presentation/Http/Action'
+        tags: ['controller.service_arguments']
+
     App\Company\Presentation\Http\Action\:
         resource: '../src/Company/Presentation/Http/Action'
+        tags: ['controller.service_arguments']
+
+    App\Security\Presentation\Http\Action\:
+        resource: '../src/Security/Presentation/Http/Action'
         tags: ['controller.service_arguments']
 
     # App\Wiki\Presentation\Http\Action\:

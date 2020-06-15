@@ -22,3 +22,11 @@ create table tb_company(
         FOREIGN KEY(sla_id) REFERENCES tb_sla(id_sla),
         UNIQUE KEY (cnpj)
 );
+
+create table tb_user(
+        id_user int auto_increment primary key ,
+        cpf varchar(11),
+        password varchar(255),
+        email varchar(255),
+        roles json
+);
