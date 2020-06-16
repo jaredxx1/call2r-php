@@ -17,20 +17,14 @@ class ArticleService
     private $articleRepository;
 
     /**
-     * @var CompanyRepository
-     */
-    private $companyRepository;
-
-    /**
      * ArticleService constructor.
      * @param ArticleRepository $articleRepository
-     * @param CompanyRepository $companyRepository
      */
-    public function __construct(ArticleRepository $articleRepository, CompanyRepository $companyRepository)
+    public function __construct(ArticleRepository $articleRepository)
     {
         $this->articleRepository = $articleRepository;
-        $this->companyRepository = $companyRepository;
     }
+
 
     /**
      * @param FindAllWikiFromCompanyQuery $query
