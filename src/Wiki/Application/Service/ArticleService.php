@@ -36,15 +36,9 @@ class ArticleService
      * @param FindAllWikiFromCompanyQuery $query
      * @return mixed
      */
-    public function getAll(FindAllWikiFromCompanyQuery $query)
+    public function fromCompany(FindAllWikiFromCompanyQuery $query)
     {
-        $company = $this->companyRepository->fromId($query->id());
-
-        if(is_null($company)){
-            throw new CompanyNotFoundException();
-        }
-
-        return $this->articleRepository->getAll($company);
+        return $this->articleRepository->fromCompany($query->id());
     }
 
 }

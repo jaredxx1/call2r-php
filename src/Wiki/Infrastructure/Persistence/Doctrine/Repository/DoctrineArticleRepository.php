@@ -4,7 +4,6 @@
 namespace App\Wiki\Infrastructure\Persistence\Doctrine\Repository;
 
 
-use App\Company\Domain\Entity\Company;
 use App\Wiki\Domain\Entity\Article;
 use App\Wiki\Domain\Repository\ArticleRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -35,14 +34,18 @@ class DoctrineArticleRepository implements ArticleRepository
     }
 
     /**
-     * @param Company $company
+     * @param int $id
      * @return array|int|string
      */
-    public function getAll(Company $company)
+    public function fromCompany(int $id)
     {
-        $query = $this->entityManager->createQuery("SELECT a FROM App\Wiki\Domain\Entity\Article a WHERE a.company = ?1");
-        $query->setParameter(1, $company);
-
-        return $query->getArrayResult();
+        return $this->entityManager
+            ->createQueryBuilder()
+            ->select('a')
+            ->from('Wiki:Article', 'a')
+            ->where('a.idCompany = :id')
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getArrayResult();
     }
 }

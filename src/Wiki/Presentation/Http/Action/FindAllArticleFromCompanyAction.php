@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Throwable;
 
-class FindAllWikiFromCompanyAction extends AbstractAction
+class FindAllArticleFromCompanyAction extends AbstractAction
 {
     /**
      * @var ArticleService
@@ -33,7 +33,7 @@ class FindAllWikiFromCompanyAction extends AbstractAction
         try {
             $data = ['id' => $id];
             $query = FindAllWikiFromCompanyQuery::fromArray($data);
-            $wikiArticles = $this->service->getAll($query);
+            $wikiArticles = $this->service->fromCompany($query);
         } catch (Exception $exception) {
             return $this->errorResponse($exception->getMessage(), $exception->getCode() ? $exception->getCode() : 400);
         } catch (Throwable $exception) {

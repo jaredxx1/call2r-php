@@ -16,6 +16,11 @@ class Article implements JsonSerializable
     private $id;
 
     /**
+     * @var int
+     */
+    private $idCompany;
+
+    /**
      * @var string
      */
     private $title;
@@ -31,27 +36,21 @@ class Article implements JsonSerializable
     private $requestNumber;
 
     /**
-     * @var Company
-     */
-    private $company;
-
-    /**
      * Article constructor.
      * @param int $id
+     * @param int $idCompany
      * @param string $title
      * @param string $description
      * @param int $requestNumber
-     * @param Company $company
      */
-    public function __construct(int $id, string $title, string $description, int $requestNumber, Company $company)
+    public function __construct(int $id, int $idCompany, string $title, string $description, int $requestNumber)
     {
         $this->id = $id;
+        $this->idCompany = $idCompany;
         $this->title = $title;
         $this->description = $description;
         $this->requestNumber = $requestNumber;
-        $this->company = $company;
     }
-
 
     public function jsonSerialize()
     {
@@ -85,6 +84,22 @@ class Article implements JsonSerializable
     public function setId(int $id): void
     {
         $this->id = $id;
+    }
+
+    /**
+     * @return int
+     */
+    public function idCompany(): int
+    {
+        return $this->idCompany;
+    }
+
+    /**
+     * @param int $idCompany
+     */
+    public function setIdCompany(int $idCompany): void
+    {
+        $this->idCompany = $idCompany;
     }
 
     /**
@@ -134,22 +149,5 @@ class Article implements JsonSerializable
     {
         $this->requestNumber = $requestNumber;
     }
-
-    /**
-     * @return Company
-     */
-    public function company(): Company
-    {
-        return $this->company;
-    }
-
-    /**
-     * @param Company $company
-     */
-    public function setCompany(Company $company): void
-    {
-        $this->company = $company;
-    }
-
 
 }
