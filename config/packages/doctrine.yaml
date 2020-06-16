@@ -23,3 +23,10 @@ doctrine:
                 dir: '%kernel.project_dir%/src/Wiki/Infrastructure/Persistence/Doctrine/ORM'
                 prefix: 'App\Wiki\Domain\Entity'
                 alias: Wiki
+                
+            Security:
+                is_bundle: false
+                type: xml
+                dir: '%kernel.project_dir%/src/Security/Infrastructure/Persistence/Doctrine/ORM'
+                prefix: 'App\Security\Domain\Entity'
+                alias: Security

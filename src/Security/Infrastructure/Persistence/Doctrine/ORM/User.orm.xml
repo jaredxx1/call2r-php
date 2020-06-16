@@ -2,11 +2,12 @@
                   xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
                   xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
                           https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
-    <entity name="App\Company\Domain\Entity\Section" table="tb_section">
-        <id name="id" type="integer" column="id_section">
+    <entity name="App\Security\Domain\Entity\User" table="tb_user">
+        <id name="id" type="integer" column="id_user">
             <generator strategy="AUTO"/>
         </id>
-        <field name="name" column="name" type="string" unique="true"/>
-        <field name="priority" column="priority" type="integer"/>
+        <field name="cpf" column="cpf" type="string"/>
+        <field name="password" column="password" type="string"/>
+        <field name="roles" column="roles" type="json"/>
     </entity>
 </doctrine-mapping>
