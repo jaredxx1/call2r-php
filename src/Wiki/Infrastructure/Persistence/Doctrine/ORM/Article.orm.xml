@@ -6,9 +6,8 @@
         <id name="id" type="integer" column="id_wiki_article">
             <generator strategy="AUTO"/>
         </id>
-        <field name="idCompany" type="integer" column="id_company"/>
+        <field name="idCompany" column="id_company" type="integer"/>
         <field name="title" column="title" type="string"/>
         <field name="description" column="description" type="string"/>
-        <field name="requestNumber" column="request_number" type="integer"/>
     </entity>
 </doctrine-mapping>

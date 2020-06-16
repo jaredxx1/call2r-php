@@ -31,25 +31,18 @@ class Article implements JsonSerializable
     private $description;
 
     /**
-     * @var integer
-     */
-    private $requestNumber;
-
-    /**
      * Article constructor.
      * @param int $id
      * @param int $idCompany
      * @param string $title
      * @param string $description
-     * @param int $requestNumber
      */
-    public function __construct(int $id, int $idCompany, string $title, string $description, int $requestNumber)
+    public function __construct(int $id, int $idCompany, string $title, string $description)
     {
         $this->id = $id;
         $this->idCompany = $idCompany;
         $this->title = $title;
         $this->description = $description;
-        $this->requestNumber = $requestNumber;
     }
 
     public function jsonSerialize()
@@ -65,8 +58,7 @@ class Article implements JsonSerializable
         return [
             'id' => $this->id(),
             'title' => $this->title(),
-            'description' => $this->description(),
-            'requestNumber' => $this->requestNumber()
+            'description' => $this->description()
         ];
     }
 
@@ -132,22 +124,6 @@ class Article implements JsonSerializable
     public function setDescription(string $description): void
     {
         $this->description = $description;
-    }
-
-    /**
-     * @return int
-     */
-    public function requestNumber(): int
-    {
-        return $this->requestNumber;
-    }
-
-    /**
-     * @param int $requestNumber
-     */
-    public function setRequestNumber(int $requestNumber): void
-    {
-        $this->requestNumber = $requestNumber;
     }
 
 }
