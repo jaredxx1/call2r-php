@@ -23,10 +23,11 @@ create table tb_company(
         UNIQUE KEY (cnpj)
 );
 
-create table tb_user(
-        id_user int auto_increment primary key ,
-        cpf varchar(11),
-        password varchar(255),
-        email varchar(255),
-        roles json
+create table tb_user
+(
+    id_user  int auto_increment primary key,
+    cpf      varchar(11)                                      null,
+    password varchar(255)                                     null,
+    email    varchar(255)                                     null,
+    role     enum ('ROLE_USER', 'ROLE_ADMIN', 'ROLE_MANAGER') null
 );
