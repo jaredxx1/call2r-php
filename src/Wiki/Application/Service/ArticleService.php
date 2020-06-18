@@ -9,7 +9,8 @@ use App\Company\Domain\Repository\CompanyRepository;
 use App\Wiki\Application\Command\CreateArticleCommand;
 use App\Wiki\Application\Command\UpdateArticleCommand;
 use App\Wiki\Application\Exception\ArticleNotFoundException;
-use App\Wiki\Application\Query\FindAllWikiFromCompanyQuery;
+use App\Wiki\Application\Query\FindAllArticleFromCompanyQuery;
+use App\Wiki\Application\Query\FindArticleByIdQuery;
 use App\Wiki\Domain\Entity\Article;
 use App\Wiki\Domain\Repository\ArticleRepository;
 
@@ -37,10 +38,10 @@ class ArticleService
     }
 
     /**
-     * @param FindAllWikiFromCompanyQuery $query
+     * @param FindAllArticleFromCompanyQuery $query
      * @return mixed
      */
-    public function fromCompany(FindAllWikiFromCompanyQuery $query)
+    public function fromCompany(FindAllArticleFromCompanyQuery $query)
     {
         return $this->articleRepository->fromCompany($query->id());
     }
@@ -82,6 +83,23 @@ class ArticleService
         $article->setTitle($command->title());
 
         return $this->articleRepository->update($article);
+    }
+
+    /**
+     * @param FindArticleByIdQuery $query
+     * @return Article
+     * @throws ArticleNotFoundException
+     */
+    public function fromArticle(FindArticleByIdQuery $query)
+    {
+        $id = $query->id();
+        $article = $this->articleRepository->fromId($id);
+
+        if (is_null($article)) {
+            throw new ArticleNotFoundException();
+        }
+
+        return $article;
     }
 
 }

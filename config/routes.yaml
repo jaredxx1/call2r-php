@@ -52,6 +52,13 @@ get_all_articles_from_company:
   controller: App\Wiki\Presentation\Http\Action\FindAllArticleFromCompanyAction
   methods:    GET
 
+get_article_by_id:
+  path: /api/v1/articles/{id}
+  controller: App\Wiki\Presentation\Http\Action\FindArticleByIdAction
+  methods:    GET
+  requirements:
+    id: '\d+'
+
 create_article:
   path: /api/v1/articles
   controller: App\Wiki\Presentation\Http\Action\CreateArticleAction

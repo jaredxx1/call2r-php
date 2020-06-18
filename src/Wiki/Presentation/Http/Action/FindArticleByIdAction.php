@@ -6,13 +6,14 @@ namespace App\Wiki\Presentation\Http\Action;
 
 use App\Core\Presentation\Http\AbstractAction;
 use App\Wiki\Application\Query\FindAllArticleFromCompanyQuery;
+use App\Wiki\Application\Query\FindArticleByIdQuery;
 use App\Wiki\Application\Service\ArticleService;
 use Exception;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Throwable;
 
-class FindAllArticleFromCompanyAction extends AbstractAction
+class FindArticleByIdAction extends AbstractAction
 {
     /**
      * @var ArticleService
@@ -20,7 +21,7 @@ class FindAllArticleFromCompanyAction extends AbstractAction
     private $service;
 
     /**
-     * FindAllWikiArticleAction constructor.
+     * FindArticleByIdAction constructor.
      * @param ArticleService $service
      */
     public function __construct(ArticleService $service)
@@ -32,8 +33,8 @@ class FindAllArticleFromCompanyAction extends AbstractAction
     {
         try {
             $data = ['id' => $id];
-            $query = FindAllArticleFromCompanyQuery::fromArray($data);
-            $wikiArticles = $this->service->fromCompany($query);
+            $query = FindArticleByIdQuery::fromArray($data);
+            $wikiArticles = $this->service->fromArticle($query);
         } catch (Exception $exception) {
             return $this->errorResponse($exception->getMessage(), $exception->getCode() ? $exception->getCode() : 400);
         } catch (Throwable $exception) {

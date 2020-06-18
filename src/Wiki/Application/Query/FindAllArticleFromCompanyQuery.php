@@ -7,7 +7,7 @@ namespace App\Wiki\Application\Query;
 use App\Core\Infrastructure\Container\Application\Utils\Query\QueryInterface;
 use Webmozart\Assert\Assert;
 
-class FindAllWikiFromCompanyQuery implements QueryInterface
+class FindAllArticleFromCompanyQuery implements QueryInterface
 {
     /**
      * @var int
@@ -21,7 +21,7 @@ class FindAllWikiFromCompanyQuery implements QueryInterface
 
     /**
      * @param array $data
-     * @return FindAllWikiFromCompanyQuery
+     * @return FindAllArticleFromCompanyQuery
      */
     public static function fromArray($data)
     {
