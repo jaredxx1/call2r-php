@@ -56,3 +56,8 @@ create_article:
   path: /api/v1/companies/{id}/wiki
   controller: App\Wiki\Presentation\Http\Action\CreateArticleAction
   methods:    POST
+
+update_article:
+  path: /api/v1/companies/{idCompany}/wiki/{idArticle}
+  controller: App\Wiki\Presentation\Http\Action\UpdateArticleAction
+  methods:    PUT
