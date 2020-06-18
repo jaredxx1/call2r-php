@@ -1,19 +1,14 @@
 <?php
 
 
-namespace App\Wiki\Domain\Entity;
+namespace App\Wiki\Application\Command;
 
 
-use App\Company\Domain\Entity\Company;
-use JsonSerializable;
+use App\Core\Infrastructure\Container\Application\Utils\Command\CommandInterface;
+use Webmozart\Assert\Assert;
 
-class Article implements JsonSerializable
+class CreateArticleCommand implements CommandInterface
 {
-
-    /**
-     * @var int
-     */
-    private $id;
 
     /**
      * @var int
@@ -31,52 +26,42 @@ class Article implements JsonSerializable
     private $description;
 
     /**
-     * Article constructor.
-     * @param int|null $id
+     * CreateArticleCommand constructor.
      * @param int $idCompany
      * @param string $title
      * @param string $description
      */
-    public function __construct(?int $id, int $idCompany, string $title, string $description)
+    public function __construct(int $idCompany, string $title, string $description)
     {
-        $this->id = $id;
         $this->idCompany = $idCompany;
         $this->title = $title;
         $this->description = $description;
     }
 
-    public function jsonSerialize()
+
+    public static function fromArray($data)
     {
-        return $this->toArray();
+        Assert::keyExists($data, 'idCompany', 'Field idCompany is required');
+        Assert::keyExists($data, 'title', 'Field title is required');
+        Assert::keyExists($data, 'description', 'Field description is required');
+
+        Assert::integer($data['idCompany'], ' Field id company is not an integer');
+        Assert::string($data['title'], ' Field title is not a string');
+        Assert::string($data['description'], ' Field description is not a string');
+
+        Assert::stringNotEmpty($data['title'], 'Field title is empty');
+        Assert::stringNotEmpty($data['description'], 'Field description is empty');
+
+        return new self(
+            $data['idCompany'],
+            $data['title'],
+            $data['description']
+        );
     }
 
-    /**
-     * @return array
-     */
     public function toArray(): array
     {
-        return [
-            'id' => $this->id(),
-            'idCompany' => $this->idCompany(),
-            'title' => $this->title(),
-            'description' => $this->description()
-        ];
-    }
-
-    /**
-     * @return int
-     */
-    public function id(): int
-    {
-        return $this->id;
-    }
-
-    /**
-     * @param int $id
-     */
-    public function setId(int $id): void
-    {
-        $this->id = $id;
+        return [];
     }
 
     /**
@@ -126,5 +111,6 @@ class Article implements JsonSerializable
     {
         $this->description = $description;
     }
+
 
 }

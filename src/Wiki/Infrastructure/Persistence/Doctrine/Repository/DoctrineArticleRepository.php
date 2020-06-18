@@ -48,4 +48,34 @@ class DoctrineArticleRepository implements ArticleRepository
             ->getQuery()
             ->getArrayResult();
     }
+
+    /**
+     * @param Article $article
+     * @return Article|null
+     */
+    public function create(Article $article): ?Article
+    {
+        $this->entityManager->persist($article);
+        $this->entityManager->flush();
+        return $article;
+    }
+
+    /**
+     * @param int $id
+     * @return Article|null
+     */
+    public function fromId(int $id): ?Article
+    {
+        return $this->repository->find($id);
+    }
+
+    /**
+     * @param Article $article
+     * @return Article|null
+     */
+    public function update(Article $article): ?Article
+    {
+        $this->entityManager->flush();
+        return $article;
+    }
 }

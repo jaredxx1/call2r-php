@@ -1,3 +1,5 @@
+drop database call2r;
+
 create database call2r;
 
 use call2r;
@@ -48,11 +50,3 @@ create table tb_company_section
     FOREIGN KEY (id_company) REFERENCES tb_company (id_company),
     FOREIGN KEY (id_section) REFERENCES tb_section (id_section)
 );
-
-select * from tb_company;
-
-select * from tb_wiki_article;
-
-
-insert into tb_wiki_article (id_company, title, description, request_number)
-values (1,'title','description',1);
