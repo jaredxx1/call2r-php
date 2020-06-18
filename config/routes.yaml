@@ -47,3 +47,19 @@ update_section:
   controller: App\Company\Presentation\Http\Action\UpdateSectionAction
   methods:    PUT
 
+get_all_articles_from_company:
+  path: /api/v1/companies/{id}/wiki
+  controller: App\Wiki\Presentation\Http\Action\FindAllArticleFromCompanyAction
+  methods:    GET
+
+create_article:
+  path: /api/v1/articles
+  controller: App\Wiki\Presentation\Http\Action\CreateArticleAction
+  methods:    POST
+
+update_article:
+  path: /api/v1/articles/{id}
+  controller: App\Wiki\Presentation\Http\Action\UpdateArticleAction
+  methods:    PUT
+  requirements:
+    id: '\d+'
