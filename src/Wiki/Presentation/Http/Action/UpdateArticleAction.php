@@ -29,12 +29,11 @@ class UpdateArticleAction extends AbstractAction
         $this->service = $service;
     }
 
-    public function __invoke(Request $request, int $idCompany, int $idArticle)
+    public function __invoke(Request $request, int $id)
     {
         try {
             $data = json_decode($request->getContent(), true);
-            $data['idUrlCompany'] = $idCompany;
-            $data['idUrlArticle'] = $idArticle;
+            $data['url'] = $id;
             $command = UpdateArticleCommand::fromArray($data);
             $article = $this->service->update($command);
         } catch (Exception $exception) {

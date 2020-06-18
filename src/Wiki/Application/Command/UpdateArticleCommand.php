@@ -15,11 +15,6 @@ class UpdateArticleCommand implements CommandInterface
     private $id;
 
     /**
-     * @var int
-     */
-    private $idCompany;
-
-    /**
      * @var string
      */
     private $title;
@@ -32,14 +27,12 @@ class UpdateArticleCommand implements CommandInterface
     /**
      * UpdateArticleCommand constructor.
      * @param int $id
-     * @param int $idCompany
      * @param string $title
      * @param string $description
      */
-    public function __construct(int $id, int $idCompany, string $title, string $description)
+    public function __construct(int $id, string $title, string $description)
     {
         $this->id = $id;
-        $this->idCompany = $idCompany;
         $this->title = $title;
         $this->description = $description;
     }
@@ -47,16 +40,13 @@ class UpdateArticleCommand implements CommandInterface
 
     public static function fromArray($data)
     {
-        Assert::eq($data['idCompany'], $data['idUrlCompany'], 'Id company not the same');
-        Assert::eq($data['id'], $data['idUrlArticle'], 'Id article not the same');
+        Assert::eq($data['url'], $data['id'], 'Id article not the same');
 
         Assert::keyExists($data, 'id', 'Field id is required');
-        Assert::keyExists($data, 'idCompany', 'Field id company is required');
         Assert::keyExists($data, 'title', 'Field title is required');
         Assert::keyExists($data, 'description', 'Field description is required');
 
-        Assert::integer($data['id'], ' Field id  is not a integer');
-        Assert::integer($data['idCompany'], ' Field id company is not a integer');
+        Assert::integer($data['id'], ' Field id  is not an integer');
         Assert::string($data['title'], ' Field title is not a string');
         Assert::string($data['description'], ' Field description is not a string');
 
@@ -65,9 +55,8 @@ class UpdateArticleCommand implements CommandInterface
 
         return new self(
             $data['id'],
-            $data['idCompany'],
-            $data['title'],
-            $data['description']
+            $data['description'],
+            $data['title']
         );
     }
 
@@ -90,22 +79,6 @@ class UpdateArticleCommand implements CommandInterface
     public function setId(int $id): void
     {
         $this->id = $id;
-    }
-
-    /**
-     * @return int
-     */
-    public function idCompany(): int
-    {
-        return $this->idCompany;
-    }
-
-    /**
-     * @param int $idCompany
-     */
-    public function setIdCompany(int $idCompany): void
-    {
-        $this->idCompany = $idCompany;
     }
 
     /**

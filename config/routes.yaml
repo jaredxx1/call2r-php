@@ -53,11 +53,13 @@ get_all_articles_from_company:
   methods:    GET
 
 create_article:
-  path: /api/v1/companies/{id}/wiki
+  path: /api/v1/articles
   controller: App\Wiki\Presentation\Http\Action\CreateArticleAction
   methods:    POST
 
 update_article:
-  path: /api/v1/companies/{idCompany}/wiki/{idArticle}
+  path: /api/v1/articles/{id}
   controller: App\Wiki\Presentation\Http\Action\UpdateArticleAction
   methods:    PUT
+  requirements:
+    id: '\d+'

@@ -41,13 +41,11 @@ class CreateArticleCommand implements CommandInterface
 
     public static function fromArray($data)
     {
-        Assert::eq($data['idCompany'], $data['url'], 'Id company not the same');
-
         Assert::keyExists($data, 'idCompany', 'Field idCompany is required');
         Assert::keyExists($data, 'title', 'Field title is required');
         Assert::keyExists($data, 'description', 'Field description is required');
 
-        Assert::integer($data['idCompany'], ' Field id company is not a integer');
+        Assert::integer($data['idCompany'], ' Field id company is not an integer');
         Assert::string($data['title'], ' Field title is not a string');
         Assert::string($data['description'], ' Field description is not a string');
 

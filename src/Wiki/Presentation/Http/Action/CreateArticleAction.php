@@ -34,12 +34,11 @@ class CreateArticleAction extends AbstractAction
      * @param int $id
      * @return JsonResponse
      */
-    public function __invoke(Request $request, int $id)
+    public function __invoke(Request $request)
     {
 
         try {
             $data = json_decode($request->getContent(), true);
-            $data['url'] = $id;
             $command = CreateArticleCommand::fromArray($data);
             $article = $this->service->create($command);
         } catch (Exception $exception) {

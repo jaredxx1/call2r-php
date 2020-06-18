@@ -45,6 +45,11 @@ class ArticleService
         return $this->articleRepository->fromCompany($query->id());
     }
 
+    /**
+     * @param CreateArticleCommand $command
+     * @return Article|null
+     * @throws CompanyNotFoundException
+     */
     public function create(CreateArticleCommand $command){
         $company = $this->companyRepository->fromId($command->idCompany());
         if(is_null($company)){
@@ -63,14 +68,11 @@ class ArticleService
 
     /**
      * @param UpdateArticleCommand $command
+     * @return Article|null
+     * @throws ArticleNotFoundException
      */
     public function update(UpdateArticleCommand $command)
     {
-        $company = $this->companyRepository->fromId($command->idCompany());
-        if(is_null($company)){
-            throw new CompanyNotFoundException();
-        }
-
         $article = $this->articleRepository->fromId($command->id());
         if(is_null($article)){
             throw new ArticleNotFoundException();
