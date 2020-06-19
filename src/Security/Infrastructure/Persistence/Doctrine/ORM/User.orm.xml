@@ -8,6 +8,6 @@
         </id>
         <field name="cpf" column="cpf" type="string"/>
         <field name="password" column="password" type="string"/>
-        <field name="roles" column="role" type="string"/>
+        <field name="role" column="role" type="string"/>
     </entity>
 </doctrine-mapping>

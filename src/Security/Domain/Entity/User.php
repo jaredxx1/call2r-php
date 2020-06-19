@@ -26,21 +26,21 @@ class User implements UserInterface, JsonSerializable
     /**
      * @var string
      */
-    private $roles;
+    private $role;
 
     /**
      * User constructor.
      * @param int $id
      * @param string $cpf
      * @param string $password
-     * @param string $roles
+     * @param string $role
      */
-    public function __construct(int $id, string $cpf, string $password, string $roles)
+    public function __construct(int $id, string $cpf, string $password, string $role)
     {
         $this->id = $id;
         $this->cpf = $cpf;
         $this->password = $password;
-        $this->roles = $roles;
+        $this->role = $role;
     }
 
     public function jsonSerialize()
@@ -90,14 +90,7 @@ class User implements UserInterface, JsonSerializable
      */
     public function getRoles(): array
     {
-        return [$this->roles];
-    }
-
-    public function setRoles(array $roles): self
-    {
-        $this->roles = $roles;
-
-        return $this;
+        return [$this->role];
     }
 
     /**

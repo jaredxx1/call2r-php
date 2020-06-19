@@ -53,9 +53,13 @@ create table tb_company_section
 
 create table tb_user
 (
-    id_user  int auto_increment primary key,
-    cpf      varchar(11)                                      null,
-    password varchar(255)                                     null,
-    email    varchar(255)                                     null,
-    role     enum ('ROLE_USER', 'ROLE_ADMIN', 'ROLE_MANAGER') null
+    id_user    int auto_increment primary key,
+    cpf        varchar(11)                                      null,
+    password   varchar(255)                                     null,
+    email      varchar(255)                                     null,
+    role       enum ('ROLE_USER', 'ROLE_ADMIN', 'ROLE_MANAGER') null,
+    birthdate  date                                             null,
+    active     tinyint(1)                                       null,
+    id_company int                                              null,
+    FOREIGN KEY (id_company) REFERENCES tb_company (id_company)
 );

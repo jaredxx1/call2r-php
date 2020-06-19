@@ -59,4 +59,35 @@ class DoctrineUserRepository implements UserRepository
         } catch (NonUniqueResultException $e) {
         }
     }
+
+    public function fromId(int $id): ?User
+    {
+        return $this->entityManager
+            ->getRepository(User::class)
+            ->find($id);
+    }
+
+    public function findSupportUsers(): array
+    {
+        return $this->entityManager
+            ->createQueryBuilder()
+            ->select('u')
+            ->from('App\Security\Domain\Entity\User', 'u')
+            ->where('u.role = :role')
+            ->setParameter('role', 'ROLE_USER')
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findManagers(): array
+    {
+        return $this->entityManager
+            ->createQueryBuilder()
+            ->select('u')
+            ->from('App\Security\Domain\Entity\User', 'u')
+            ->where('u.role = :role')
+            ->setParameter('role', 'ROLE_MANAGER')
+            ->getQuery()
+            ->getResult();
+    }
 }

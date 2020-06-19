@@ -6,8 +6,10 @@ namespace App\Security\Application\Service;
 
 use App\Security\Application\Command\LoginCommand;
 use App\Security\Application\Exception\InvalidCredentialsException;
+use App\Security\Application\Query\FindUsersByRoleQuery;
 use App\Security\Domain\Entity\User;
 use App\Security\Domain\Repository\UserRepository;
+use Exception;
 use Firebase\JWT\JWT;
 
 /**
@@ -40,6 +42,11 @@ final class UserService
         return $this->userRepository->fromCpf($cpf);
     }
 
+    /**
+     * @param LoginCommand $command
+     * @return User|null
+     * @throws InvalidCredentialsException
+     */
     public function fromLoginCredentials(LoginCommand $command): ?User
     {
         $user = $this->userRepository->fromLoginCredentials(
@@ -54,6 +61,10 @@ final class UserService
         return $user;
     }
 
+    /**
+     * @param User $user
+     * @return string
+     */
     public function generateAuthToken(User $user)
     {
         $now_seconds = time();
@@ -67,5 +78,25 @@ final class UserService
         ];
 
         return JWT::encode($payload, $_ENV['JWT_SECRET']);
+    }
+
+    /**
+     * @param FindUsersByRoleQuery $query
+     * @throws Exception
+     */
+    public function findUsersByRole(FindUsersByRoleQuery $query)
+    {
+        switch ($query->getRole()) {
+            case 'manager':
+                $users = $this->userRepository->findManagers();
+                break;
+            case 'support':
+                $users = $this->userRepository->findSupportUsers();
+                break;
+            default:
+                throw new Exception('Unexpected role');
+        }
+
+        return $users;
     }
 }

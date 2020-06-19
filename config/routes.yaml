@@ -63,3 +63,10 @@ update_article:
   methods:    PUT
   requirements:
     id: '\d+'
+
+get_user_by_profile:
+  path: /api/v1/users/{role}
+  controller: App\Security\Presentation\Http\Action\FindUsersByRoleAction
+  methods:    GET
+  requirements:
+    role: '^(manager|support)$'
