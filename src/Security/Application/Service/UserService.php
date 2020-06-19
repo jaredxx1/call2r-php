@@ -6,6 +6,7 @@ namespace App\Security\Application\Service;
 
 use App\Security\Application\Command\LoginCommand;
 use App\Security\Application\Exception\InvalidCredentialsException;
+use App\Security\Application\Exception\UserNotFoundException;
 use App\Security\Application\Query\FindUsersByRoleQuery;
 use App\Security\Domain\Entity\User;
 use App\Security\Domain\Repository\UserRepository;
@@ -40,6 +41,22 @@ final class UserService
     public function fromCpf(string $cpf): ?User
     {
         return $this->userRepository->fromCpf($cpf);
+    }
+
+    /**
+     * @param string $id
+     * @return User|null
+     * @throws UserNotFoundException
+     */
+    public function fromId(string $id): ?User
+    {
+        $user = $this->userRepository->fromId($id);
+
+        if (is_null($user)) {
+            throw new UserNotFoundException();
+        }
+
+        return $user;
     }
 
     /**

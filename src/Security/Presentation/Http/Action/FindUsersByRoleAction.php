@@ -11,6 +11,10 @@ use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * Class FindUsersByRoleAction
+ * @package App\Security\Presentation\Http\Action
+ */
 class FindUsersByRoleAction extends AbstractAction
 {
     /**
@@ -27,6 +31,11 @@ class FindUsersByRoleAction extends AbstractAction
         $this->userService = $userService;
     }
 
+    /**
+     * @param Request $request
+     * @param string $role
+     * @return JsonResponse
+     */
     public function __invoke(Request $request, string $role)
     {
         try {

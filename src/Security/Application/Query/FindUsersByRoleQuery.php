@@ -7,6 +7,10 @@ namespace App\Security\Application\Query;
 use App\Core\Infrastructure\Container\Application\Utils\Query\QueryInterface;
 use Webmozart\Assert\Assert;
 
+/**
+ * Class FindUsersByRoleQuery
+ * @package App\Security\Application\Query
+ */
 class FindUsersByRoleQuery implements QueryInterface
 {
 
@@ -24,6 +28,10 @@ class FindUsersByRoleQuery implements QueryInterface
         $this->role = $role;
     }
 
+    /**
+     * @param array $data
+     * @return FindUsersByRoleQuery
+     */
     public static function fromArray($data)
     {
         Assert::keyExists($data, 'role', "Parameter role is required.");
@@ -34,6 +42,9 @@ class FindUsersByRoleQuery implements QueryInterface
         );
     }
 
+    /**
+     * @return array
+     */
     public function toArray(): array
     {
         // TODO: Implement toArray() method.
