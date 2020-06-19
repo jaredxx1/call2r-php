@@ -5,12 +5,11 @@ namespace App\Wiki\Presentation\Http\Action;
 
 
 use App\Core\Presentation\Http\AbstractAction;
-use App\Wiki\Application\Command\CreateArticleCommand;
 use App\Wiki\Application\Command\UpdateArticleCommand;
 use App\Wiki\Application\Service\ArticleService;
 use Exception;
-use \Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Throwable;
 
 class UpdateArticleAction extends AbstractAction

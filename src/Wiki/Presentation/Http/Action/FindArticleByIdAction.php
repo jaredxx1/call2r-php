@@ -5,7 +5,6 @@ namespace App\Wiki\Presentation\Http\Action;
 
 
 use App\Core\Presentation\Http\AbstractAction;
-use App\Wiki\Application\Query\FindAllArticleFromCompanyQuery;
 use App\Wiki\Application\Query\FindArticleByIdQuery;
 use App\Wiki\Application\Service\ArticleService;
 use Exception;

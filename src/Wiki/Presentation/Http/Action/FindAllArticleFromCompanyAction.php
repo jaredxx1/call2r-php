@@ -8,8 +8,8 @@ use App\Core\Presentation\Http\AbstractAction;
 use App\Wiki\Application\Query\FindAllArticleFromCompanyQuery;
 use App\Wiki\Application\Service\ArticleService;
 use Exception;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Throwable;
 
 class FindAllArticleFromCompanyAction extends AbstractAction
