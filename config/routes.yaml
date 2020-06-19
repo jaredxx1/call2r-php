@@ -70,3 +70,10 @@ update_article:
   methods:    PUT
   requirements:
     id: '\d+'
+
+delete_article:
+  path: /api/v1/articles/{id}
+  controller: App\Wiki\Presentation\Http\Action\DeleteArticleAction
+  methods:    DELETE
+  requirements:
+    id: '\d+'
