@@ -7,7 +7,7 @@ namespace App\Wiki\Application\Query;
 use App\Core\Infrastructure\Container\Application\Utils\Query\QueryInterface;
 use Webmozart\Assert\Assert;
 
-class FindArticleByIdQuery implements QueryInterface
+class FindArticlesByIdQuery implements QueryInterface
 {
     /**
      * @var int
@@ -21,7 +21,7 @@ class FindArticleByIdQuery implements QueryInterface
 
     /**
      * @param array $data
-     * @return FindArticleByIdQuery
+     * @return FindArticlesByIdQuery
      */
     public static function fromArray($data)
     {
