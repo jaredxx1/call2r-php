@@ -38,13 +38,13 @@ class DeleteArticleAction extends AbstractAction
         try {
             $data = ['id' => $id];
             $query = DeleteArticleQuery::fromArray($data);
-            $article = $this->service->delete($query);
+            $this->service->delete($query);
         } catch (Exception $exception) {
             return $this->errorResponse($exception->getMessage(), $exception->getCode() ? $exception->getCode() : 400);
         } catch (Throwable $exception) {
             return $this->errorResponse($exception->getMessage(), $exception->getCode() ? $exception->getCode() : 400);
         }
 
-        return new JsonResponse($article, 200);
+        return new JsonResponse([], 200);
     }
 }

@@ -106,7 +106,6 @@ class ArticleService
 
     /**
      * @param DeleteArticleQuery $query
-     * @return Article
      * @throws ArticleNotFoundException
      */
     public function delete(DeleteArticleQuery $query)
@@ -117,8 +116,6 @@ class ArticleService
             throw new ArticleNotFoundException();
         }
         $this->articleRepository->delete($article);
-        $article->setId($query->id());
-        return $article;
     }
 
 }
