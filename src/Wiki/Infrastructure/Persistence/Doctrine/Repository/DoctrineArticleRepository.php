@@ -78,4 +78,14 @@ class DoctrineArticleRepository implements ArticleRepository
         $this->entityManager->flush();
         return $article;
     }
+
+    /**
+     * @param Article $article
+     * @return void
+     */
+    public function delete(Article $article)
+    {
+        $this->entityManager->remove($article);
+        $this->entityManager->flush();
+    }
 }

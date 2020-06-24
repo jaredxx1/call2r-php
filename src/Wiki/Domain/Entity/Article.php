@@ -4,7 +4,6 @@
 namespace App\Wiki\Domain\Entity;
 
 
-use App\Company\Domain\Entity\Company;
 use JsonSerializable;
 
 class Article implements JsonSerializable
@@ -72,27 +71,11 @@ class Article implements JsonSerializable
     }
 
     /**
-     * @param int $id
-     */
-    public function setId(int $id): void
-    {
-        $this->id = $id;
-    }
-
-    /**
      * @return int
      */
     public function idCompany(): int
     {
         return $this->idCompany;
-    }
-
-    /**
-     * @param int $idCompany
-     */
-    public function setIdCompany(int $idCompany): void
-    {
-        $this->idCompany = $idCompany;
     }
 
     /**
@@ -104,19 +87,35 @@ class Article implements JsonSerializable
     }
 
     /**
-     * @param string $title
-     */
-    public function setTitle(string $title): void
-    {
-        $this->title = $title;
-    }
-
-    /**
      * @return string
      */
     public function description(): string
     {
         return $this->description;
+    }
+
+    /**
+     * @param int $id
+     */
+    public function setId(int $id): void
+    {
+        $this->id = $id;
+    }
+
+    /**
+     * @param int $idCompany
+     */
+    public function setIdCompany(int $idCompany): void
+    {
+        $this->idCompany = $idCompany;
+    }
+
+    /**
+     * @param string $title
+     */
+    public function setTitle(string $title): void
+    {
+        $this->title = $title;
     }
 
     /**
