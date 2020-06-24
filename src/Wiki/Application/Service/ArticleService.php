@@ -9,7 +9,9 @@ use App\Company\Domain\Repository\CompanyRepository;
 use App\Wiki\Application\Command\CreateArticleCommand;
 use App\Wiki\Application\Command\UpdateArticleCommand;
 use App\Wiki\Application\Exception\ArticleNotFoundException;
-use App\Wiki\Application\Query\FindAllWikiFromCompanyQuery;
+use App\Wiki\Application\Query\DeleteArticleQuery;
+use App\Wiki\Application\Query\FindAllArticlesFromCompanyQuery;
+use App\Wiki\Application\Query\FindArticlesByIdQuery;
 use App\Wiki\Domain\Entity\Article;
 use App\Wiki\Domain\Repository\ArticleRepository;
 
@@ -37,10 +39,10 @@ class ArticleService
     }
 
     /**
-     * @param FindAllWikiFromCompanyQuery $query
+     * @param FindAllArticlesFromCompanyQuery $query
      * @return mixed
      */
-    public function fromCompany(FindAllWikiFromCompanyQuery $query)
+    public function fromCompany(FindAllArticlesFromCompanyQuery $query)
     {
         return $this->articleRepository->fromCompany($query->id());
     }
@@ -50,9 +52,10 @@ class ArticleService
      * @return Article|null
      * @throws CompanyNotFoundException
      */
-    public function create(CreateArticleCommand $command){
+    public function create(CreateArticleCommand $command)
+    {
         $company = $this->companyRepository->fromId($command->idCompany());
-        if(is_null($company)){
+        if (is_null($company)) {
             throw new CompanyNotFoundException();
         }
 
@@ -74,7 +77,7 @@ class ArticleService
     public function update(UpdateArticleCommand $command)
     {
         $article = $this->articleRepository->fromId($command->id());
-        if(is_null($article)){
+        if (is_null($article)) {
             throw new ArticleNotFoundException();
         }
 
@@ -82,6 +85,37 @@ class ArticleService
         $article->setTitle($command->title());
 
         return $this->articleRepository->update($article);
+    }
+
+    /**
+     * @param FindArticlesByIdQuery $query
+     * @return Article
+     * @throws ArticleNotFoundException
+     */
+    public function fromArticle(FindArticlesByIdQuery $query)
+    {
+        $id = $query->id();
+        $article = $this->articleRepository->fromId($id);
+
+        if (is_null($article)) {
+            throw new ArticleNotFoundException();
+        }
+
+        return $article;
+    }
+
+    /**
+     * @param DeleteArticleQuery $query
+     * @throws ArticleNotFoundException
+     */
+    public function delete(DeleteArticleQuery $query)
+    {
+        $id = $query->id();
+        $article = $this->articleRepository->fromId($id);
+        if (is_null($article)) {
+            throw new ArticleNotFoundException();
+        }
+        $this->articleRepository->delete($article);
     }
 
 }

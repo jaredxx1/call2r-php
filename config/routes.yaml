@@ -49,8 +49,15 @@ update_section:
 
 get_all_articles_from_company:
   path: /api/v1/companies/{id}/wiki
-  controller: App\Wiki\Presentation\Http\Action\FindAllArticleFromCompanyAction
+  controller: App\Wiki\Presentation\Http\Action\FindAllArticlesFromCompanyAction
   methods:    GET
+
+get_article_by_id:
+  path: /api/v1/articles/{id}
+  controller: App\Wiki\Presentation\Http\Action\FindArticlesByIdAction
+  methods:    GET
+  requirements:
+    id: '\d+'
 
 create_article:
   path: /api/v1/articles

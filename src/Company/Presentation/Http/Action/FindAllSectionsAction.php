@@ -1,30 +1,32 @@
 <?php
 
 
-namespace App\Wiki\Presentation\Http\Action;
+namespace App\Company\Presentation\Http\Action;
 
 
+use App\Company\Application\Service\CompanyService;
+use App\Company\Application\Service\SectionService;
 use App\Core\Presentation\Http\AbstractAction;
-use App\Wiki\Application\Command\CreateArticleCommand;
-use App\Wiki\Application\Service\ArticleService;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Throwable;
 
-class CreateArticleAction extends AbstractAction
+class FindAllSectionsAction extends AbstractAction
 {
-
     /**
-     * @var ArticleService
+     * @var SectionService
      */
     private $service;
 
+
     /**
-     * CreateArticleAction constructor.
-     * @param ArticleService $service
+     * FindAllSectionsAction constructor.
+     * @param SectionService $service
      */
-    public function __construct(ArticleService $service)
+    public function __construct(
+        SectionService $service
+    )
     {
         $this->service = $service;
     }
@@ -35,17 +37,14 @@ class CreateArticleAction extends AbstractAction
      */
     public function __invoke(Request $request)
     {
-
         try {
-            $data = json_decode($request->getContent(), true);
-            $command = CreateArticleCommand::fromArray($data);
-            $article = $this->service->create($command);
+            $sections = $this->service->getAll();
         } catch (Exception $exception) {
             return $this->errorResponse($exception->getMessage(), $exception->getCode() ? $exception->getCode() : 400);
         } catch (Throwable $exception) {
             return $this->errorResponse($exception->getMessage(), $exception->getCode() ? $exception->getCode() : 400);
         }
 
-        return new JsonResponse($article, 201);
+        return new JsonResponse($sections, 200);
     }
 }

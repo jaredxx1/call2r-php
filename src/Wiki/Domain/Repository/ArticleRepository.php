@@ -13,4 +13,6 @@ interface ArticleRepository
     public function create(Article $article): ?Article;
 
     public function update(Article $article): ?Article;
+
+    public function delete(Article $article);
 }
