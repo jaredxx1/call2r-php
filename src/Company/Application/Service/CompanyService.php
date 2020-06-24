@@ -11,11 +11,13 @@ use App\Company\Application\Exception\NonUniqueMotherCompanyException;
 use App\Company\Application\Exception\SlaNotFoundException;
 use App\Company\Application\Query\FindCompanyByIdQuery;
 use App\Company\Domain\Entity\Company;
+use App\Company\Domain\Entity\Section;
 use App\Company\Domain\Entity\SLA;
 use App\Company\Domain\Repository\CompanyRepository;
+use App\Company\Domain\Repository\SectionRepository;
 use App\Company\Domain\Repository\SlaRepository;
 
-final class CompanyService
+class CompanyService
 {
 
     /**
@@ -24,22 +26,30 @@ final class CompanyService
     private $companyRepository;
 
     /**
-     * @var $SlaRepository
+     * @var SlaRepository
      */
     private $slaRepository;
+
+    /**
+     * @var SectionRepository
+     */
+    private $sectionRepository;
 
     /**
      * CompanyService constructor.
      * @param CompanyRepository $companyRepository
      * @param SlaRepository $slaRepository
+     * @param SectionRepository $sectionRepository
      */
     public function __construct(
         CompanyRepository $companyRepository,
-        SlaRepository $slaRepository
+        SlaRepository $slaRepository,
+        SectionRepository $sectionRepository
     )
     {
         $this->companyRepository = $companyRepository;
         $this->slaRepository = $slaRepository;
+        $this->sectionRepository = $sectionRepository;
     }
 
     /**
@@ -47,7 +57,9 @@ final class CompanyService
      */
     public function getAll()
     {
-        return $this->companyRepository->getAll();
+        $companies = $this->companyRepository->getAll();
+
+        return $companies;
     }
 
     /**
@@ -66,27 +78,48 @@ final class CompanyService
             $command->sla()['p5']
         );
 
+        foreach ($command->sections() as $section) {
+            $foundSection = $this->sectionRepository->fromName($section['name']);
+            if (is_null($foundSection)) {
+                $sections[] = new Section(
+                    null,
+                    $section['name'],
+                    $section['priority']
+                );
+            } else {
+                $sections[] = $foundSection;
+            }
+        }
+
         $company = new Company(
             $command->name(),
             $command->cnpj(),
             $command->description(),
             $command->isMother(),
             $command->isActive(),
-            $sla
+            $sla,
+            $sections
         );
+
         if ($company->isMother()) {
             $motherCompany = $this->companyRepository->getMother();
+
+            if (!is_null($motherCompany)) {
+                throw new NonUniqueMotherCompanyException();
+            }
+
             $sla->setP1(0);
             $sla->setP2(0);
             $sla->setP3(0);
             $sla->setP4(0);
             $sla->setP5(0);
+
             $company->setSla($sla);
-            if (!is_null($motherCompany)) {
-                throw new NonUniqueMotherCompanyException();
-            }
+
         }
+
         $company = $this->companyRepository->create($company);
+
         return $company;
     }
 
@@ -111,9 +144,11 @@ final class CompanyService
      * @param UpdateCompanyCommand $command
      * @return Company|null
      * @throws CompanyNotFoundException
+     * @throws SlaNotFoundException
      */
     public function update(UpdateCompanyCommand $command): ?Company
     {
+
         $id = $command->id();
         $company = $this->companyRepository->fromId($id);
         $sla = $this->slaRepository->fromId($company->sla()->id());
@@ -122,8 +157,21 @@ final class CompanyService
             throw new CompanyNotFoundException();
         }
 
-        if(is_null($sla)){
+        if (is_null($sla)) {
             throw new SlaNotFoundException();
+        }
+
+        foreach ($command->sections() as $section) {
+            $foundSection = $this->sectionRepository->fromName($section['name']);
+            if (is_null($foundSection)) {
+                $sections[] = new Section(
+                    null,
+                    $section['name'],
+                    $section['priority']
+                );
+            } else {
+                $sections[] = $foundSection;
+            }
         }
 
         // Save sla
@@ -134,6 +182,10 @@ final class CompanyService
         $sla->setP5($command->sla()['p5']);
 
         $this->slaRepository->update($sla);
+
+        // set new sections to company
+
+        $company->setSections($sections);
 
         // Save company
         $company->setName($command->name());

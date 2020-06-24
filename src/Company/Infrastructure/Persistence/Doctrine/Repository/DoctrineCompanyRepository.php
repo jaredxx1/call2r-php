@@ -79,6 +79,11 @@ class DoctrineCompanyRepository implements CompanyRepository
     {
         try {
             $this->entityManager->persist($company->sla());
+
+            foreach ($company->sections() as $section) {
+                $this->entityManager->persist($section);
+            }
+
             $this->entityManager->persist($company);
             $this->entityManager->flush();
         } catch (UniqueConstraintViolationException $exception) {
@@ -94,6 +99,9 @@ class DoctrineCompanyRepository implements CompanyRepository
      */
     public function update(Company $company): ?Company
     {
+        foreach ($company->sections() as $section) {
+            $this->entityManager->persist($section);
+        }
         $this->entityManager->flush();
 
         return $company;

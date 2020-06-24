@@ -4,49 +4,47 @@
 namespace App\Company\Presentation\Http\Action;
 
 
-use App\Company\Application\Command\UpdateCompanyCommand;
 use App\Company\Application\Service\CompanyService;
+use App\Company\Application\Service\SectionService;
 use App\Core\Presentation\Http\AbstractAction;
-use Symfony\Component\Config\Definition\Exception\Exception;
+use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Throwable;
 
-class UpdateCompanyAction extends AbstractAction
+class FindAllSectionsAction extends AbstractAction
 {
-
     /**
-     * @var CompanyService
+     * @var SectionService
      */
     private $service;
 
+
     /**
-     * UpdateCompanyAction constructor.
-     * @param CompanyService $service
+     * FindAllSectionsAction constructor.
+     * @param SectionService $service
      */
-    public function __construct(CompanyService $service)
+    public function __construct(
+        SectionService $service
+    )
     {
         $this->service = $service;
     }
 
     /**
      * @param Request $request
-     * @param int $id
      * @return JsonResponse
      */
-    public function __invoke(Request $request, int $id)
+    public function __invoke(Request $request)
     {
         try {
-            $data = json_decode($request->getContent(), true);
-            $data['url'] = $id;
-            $command = UpdateCompanyCommand::fromArray($data);
-            $company = $this->service->update($command);
+            $sections = $this->service->getAll();
         } catch (Exception $exception) {
             return $this->errorResponse($exception->getMessage(), $exception->getCode() ? $exception->getCode() : 400);
         } catch (Throwable $exception) {
             return $this->errorResponse($exception->getMessage(), $exception->getCode() ? $exception->getCode() : 400);
         }
 
-        return new JsonResponse($company, 200);
+        return new JsonResponse($sections, 200);
     }
 }
