@@ -5,13 +5,17 @@ namespace App\Wiki\Presentation\Http\Action;
 
 
 use App\Core\Presentation\Http\AbstractAction;
-use App\Wiki\Application\Query\DeleteArticleQuery;
+use App\Wiki\Application\Query\DeleteArticleCommand;
 use App\Wiki\Application\Service\ArticleService;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Throwable;
 
+/**
+ * Class DeleteArticleAction
+ * @package App\Wiki\Presentation\Http\Action
+ */
 class DeleteArticleAction extends AbstractAction
 {
     /**
@@ -37,7 +41,7 @@ class DeleteArticleAction extends AbstractAction
     {
         try {
             $data = ['id' => $id];
-            $query = DeleteArticleQuery::fromArray($data);
+            $query = DeleteArticleCommand::fromArray($data);
             $this->service->delete($query);
         } catch (Exception $exception) {
             return $this->errorResponse($exception->getMessage(), $exception->getCode() ? $exception->getCode() : 400);

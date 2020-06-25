@@ -7,6 +7,10 @@ namespace App\Wiki\Application\Command;
 use App\Core\Infrastructure\Container\Application\Utils\Command\CommandInterface;
 use Webmozart\Assert\Assert;
 
+/**
+ * Class CreateArticleCommand
+ * @package App\Wiki\Application\Command
+ */
 class CreateArticleCommand implements CommandInterface
 {
 
@@ -39,6 +43,10 @@ class CreateArticleCommand implements CommandInterface
     }
 
 
+    /**
+     * @param array $data
+     * @return CreateArticleCommand
+     */
     public static function fromArray($data)
     {
         Assert::keyExists($data, 'idCompany', 'Field idCompany is required');
@@ -59,6 +67,9 @@ class CreateArticleCommand implements CommandInterface
         );
     }
 
+    /**
+     * @return array
+     */
     public function toArray(): array
     {
         return [];

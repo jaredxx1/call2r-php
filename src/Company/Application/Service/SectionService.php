@@ -9,6 +9,10 @@ use App\Company\Application\Exception\SectionNotFoundException;
 use App\Company\Domain\Entity\Section;
 use App\Company\Domain\Repository\SectionRepository;
 
+/**
+ * Class SectionService
+ * @package App\Company\Application\Service
+ */
 final class SectionService
 {
 

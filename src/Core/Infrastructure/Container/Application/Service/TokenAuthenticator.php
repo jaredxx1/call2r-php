@@ -16,6 +16,10 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
 
+/**
+ * Class TokenAuthenticator
+ * @package App\Core\Infrastructure\Container\Application\Service
+ */
 class TokenAuthenticator extends AbstractGuardAuthenticator
 {
 
@@ -33,6 +37,11 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
         $this->userService = $userService;
     }
 
+    /**
+     * @param Request $request
+     * @param AuthenticationException|null $authException
+     * @return JsonResponse|Response
+     */
     public function start(Request $request, AuthenticationException $authException = null)
     {
         $data = [
@@ -42,17 +51,30 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
         return new JsonResponse($data, Response::HTTP_UNAUTHORIZED);
     }
 
+    /**
+     * @param Request $request
+     * @return bool
+     */
     public function supports(Request $request)
     {
         return $request->headers->has('Authorization');
     }
 
+    /**
+     * @param Request $request
+     * @return mixed|string|string[]|null
+     */
     public function getCredentials(Request $request)
     {
         $authorization = $request->headers->get('Authorization');
         return str_replace(['Bearer', ' '], '', $authorization);
     }
 
+    /**
+     * @param mixed $credentials
+     * @param UserProviderInterface $userProvider
+     * @return \App\Security\Domain\Entity\User|UserInterface|null
+     */
     public function getUser($credentials, UserProviderInterface $userProvider)
     {
         try {
@@ -64,6 +86,11 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
         return $this->userService->fromCpf($jwtPayload->cpf);
     }
 
+    /**
+     * @param mixed $credentials
+     * @param UserInterface $user
+     * @return bool
+     */
     public function checkCredentials($credentials, UserInterface $user)
     {
         // TODO: Check credentials
@@ -71,16 +98,30 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
         return true;
     }
 
+    /**
+     * @param Request $request
+     * @param AuthenticationException $exception
+     * @return Response|void|null
+     */
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception)
     {
         // TODO: Implement onAuthenticationFailure() method.
     }
 
+    /**
+     * @param Request $request
+     * @param TokenInterface $token
+     * @param string $providerKey
+     * @return Response|void|null
+     */
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $providerKey)
     {
         // TODO: Implement onAuthenticationSuccess() method.
     }
 
+    /**
+     * @return bool
+     */
     public function supportsRememberMe()
     {
         return false;

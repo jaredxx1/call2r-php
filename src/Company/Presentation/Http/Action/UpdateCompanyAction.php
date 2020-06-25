@@ -12,6 +12,10 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Throwable;
 
+/**
+ * Class UpdateCompanyAction
+ * @package App\Company\Presentation\Http\Action
+ */
 class UpdateCompanyAction extends AbstractAction
 {
 

@@ -8,6 +8,10 @@ namespace App\Company\Domain\Entity;
 
 use JsonSerializable;
 
+/**
+ * Class Company
+ * @package App\Company\Domain\Entity
+ */
 class Company implements JsonSerializable
 {
 

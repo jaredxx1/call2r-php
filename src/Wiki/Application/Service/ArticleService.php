@@ -9,12 +9,16 @@ use App\Company\Domain\Repository\CompanyRepository;
 use App\Wiki\Application\Command\CreateArticleCommand;
 use App\Wiki\Application\Command\UpdateArticleCommand;
 use App\Wiki\Application\Exception\ArticleNotFoundException;
-use App\Wiki\Application\Query\DeleteArticleQuery;
+use App\Wiki\Application\Query\DeleteArticleCommand;
 use App\Wiki\Application\Query\FindAllArticlesFromCompanyQuery;
 use App\Wiki\Application\Query\FindArticlesByIdQuery;
 use App\Wiki\Domain\Entity\Article;
 use App\Wiki\Domain\Repository\ArticleRepository;
 
+/**
+ * Class ArticleService
+ * @package App\Wiki\Application\Service
+ */
 class ArticleService
 {
     /**
@@ -105,10 +109,10 @@ class ArticleService
     }
 
     /**
-     * @param DeleteArticleQuery $query
+     * @param DeleteArticleCommand $query
      * @throws ArticleNotFoundException
      */
-    public function delete(DeleteArticleQuery $query)
+    public function delete(DeleteArticleCommand $query)
     {
         $id = $query->id();
         $article = $this->articleRepository->fromId($id);

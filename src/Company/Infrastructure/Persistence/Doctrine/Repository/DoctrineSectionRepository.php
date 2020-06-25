@@ -8,7 +8,12 @@ use App\Company\Domain\Entity\Section;
 use App\Company\Domain\Repository\SectionRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ObjectRepository;
+use \Doctrine\ORM\NonUniqueResultException;
 
+/**
+ * Class DoctrineSectionRepository
+ * @package App\Company\Infrastructure\Persistence\Doctrine\Repository
+ */
 class DoctrineSectionRepository implements SectionRepository
 {
 

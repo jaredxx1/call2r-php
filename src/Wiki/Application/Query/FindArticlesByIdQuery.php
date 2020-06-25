@@ -7,6 +7,10 @@ namespace App\Wiki\Application\Query;
 use App\Core\Infrastructure\Container\Application\Utils\Query\QueryInterface;
 use Webmozart\Assert\Assert;
 
+/**
+ * Class FindArticlesByIdQuery
+ * @package App\Wiki\Application\Query
+ */
 class FindArticlesByIdQuery implements QueryInterface
 {
     /**
@@ -14,6 +18,10 @@ class FindArticlesByIdQuery implements QueryInterface
      */
     private $id;
 
+    /**
+     * FindArticlesByIdQuery constructor.
+     * @param int $id
+     */
     public function __construct(int $id)
     {
         $this->id = $id;

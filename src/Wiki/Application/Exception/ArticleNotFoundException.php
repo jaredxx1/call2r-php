@@ -7,6 +7,10 @@ namespace App\Wiki\Application\Exception;
 use Exception;
 use Throwable;
 
+/**
+ * Class ArticleNotFoundException
+ * @package App\Wiki\Application\Exception
+ */
 class ArticleNotFoundException extends Exception
 {
     /**

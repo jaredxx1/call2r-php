@@ -7,6 +7,10 @@ namespace App\Company\Application\Exception;
 use Exception;
 use Throwable;
 
+/**
+ * Class SlaNotFoundException
+ * @package App\Company\Application\Exception
+ */
 class SlaNotFoundException extends Exception
 {
     /**

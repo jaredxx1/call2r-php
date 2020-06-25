@@ -7,6 +7,10 @@ namespace App\Company\Application\Exception;
 use Exception;
 use Throwable;
 
+/**
+ * Class CompanyNotFoundException
+ * @package App\Company\Application\Exception
+ */
 class CompanyNotFoundException extends Exception
 {
     /**

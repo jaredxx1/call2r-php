@@ -7,6 +7,10 @@ namespace App\Wiki\Application\Command;
 use App\Core\Infrastructure\Container\Application\Utils\Command\CommandInterface;
 use Webmozart\Assert\Assert;
 
+/**
+ * Class UpdateArticleCommand
+ * @package App\Wiki\Application\Command
+ */
 class UpdateArticleCommand implements CommandInterface
 {
     /**
@@ -38,6 +42,10 @@ class UpdateArticleCommand implements CommandInterface
     }
 
 
+    /**
+     * @param array $data
+     * @return UpdateArticleCommand
+     */
     public static function fromArray($data)
     {
         Assert::eq($data['url'], $data['id'], 'Id article not the same');
@@ -60,6 +68,9 @@ class UpdateArticleCommand implements CommandInterface
         );
     }
 
+    /**
+     * @return array
+     */
     public function toArray(): array
     {
         return [];

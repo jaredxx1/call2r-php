@@ -6,6 +6,10 @@ namespace App\Company\Domain\Entity;
 
 use JsonSerializable;
 
+/**
+ * Class SLA
+ * @package App\Company\Domain\Entity
+ */
 class SLA implements JsonSerializable
 {
     /**

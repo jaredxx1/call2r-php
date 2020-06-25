@@ -9,6 +9,10 @@ use App\Wiki\Domain\Repository\ArticleRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ObjectRepository;
 
+/**
+ * Class DoctrineArticleRepository
+ * @package App\Wiki\Infrastructure\Persistence\Doctrine\Repository
+ */
 class DoctrineArticleRepository implements ArticleRepository
 {
     /**

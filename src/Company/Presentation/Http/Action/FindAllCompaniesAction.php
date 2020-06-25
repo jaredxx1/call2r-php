@@ -10,6 +10,10 @@ use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Throwable;
 
+/**
+ * Class FindAllCompaniesAction
+ * @package App\Company\Presentation\Http\Action
+ */
 class FindAllCompaniesAction extends AbstractAction
 {
 

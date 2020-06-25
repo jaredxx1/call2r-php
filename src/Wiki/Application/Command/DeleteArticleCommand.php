@@ -7,13 +7,21 @@ namespace App\Wiki\Application\Query;
 use App\Core\Infrastructure\Container\Application\Utils\Query\QueryInterface;
 use Webmozart\Assert\Assert;
 
-class DeleteArticleQuery implements QueryInterface
+/**
+ * Class DeleteArticleCommand
+ * @package App\Wiki\Application\Query
+ */
+class DeleteArticleCommand implements QueryInterface
 {
     /**
      * @var int
      */
     private $id;
 
+    /**
+     * DeleteArticleCommand constructor.
+     * @param int $id
+     */
     public function __construct(int $id)
     {
         $this->id = $id;
@@ -21,7 +29,7 @@ class DeleteArticleQuery implements QueryInterface
 
     /**
      * @param array $data
-     * @return DeleteArticleQuery
+     * @return DeleteArticleCommand
      */
     public static function fromArray($data)
     {

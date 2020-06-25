@@ -6,6 +6,10 @@ namespace App\Wiki\Domain\Entity;
 
 use JsonSerializable;
 
+/**
+ * Class Article
+ * @package App\Wiki\Domain\Entity
+ */
 class Article implements JsonSerializable
 {
 
@@ -44,6 +48,9 @@ class Article implements JsonSerializable
         $this->description = $description;
     }
 
+    /**
+     * @return array|mixed
+     */
     public function jsonSerialize()
     {
         return $this->toArray();
