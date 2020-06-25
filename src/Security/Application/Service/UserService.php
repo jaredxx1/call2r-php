@@ -4,6 +4,7 @@
 namespace App\Security\Application\Service;
 
 
+use App\Security\Application\Command\CreateUserCommand;
 use App\Security\Application\Command\LoginCommand;
 use App\Security\Application\Exception\InvalidCredentialsException;
 use App\Security\Application\Exception\UserNotFoundException;
@@ -99,6 +100,7 @@ final class UserService
 
     /**
      * @param FindUsersByRoleQuery $query
+     * @return array
      * @throws Exception
      */
     public function findUsersByRole(FindUsersByRoleQuery $query)
@@ -115,5 +117,26 @@ final class UserService
         }
 
         return $users;
+    }
+
+    /**
+     *
+     * @param CreateUserCommand $command
+     * @return User|null
+     */
+    public function createUser(CreateUserCommand $command)
+    {
+        $user = new User(
+            null,
+            $command->getCpf(),
+            $command->getPassword(),
+            $command->getRole(),
+            $command->getEmail(),
+            $command->getBirthdate(),
+            $command->isActive(),
+            $command->getCompanyId()
+        );
+
+        return $this->userRepository->createUser($user);
     }
 }

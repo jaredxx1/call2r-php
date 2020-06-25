@@ -9,6 +9,10 @@ use App\Security\Domain\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
 
+/**
+ * Class DoctrineUserRepository
+ * @package App\Security\Infrastructure\Persistence\Doctrine\Repository
+ */
 class DoctrineUserRepository implements UserRepository
 {
 
@@ -27,6 +31,10 @@ class DoctrineUserRepository implements UserRepository
     }
 
 
+    /**
+     * @param string $cpf
+     * @return User|null
+     */
     public function fromCpf(string $cpf): ?User
     {
         try {
@@ -44,6 +52,11 @@ class DoctrineUserRepository implements UserRepository
 
     }
 
+    /**
+     * @param string $cpf
+     * @param string $password
+     * @return User|null
+     */
     public function fromLoginCredentials(string $cpf, string $password): ?User
     {
         try {
@@ -60,6 +73,10 @@ class DoctrineUserRepository implements UserRepository
         }
     }
 
+    /**
+     * @param int $id
+     * @return User|null
+     */
     public function fromId(int $id): ?User
     {
         return $this->entityManager
@@ -67,6 +84,9 @@ class DoctrineUserRepository implements UserRepository
             ->find($id);
     }
 
+    /**
+     * @return array
+     */
     public function findSupportUsers(): array
     {
         return $this->entityManager
@@ -79,6 +99,9 @@ class DoctrineUserRepository implements UserRepository
             ->getResult();
     }
 
+    /**
+     * @return array
+     */
     public function findManagers(): array
     {
         return $this->entityManager
@@ -89,5 +112,17 @@ class DoctrineUserRepository implements UserRepository
             ->setParameter('role', 'ROLE_MANAGER')
             ->getQuery()
             ->getResult();
+    }
+
+    /**
+     * @param User $user
+     * @return User|null
+     */
+    public function createUser(User $user): ?User
+    {
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
+
+        return $user;
     }
 }

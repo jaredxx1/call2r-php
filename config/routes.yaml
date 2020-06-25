@@ -84,3 +84,15 @@ get_users_by_role:
   methods:    GET
   requirements:
     role: '^(manager|support)$'
+
+create_user:
+  path: /api/v1/users
+  controller: App\Security\Presentation\Http\Action\CreateUserAction
+  methods:    POST
+
+#update_user:
+#  path: /api/v1/users/{id}
+#  controller: App\Security\Presentation\Http\Action\UpdateUserAction
+#  methods:    PUT
+#  requirements:
+#    id: '\d+'

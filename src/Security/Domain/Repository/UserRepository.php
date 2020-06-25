@@ -17,4 +17,6 @@ interface UserRepository
     public function findSupportUsers(): array;
 
     public function findManagers(): array;
+
+    public function createUser(User $user): ?User;
 }
