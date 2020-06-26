@@ -56,9 +56,10 @@ create table tb_wiki_article(
 create table tb_wiki_category
 (
     id_wiki_category int auto_increment primary key,
+    id_company int,
     title       varchar(255),
     active   boolean,
-    UNIQUE KEY (title)
+    FOREIGN KEY (id_company) REFERENCES tb_company(id_company)
 );
 
 create table tb_article_category

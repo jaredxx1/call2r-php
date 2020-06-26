@@ -13,7 +13,7 @@ use App\Company\Domain\Repository\SectionRepository;
  * Class SectionService
  * @package App\Company\Application\Service
  */
-final class SectionService
+class SectionService
 {
 
     /**

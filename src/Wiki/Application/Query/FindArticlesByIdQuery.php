@@ -16,16 +16,24 @@ class FindArticlesByIdQuery implements QueryInterface
     /**
      * @var int
      */
-    private $id;
+    private $idCompany;
+
+    /**
+     * @var int
+     */
+    private $idArticle;
 
     /**
      * FindArticlesByIdQuery constructor.
-     * @param int $id
+     * @param int $idCompany
+     * @param int $idArticle
      */
-    public function __construct(int $id)
+    public function __construct(int $idCompany, int $idArticle)
     {
-        $this->id = $id;
+        $this->idCompany = $idCompany;
+        $this->idArticle = $idArticle;
     }
+
 
     /**
      * @param array $data
@@ -33,11 +41,14 @@ class FindArticlesByIdQuery implements QueryInterface
      */
     public static function fromArray($data)
     {
-        Assert::keyExists($data, 'id', "Id must be a integer");
-        Assert::integer($data['id'], "Id must be a integer");
+        Assert::keyExists($data, 'urlCompany', "Id company must be a integer");
+        Assert::keyExists($data, 'urlArticle', "Id article must be a integer");
+        Assert::integer($data['urlCompany'], "Id company must be a integer");
+        Assert::integer($data['urlArticle'], "Id article must be a integer");
 
         return new self(
-            $data['id']
+            $data['urlCompany'],
+            $data['urlArticle']
         );
     }
 
@@ -52,8 +63,32 @@ class FindArticlesByIdQuery implements QueryInterface
     /**
      * @return int
      */
-    public function id(): int
+    public function idCompany(): int
     {
-        return $this->id;
+        return $this->idCompany;
+    }
+
+    /**
+     * @param int $idCompany
+     */
+    public function setIdCompany(int $idCompany): void
+    {
+        $this->idCompany = $idCompany;
+    }
+
+    /**
+     * @return int
+     */
+    public function idArticle(): int
+    {
+        return $this->idArticle;
+    }
+
+    /**
+     * @param int $idArticle
+     */
+    public function setIdArticle(int $idArticle): void
+    {
+        $this->idArticle = $idArticle;
     }
 }

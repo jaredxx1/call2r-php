@@ -41,7 +41,7 @@ get_all_sections:
   path: /api/v1/sections
   controller: App\Company\Presentation\Http\Action\FindAllSectionsAction
   methods:    GET
-  
+
 update_section:
   path: /api/v1/sections/{id}
   controller: App\Company\Presentation\Http\Action\UpdateSectionAction
@@ -53,7 +53,7 @@ get_all_articles_from_company:
   methods:    GET
 
 get_article_by_id:
-  path: /api/v1/articles/{id}
+  path: /api/v1/companies/{idCompany}/wiki/{idArticle}
   controller: App\Wiki\Presentation\Http\Action\FindArticlesByIdAction
   methods:    GET
   requirements:
@@ -65,7 +65,7 @@ create_article:
   methods:    POST
 
 update_article:
-  path: /api/v1/articles/{id}
+  path: /api/v1/companies/{idCompany}/wiki/{idArticle}
   controller: App\Wiki\Presentation\Http\Action\UpdateArticleAction
   methods:    PUT
   requirements:
@@ -75,5 +75,17 @@ delete_article:
   path: /api/v1/articles/{id}
   controller: App\Wiki\Presentation\Http\Action\DeleteArticleAction
   methods:    DELETE
+  requirements:
+    id: '\d+'
+
+get_all_categories:
+  path: /api/v1/companies/{id}/wiki/categories
+  controller: App\Wiki\Presentation\Http\Action\FindAllCategoriesFromCompanyAction
+  methods:    GET
+
+update_category:
+  path: /api/v1/companies/{idCompany}/wiki/categories/{idCategory}
+  controller: App\Wiki\Presentation\Http\Action\UpdateCategoryAction
+  methods:    PUT
   requirements:
     id: '\d+'

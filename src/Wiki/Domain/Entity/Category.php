@@ -15,6 +15,11 @@ class Category implements JsonSerializable
     private $id;
 
     /**
+     * @var int
+     */
+    private $idCompany;
+
+    /**
      * @var string
      */
     private $title;
@@ -27,12 +32,14 @@ class Category implements JsonSerializable
     /**
      * Category constructor.
      * @param int $id
+     * @param int $idCompany
      * @param string $title
      * @param bool $active
      */
-    public function __construct(?int $id, string $title, bool $active)
+    public function __construct(?int $id, int $idCompany, string $title, bool $active)
     {
         $this->id = $id;
+        $this->idCompany = $idCompany;
         $this->title = $title;
         $this->active = $active;
     }
@@ -53,6 +60,7 @@ class Category implements JsonSerializable
     {
         return [
             'id' => $this->id(),
+            'idCompany' => $this->idCompany(),
             'title' => $this->title(),
             'active' => $this->active()
         ];
@@ -106,6 +114,20 @@ class Category implements JsonSerializable
         $this->active = $active;
     }
 
+    /**
+     * @return int
+     */
+    public function idCompany(): int
+    {
+        return $this->idCompany;
+    }
 
+    /**
+     * @param int $idCompany
+     */
+    public function setIdCompany(int $idCompany): void
+    {
+        $this->idCompany = $idCompany;
+    }
 
 }

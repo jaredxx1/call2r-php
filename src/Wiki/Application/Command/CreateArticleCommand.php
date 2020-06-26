@@ -71,14 +71,17 @@ class CreateArticleCommand implements CommandInterface
         $categories = $data['categories'];
         Assert::isArray($categories, 'Field categories is not an array');
 
-        foreach ($categories as $section) {
-            Assert::keyExists($section, 'title', 'Field category title name is required');
-            Assert::keyExists($section, 'active', 'Field category active is required');
+        foreach ($categories as $category) {
+            Assert::eq($category['idCompany'], $data['idCompany'], 'Id company is different between company and article');
+            Assert::keyExists($category, 'title', 'Field category title name is required');
+            Assert::keyExists($category, 'idCompany', 'Field category id company name is required');
+            Assert::keyExists($category, 'active', 'Field category active is required');
 
-            Assert::stringNotEmpty($section['title'], 'Field category title is empty');
+            Assert::stringNotEmpty($category['title'], 'Field category title is empty');
 
-            Assert::string($section['title'], 'Field category title is not a string');
-            Assert::boolean($section['active'], 'Field category active is not a boolean');
+            Assert::string($category['title'], 'Field category title is not a string');
+            Assert::integer($category['idCompany'], 'Field category id company is not a string');
+            Assert::boolean($category['active'], 'Field category active is not a boolean');
         }
 
         return new self(

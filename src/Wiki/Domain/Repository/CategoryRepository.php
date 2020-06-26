@@ -17,4 +17,34 @@ interface CategoryRepository
      * @return Category|null
      */
     public function fromTitle(string $title): ?Category;
+
+    /**
+     * @return mixed
+     */
+    public function getAll();
+
+    /**
+     * @param int $id
+     * @return Category|null
+     */
+    public function fromId(int $id): ?Category;
+
+    /**
+     * @param Category $category
+     * @return Category|null
+     */
+    public function update(Category $category): ?Category;
+
+    /**
+     * @param int $id
+     * @return Category|null
+     */
+    public function fromCompany(int $id);
+
+    /**
+     * @param string $title
+     * @param int $idCompany
+     * @return Category|null
+     */
+    public function fromCompanyTitle(string $title, int $idCompany): ?Category;
 }

@@ -82,6 +82,9 @@ class DoctrineArticleRepository implements ArticleRepository
      */
     public function update(Article $article): ?Article
     {
+        foreach ($article->categories() as $category) {
+            $this->entityManager->persist($category);
+        }
         $this->entityManager->flush();
         return $article;
     }
