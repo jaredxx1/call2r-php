@@ -73,7 +73,8 @@ class Article implements JsonSerializable
             'id' => $this->id(),
             'idCompany' => $this->idCompany(),
             'title' => $this->title(),
-            'description' => $this->description()
+            'description' => $this->description(),
+            'categories' => $this->categories()->getIterator()
         ];
     }
 

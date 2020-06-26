@@ -12,10 +12,6 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Throwable;
 
-/**
- * Class CreateArticleAction
- * @package App\Wiki\Presentation\Http\Action
- */
 class CreateArticleAction extends AbstractAction
 {
 
