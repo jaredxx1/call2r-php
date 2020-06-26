@@ -34,19 +34,27 @@ class Article implements JsonSerializable
     private $description;
 
     /**
+     * @var array
+     */
+    private $categories;
+
+    /**
      * Article constructor.
-     * @param int|null $id
+     * @param int $id
      * @param int $idCompany
      * @param string $title
      * @param string $description
+     * @param array $categories
      */
-    public function __construct(?int $id, int $idCompany, string $title, string $description)
+    public function __construct(?int $id, int $idCompany, string $title, string $description, array $categories)
     {
         $this->id = $id;
         $this->idCompany = $idCompany;
         $this->title = $title;
         $this->description = $description;
+        $this->categories = $categories;
     }
+
 
     /**
      * @return array|mixed
@@ -132,5 +140,22 @@ class Article implements JsonSerializable
     {
         $this->description = $description;
     }
+
+    /**
+     * @return array
+     */
+    public function categories()
+    {
+        return $this->categories;
+    }
+
+    /**
+     * @param array $categories
+     */
+    public function setCategories(array $categories): void
+    {
+        $this->categories = $categories;
+    }
+
 
 }

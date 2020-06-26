@@ -13,7 +13,9 @@ use App\Wiki\Application\Query\DeleteArticleCommand;
 use App\Wiki\Application\Query\FindAllArticlesFromCompanyQuery;
 use App\Wiki\Application\Query\FindArticlesByIdQuery;
 use App\Wiki\Domain\Entity\Article;
+use App\Wiki\Domain\Entity\Category;
 use App\Wiki\Domain\Repository\ArticleRepository;
+use App\Wiki\Domain\Repository\CategoryRepository;
 
 /**
  * Class ArticleService
@@ -32,15 +34,23 @@ class ArticleService
     private $companyRepository;
 
     /**
+     * @var CategoryRepository
+     */
+    private $categoryRepository;
+
+    /**
      * ArticleService constructor.
      * @param ArticleRepository $articleRepository
      * @param CompanyRepository $companyRepository
+     * @param CategoryRepository $categoryRepository
      */
-    public function __construct(ArticleRepository $articleRepository, CompanyRepository $companyRepository)
+    public function __construct(ArticleRepository $articleRepository, CompanyRepository $companyRepository, CategoryRepository $categoryRepository)
     {
         $this->articleRepository = $articleRepository;
         $this->companyRepository = $companyRepository;
+        $this->categoryRepository = $categoryRepository;
     }
+
 
     /**
      * @param FindAllArticlesFromCompanyQuery $query
@@ -63,14 +73,30 @@ class ArticleService
             throw new CompanyNotFoundException();
         }
 
+        foreach ($command->categories() as $category) {
+            $foundCategory = $this->categoryRepository->fromTitle($category['title']);
+            if (is_null($foundCategory)) {
+                $categories[] = new Category(
+                    null,
+                    $category['title'],
+                    $category['active']
+                );
+            } else {
+                $categories[] = $foundCategory;
+            }
+        }
+
         $article = new Article(
             null,
             $command->idCompany(),
             $command->title(),
-            $command->description()
+            $command->description(),
+            $categories
         );
 
-        return $this->articleRepository->create($article);
+        $article = $this->articleRepository->create($article);
+
+        return $article;
     }
 
     /**

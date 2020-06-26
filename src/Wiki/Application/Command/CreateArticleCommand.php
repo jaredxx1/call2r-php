@@ -30,16 +30,23 @@ class CreateArticleCommand implements CommandInterface
     private $description;
 
     /**
+     * @var array
+     */
+    private $categories;
+
+    /**
      * CreateArticleCommand constructor.
      * @param int $idCompany
      * @param string $title
      * @param string $description
+     * @param array $categories
      */
-    public function __construct(int $idCompany, string $title, string $description)
+    public function __construct(int $idCompany, string $title, string $description, array $categories)
     {
         $this->idCompany = $idCompany;
         $this->title = $title;
         $this->description = $description;
+        $this->categories = $categories;
     }
 
 
@@ -52,6 +59,7 @@ class CreateArticleCommand implements CommandInterface
         Assert::keyExists($data, 'idCompany', 'Field idCompany is required');
         Assert::keyExists($data, 'title', 'Field title is required');
         Assert::keyExists($data, 'description', 'Field description is required');
+        Assert::keyExists($data, 'categories', 'Field categories is required');
 
         Assert::integer($data['idCompany'], ' Field id company is not an integer');
         Assert::string($data['title'], ' Field title is not a string');
@@ -60,10 +68,24 @@ class CreateArticleCommand implements CommandInterface
         Assert::stringNotEmpty($data['title'], 'Field title is empty');
         Assert::stringNotEmpty($data['description'], 'Field description is empty');
 
+        $categories = $data['categories'];
+        Assert::isArray($categories, 'Field categories is not an array');
+
+        foreach ($categories as $section) {
+            Assert::keyExists($section, 'title', 'Field category title name is required');
+            Assert::keyExists($section, 'active', 'Field category active is required');
+
+            Assert::stringNotEmpty($section['title'], 'Field category title is empty');
+
+            Assert::string($section['title'], 'Field category title is not a string');
+            Assert::boolean($section['active'], 'Field category active is not a boolean');
+        }
+
         return new self(
             $data['idCompany'],
             $data['title'],
-            $data['description']
+            $data['description'],
+            $data['categories']
         );
     }
 
@@ -121,6 +143,22 @@ class CreateArticleCommand implements CommandInterface
     public function setDescription(string $description): void
     {
         $this->description = $description;
+    }
+
+    /**
+     * @return array
+     */
+    public function categories(): array
+    {
+        return $this->categories;
+    }
+
+    /**
+     * @param array $categories
+     */
+    public function setCategories(array $categories): void
+    {
+        $this->categories = $categories;
     }
 
 
