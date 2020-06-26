@@ -57,7 +57,8 @@ create table tb_wiki_category
 (
     id_wiki_category int auto_increment primary key,
     title       varchar(255),
-    active   boolean
+    active   boolean,
+    UNIQUE KEY (title)
 );
 
 create table tb_article_category
@@ -67,4 +68,3 @@ create table tb_article_category
     FOREIGN KEY (id_wiki_article) REFERENCES tb_wiki_article (id_wiki_article),
     FOREIGN KEY (id_wiki_category) REFERENCES tb_wiki_category (id_wiki_category)
 );
-
