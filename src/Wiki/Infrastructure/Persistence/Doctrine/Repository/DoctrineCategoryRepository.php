@@ -96,7 +96,7 @@ class DoctrineCategoryRepository implements CategoryRepository
      * @return Category|null
      * @throws NonUniqueResultException
      */
-    public function fromCompanyTitle(string $title, int $idCompany): ?Category
+    public function fromArticleTitle(string $title, int $idCompany): ?Category
     {
         return $this->entityManager
             ->createQueryBuilder()
@@ -123,5 +123,15 @@ class DoctrineCategoryRepository implements CategoryRepository
             ->setParameter('id', $id)
             ->getQuery()
             ->getArrayResult();
+    }
+
+    /**
+     * @param Category $category
+     * @return mixed
+     */
+    public function delete(Category $category): void
+    {
+
+        $this->entityManager->remove($category);
     }
 }

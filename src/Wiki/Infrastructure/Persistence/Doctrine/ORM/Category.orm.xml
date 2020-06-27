@@ -2,12 +2,11 @@
                   xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
                   xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
                           https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
-    <entity name="App\Wiki\Domain\Entity\Category" table="tb_wiki_category">
-        <id name="id" type="integer" column="id_wiki_category">
+    <entity name="App\Wiki\Domain\Entity\Category" table="tb_category">
+        <id name="id" type="integer" column="id_category">
             <generator strategy="AUTO"/>
         </id>
         <field name="idCompany" column="id_company" type="integer"/>
         <field name="title" column="title" type="string" unique="true"/>
-        <field name="active" column="active" type="boolean"/>
     </entity>
 </doctrine-mapping>

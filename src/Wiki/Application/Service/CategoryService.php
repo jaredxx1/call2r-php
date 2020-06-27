@@ -4,7 +4,9 @@
 namespace App\Wiki\Application\Service;
 
 
+use App\Wiki\Application\Command\DeleteCategoryCommand;
 use App\Wiki\Application\Command\UpdateCategoryCommand;
+use App\Wiki\Application\Exception\CategoryNotAvalible;
 use App\Wiki\Application\Exception\CategoryNotFoundException;
 use App\Wiki\Application\Query\FindAllCategoriesFromCompanyQuery;
 use App\Wiki\Domain\Repository\CategoryRepository;
@@ -29,7 +31,7 @@ class CategoryService
      * @param FindAllCategoriesFromCompanyQuery $query
      * @return \App\Wiki\Domain\Entity\Category|null
      */
-    public function getAll(FindAllCategoriesFromCompanyQuery $query){
+    public function fromCompany(FindAllCategoriesFromCompanyQuery $query){
         return $this->categoryRepository->fromCompany($query->id());
     }
 
@@ -41,8 +43,27 @@ class CategoryService
         }
 
         $category->setTitle($command->title());
-        $category->setActive($command->active());
 
         return $this->categoryRepository->update($category);
+    }
+
+    /**
+     * @param DeleteCategoryCommand $command
+     * @throws CategoryNotFoundException|CategoryNotAvalible
+     */
+    public function delete(DeleteCategoryCommand $command)
+    {
+        $id = $command->idCategory();
+        $category = $this->categoryRepository->fromId($id);
+
+        if(is_null($category)){
+            throw new CategoryNotFoundException();
+        }
+
+        if($category->idCompany() != $command->idCompany()){
+            throw new CategoryNotAvalible();
+        }
+
+        $this->categoryRepository->delete($category);
     }
 }

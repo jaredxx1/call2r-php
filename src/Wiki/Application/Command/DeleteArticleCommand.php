@@ -16,16 +16,24 @@ class DeleteArticleCommand implements QueryInterface
     /**
      * @var int
      */
-    private $id;
+    private $idArticle;
+
+    /**
+     * @var int
+     */
+    private $idCompany;
 
     /**
      * DeleteArticleCommand constructor.
-     * @param int $id
+     * @param int $idArticle
+     * @param int $idCompany
      */
-    public function __construct(int $id)
+    public function __construct(int $idArticle, int $idCompany)
     {
-        $this->id = $id;
+        $this->idArticle = $idArticle;
+        $this->idCompany = $idCompany;
     }
+
 
     /**
      * @param array $data
@@ -33,11 +41,14 @@ class DeleteArticleCommand implements QueryInterface
      */
     public static function fromArray($data)
     {
-        Assert::keyExists($data, 'id', "Id must be a integer");
-        Assert::integer($data['id'], "Id must be a integer");
+        Assert::keyExists($data, 'urlArticle', "Id article is required");
+        Assert::keyExists($data, 'urlCompany', "Id company is required");
+        Assert::integer($data['urlArticle'], "Id article must be a integer");
+        Assert::integer($data['urlCompany'], "Id company must be a integer");
 
         return new self(
-            $data['id']
+            $data['urlArticle'],
+            $data['urlCompany']
         );
     }
 
@@ -52,8 +63,16 @@ class DeleteArticleCommand implements QueryInterface
     /**
      * @return int
      */
-    public function id(): int
+    public function idCompany(): int
     {
-        return $this->id;
+        return $this->idCompany;
+    }
+
+    /**
+     * @return int
+     */
+    public function idArticle(): int
+    {
+        return $this->idArticle;
     }
 }

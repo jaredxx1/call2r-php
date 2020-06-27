@@ -75,7 +75,7 @@ class ArticleService
         }
 
         foreach ($command->categories() as $category) {
-            $foundCategory = $this->categoryRepository->fromCompanyTitle($category['title'], $category['idCompany']);
+            $foundCategory = $this->categoryRepository->fromArticleTitle($category['title'], $category['idCompany']);
             if (is_null($foundCategory)) {
                 $categories[] = new Category(
                     null,
@@ -108,20 +108,18 @@ class ArticleService
      */
     public function update(UpdateArticleCommand $command)
     {
-        //validate if article exists
         $article = $this->articleRepository->fromId($command->id());
         if (is_null($article)) {
             throw new ArticleNotFoundException();
         }
 
+        $company = $this->companyRepository->fromId($command->idCompany());
+        if (is_null($company)) {
+            throw new CompanyNotFoundException();
+        }
+
         foreach ($command->categories() as $category) {
-            //if company exists
-            $company = $this->companyRepository->fromId($category['idCompany']);
-            if (is_null($company)) {
-                throw new CompanyNotFoundException();
-            }
-            //select from base the category
-            $foundCategory = $this->categoryRepository->fromCompanyTitle($category['title'], $category['idCompany']);
+            $foundCategory = $this->categoryRepository->fromArticleTitle($category['title'], $category['idCompany']);
             if (is_null($foundCategory)) {
                 $categories[] = new Category(
                     null,
@@ -130,7 +128,6 @@ class ArticleService
                     $category['active']
                 );
             } else {
-                //if it already exists
                 $categories[] = $foundCategory;
             }
         }
@@ -149,17 +146,12 @@ class ArticleService
      */
     public function fromArticle(FindArticlesByIdQuery $query)
     {
-        $idArticle = $query->idArticle();
-        $idCompany = $query->idCompany();
-
-        $company = $this->companyRepository->fromId($idCompany);
-
+        $company = $this->companyRepository->fromId($query->idCompany());
         if (is_null($company)) {
             throw new CompanyNotFoundException();
         }
 
-        $article = $this->articleRepository->fromId($idArticle);
-
+        $article = $this->articleRepository->fromId($query->idArticle());
         if (is_null($article)) {
             throw new ArticleNotFoundException();
         }
@@ -173,15 +165,26 @@ class ArticleService
 
     /**
      * @param DeleteArticleCommand $query
+     * @throws ArticleNotAvalible
      * @throws ArticleNotFoundException
+     * @throws CompanyNotFoundException
      */
     public function delete(DeleteArticleCommand $query)
     {
-        $id = $query->id();
-        $article = $this->articleRepository->fromId($id);
+        $article = $this->articleRepository->fromId($query->idArticle());
         if (is_null($article)) {
             throw new ArticleNotFoundException();
         }
+
+        $company = $this->categoryRepository->fromId($query->idCompany());
+        if(is_null($company)){
+            throw new CompanyNotFoundException();
+        }
+
+        if($article->idCompany() != $query->idCompany()){
+            throw new ArticleNotAvalible();
+        }
+
         $this->articleRepository->delete($article);
     }
 

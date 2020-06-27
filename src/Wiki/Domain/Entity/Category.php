@@ -6,6 +6,10 @@ namespace App\Wiki\Domain\Entity;
 
 use JsonSerializable;
 
+/**
+ * Class Category
+ * @package App\Wiki\Domain\Entity
+ */
 class Category implements JsonSerializable
 {
 
@@ -25,23 +29,16 @@ class Category implements JsonSerializable
     private $title;
 
     /**
-     * @var boolean
-     */
-    private $active;
-
-    /**
      * Category constructor.
      * @param int $id
      * @param int $idCompany
      * @param string $title
-     * @param bool $active
      */
-    public function __construct(?int $id, int $idCompany, string $title, bool $active)
+    public function __construct(?int $id, int $idCompany, string $title)
     {
         $this->id = $id;
         $this->idCompany = $idCompany;
         $this->title = $title;
-        $this->active = $active;
     }
 
 
@@ -62,7 +59,6 @@ class Category implements JsonSerializable
             'id' => $this->id(),
             'idCompany' => $this->idCompany(),
             'title' => $this->title(),
-            'active' => $this->active()
         ];
     }
 
@@ -96,22 +92,6 @@ class Category implements JsonSerializable
     public function setTitle(string $title): void
     {
         $this->title = $title;
-    }
-
-    /**
-     * @return bool
-     */
-    public function active(): bool
-    {
-        return $this->active;
-    }
-
-    /**
-     * @param bool $active
-     */
-    public function setActive(bool $active): void
-    {
-        $this->active = $active;
     }
 
     /**

@@ -40,7 +40,7 @@ class FindAllCategoriesFromCompanyAction extends AbstractAction
         try {
             $data = ['id' => $id];
             $query = FindAllCategoriesFromCompanyQuery::fromArray($data);
-            $categories = $this->service->getAll($query);
+            $categories = $this->service->fromCompany($query);
         } catch (Exception $exception) {
             return $this->errorResponse($exception->getMessage(), $exception->getCode() ? $exception->getCode() : 400);
         } catch (Throwable $exception) {

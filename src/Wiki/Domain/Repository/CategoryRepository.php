@@ -46,5 +46,11 @@ interface CategoryRepository
      * @param int $idCompany
      * @return Category|null
      */
-    public function fromCompanyTitle(string $title, int $idCompany): ?Category;
+    public function fromArticleTitle(string $title, int $idCompany): ?Category;
+
+    /**
+     * @param Category $category
+     * @return mixed
+     */
+    public function delete(Category $category);
 }

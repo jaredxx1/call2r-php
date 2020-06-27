@@ -45,27 +45,26 @@ create table tb_company_section
 
 -- Article
 
-create table tb_wiki_article(
-    id_wiki_article int auto_increment primary key,
+create table tb_article(
+    id_article int auto_increment primary key,
     id_company int,
     title varchar(255),
     description varchar(255),
     FOREIGN KEY (id_company) REFERENCES tb_company(id_company)
 );
 
-create table tb_wiki_category
+create table tb_category
 (
-    id_wiki_category int auto_increment primary key,
+    id_category int auto_increment primary key,
     id_company int,
     title       varchar(255),
-    active   boolean,
     FOREIGN KEY (id_company) REFERENCES tb_company(id_company)
 );
 
 create table tb_article_category
 (
-    id_wiki_article int,
-    id_wiki_category int,
-    FOREIGN KEY (id_wiki_article) REFERENCES tb_wiki_article (id_wiki_article),
-    FOREIGN KEY (id_wiki_category) REFERENCES tb_wiki_category (id_wiki_category)
+    id_article int,
+    id_category int,
+    FOREIGN KEY (id_article) REFERENCES tb_article (id_article),
+    FOREIGN KEY (id_category) REFERENCES tb_category (id_category)
 );

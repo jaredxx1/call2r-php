@@ -75,13 +75,11 @@ class CreateArticleCommand implements CommandInterface
             Assert::eq($category['idCompany'], $data['idCompany'], 'Id company is different between company and article');
             Assert::keyExists($category, 'title', 'Field category title name is required');
             Assert::keyExists($category, 'idCompany', 'Field category id company name is required');
-            Assert::keyExists($category, 'active', 'Field category active is required');
 
             Assert::stringNotEmpty($category['title'], 'Field category title is empty');
 
             Assert::string($category['title'], 'Field category title is not a string');
             Assert::integer($category['idCompany'], 'Field category id company is not a string');
-            Assert::boolean($category['active'], 'Field category active is not a boolean');
         }
 
         return new self(

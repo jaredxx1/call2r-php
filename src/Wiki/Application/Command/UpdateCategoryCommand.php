@@ -20,21 +20,14 @@ class UpdateCategoryCommand implements CommandInterface
     private $title;
 
     /**
-     * @var boolean
-     */
-    private $active;
-
-    /**
      * UpdateCategoryCommand constructor.
      * @param int $id
      * @param string $title
-     * @param bool $active
      */
-    public function __construct(int $id, string $title, bool $active)
+    public function __construct(int $id, string $title)
     {
         $this->id = $id;
         $this->title = $title;
-        $this->active = $active;
     }
 
     /**
@@ -43,23 +36,20 @@ class UpdateCategoryCommand implements CommandInterface
      */
     public static function fromArray($data)
     {
-        Assert::eq($data['urlCategory'], $data['id'], 'Id category not the same');
-        Assert::eq($data['urlCompany'], $data['idCompany'], 'Id company not the same');
-
         Assert::keyExists($data, 'id', 'Field id is required');
+
+        Assert::eq($data['urlCategory'], $data['id'], 'Id category not the same');
+
         Assert::keyExists($data, 'title', 'Field category title name is required');
-        Assert::keyExists($data, 'active', 'Field category active is required');
 
         Assert::stringNotEmpty($data['title'], 'Field category title is empty');
 
         Assert::integer($data['id'],  'Field id is not an integer');
         Assert::string($data['title'], 'Field category title is not a string');
-        Assert::boolean($data['active'], 'Field category active is not a boolean');
 
         return new self(
             $data['id'],
-            $data['title'],
-            $data['active']
+            $data['title']
         );
     }
 
@@ -101,21 +91,5 @@ class UpdateCategoryCommand implements CommandInterface
     public function setTitle(string $title): void
     {
         $this->title = $title;
-    }
-
-    /**
-     * @return bool
-     */
-    public function active(): bool
-    {
-        return $this->active;
-    }
-
-    /**
-     * @param bool $active
-     */
-    public function setActive(bool $active): void
-    {
-        $this->active = $active;
     }
 }

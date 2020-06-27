@@ -62,9 +62,10 @@ class UpdateArticleCommand implements CommandInterface
      */
     public static function fromArray($data)
     {
-        Assert::eq($data['urlArticle'], $data['id'], 'Id article not the same');
-        Assert::eq($data['urlCompany'], $data['idCompany'], 'Id company not the same');
         Assert::keyExists($data, 'id', 'Field id is required');
+        Assert::eq($data['urlArticle'], $data['id'], 'Id article not the same');
+        $data['idCompany'] = $data['urlCompany'];
+
         Assert::keyExists($data, 'title', 'Field title is required');
         Assert::keyExists($data, 'description', 'Field description is required');
         Assert::keyExists($data, 'categories', 'Field categories is required');
@@ -80,17 +81,14 @@ class UpdateArticleCommand implements CommandInterface
         Assert::isArray($categories, 'Field categories is not an array');
 
         foreach ($categories as $category) {
+            Assert::eq($category['idCompany'], $data['idCompany'], 'Id company is different between company and article');
+
             Assert::keyExists($category, 'title', 'Field category title name is required');
-            Assert::keyExists($category, 'active', 'Field category active is required');
 
             Assert::stringNotEmpty($category['title'], 'Field category title is empty');
 
             Assert::string($category['title'], 'Field category title is not a string');
-            Assert::boolean($category['active'], 'Field category active is not a boolean');
-            Assert::eq($category['idCompany'], $data['urlCompany'], 'Id company is different between company and article');
         }
-
-        $data['idCompany'] = $data['urlCompany'];
         return new self(
             $data['id'],
             $data['idCompany'],
