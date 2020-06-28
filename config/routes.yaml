@@ -135,5 +135,5 @@ update_user:
   path: /api/v1/users/{id}
   controller: App\Security\Presentation\Http\Action\UpdateUserAction
   methods:    PUT
-    requirements:
+  requirements:
     id: '\d+'
