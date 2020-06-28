@@ -7,7 +7,7 @@ namespace App\Wiki\Application\Exception;
 use Exception;
 use Throwable;
 
-class CategoryNotAvalible extends Exception
+class CategoryNotAuthorized extends Exception
 {
     /**
      * CompanyNotFoundException constructor.
@@ -15,7 +15,7 @@ class CategoryNotAvalible extends Exception
      * @param int $code
      * @param Throwable|null $previous
      */
-    public function __construct($message = "Category not available for this company", $code = 409, Throwable $previous = null)
+    public function __construct($message = "This Category is not accessible for this user", $code = 403, Throwable $previous = null)
     {
         parent::__construct($message, $code, $previous);
     }

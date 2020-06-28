@@ -6,7 +6,7 @@ namespace App\Wiki\Application\Service;
 
 use App\Wiki\Application\Command\DeleteCategoryCommand;
 use App\Wiki\Application\Command\UpdateCategoryCommand;
-use App\Wiki\Application\Exception\CategoryNotAvalible;
+use App\Wiki\Application\Exception\CategoryNotAuthorized;
 use App\Wiki\Application\Exception\CategoryNotFoundException;
 use App\Wiki\Application\Query\FindAllCategoriesFromCompanyQuery;
 use App\Wiki\Domain\Repository\CategoryRepository;
@@ -49,7 +49,7 @@ class CategoryService
 
     /**
      * @param DeleteCategoryCommand $command
-     * @throws CategoryNotFoundException|CategoryNotAvalible
+     * @throws CategoryNotFoundException|CategoryNotAuthorized
      */
     public function delete(DeleteCategoryCommand $command)
     {
@@ -61,7 +61,7 @@ class CategoryService
         }
 
         if($category->idCompany() != $command->idCompany()){
-            throw new CategoryNotAvalible();
+            throw new CategoryNotAuthorized();
         }
 
         $this->categoryRepository->delete($category);

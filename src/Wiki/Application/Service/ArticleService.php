@@ -8,7 +8,7 @@ use App\Company\Application\Exception\CompanyNotFoundException;
 use App\Company\Domain\Repository\CompanyRepository;
 use App\Wiki\Application\Command\CreateArticleCommand;
 use App\Wiki\Application\Command\UpdateArticleCommand;
-use App\Wiki\Application\Exception\ArticleNotAvalible;
+use App\Wiki\Application\Exception\ArticleNotAuthorized;
 use App\Wiki\Application\Exception\ArticleNotFoundException;
 use App\Wiki\Application\Query\DeleteArticleCommand;
 use App\Wiki\Application\Query\FindAllArticlesFromCompanyQuery;
@@ -142,7 +142,7 @@ class ArticleService
     /**
      * @param FindArticlesByIdQuery $query
      * @return Article
-     * @throws ArticleNotFoundException|CompanyNotFoundException|ArticleNotAvalible
+     * @throws ArticleNotFoundException|CompanyNotFoundException|ArticleNotAuthorized
      */
     public function fromArticle(FindArticlesByIdQuery $query)
     {
@@ -157,7 +157,7 @@ class ArticleService
         }
 
         if($article->idCompany() != $company->id()){
-            throw new ArticleNotAvalible();
+            throw new ArticleNotAuthorized();
         }
 
         return $article;
@@ -165,7 +165,7 @@ class ArticleService
 
     /**
      * @param DeleteArticleCommand $query
-     * @throws ArticleNotAvalible
+     * @throws ArticleNotAuthorized
      * @throws ArticleNotFoundException
      * @throws CompanyNotFoundException
      */
@@ -182,7 +182,7 @@ class ArticleService
         }
 
         if($article->idCompany() != $query->idCompany()){
-            throw new ArticleNotAvalible();
+            throw new ArticleNotAuthorized();
         }
 
         $this->articleRepository->delete($article);

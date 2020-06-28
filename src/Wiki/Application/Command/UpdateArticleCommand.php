@@ -81,8 +81,6 @@ class UpdateArticleCommand implements CommandInterface
         Assert::isArray($categories, 'Field categories is not an array');
 
         foreach ($categories as $category) {
-            Assert::eq($category['idCompany'], $data['idCompany'], 'Id company is different between company and article');
-
             Assert::keyExists($category, 'title', 'Field category title name is required');
 
             Assert::stringNotEmpty($category['title'], 'Field category title is empty');

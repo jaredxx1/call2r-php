@@ -51,6 +51,6 @@ class DeleteArticleAction extends AbstractAction
             return $this->errorResponse($exception->getMessage(), $exception->getCode() ? $exception->getCode() : 400);
         }
 
-        return new JsonResponse([], 200);
+        return new JsonResponse(null, 204);
     }
 }

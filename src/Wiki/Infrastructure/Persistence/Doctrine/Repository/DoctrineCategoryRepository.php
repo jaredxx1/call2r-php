@@ -68,15 +68,10 @@ class DoctrineCategoryRepository implements CategoryRepository
     /**
      * @param Category $category
      * @return Category|null
-     * @throws DuplicatedCategoryException
      */
     public function update(Category $category): ?Category
     {
-        try {
-            $this->entityManager->flush();
-        } catch (UniqueConstraintViolationException $exception) {
-            throw new DuplicatedCategoryException();
-        }
+        $this->entityManager->flush();
 
         return $category;
     }
