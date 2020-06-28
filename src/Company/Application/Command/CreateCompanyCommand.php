@@ -96,12 +96,6 @@ class CreateCompanyCommand implements CommandInterface
         Assert::keyExists($data, 'sla', 'Object sla is required');
         Assert::keyExists($data, 'sections', 'Array sections is required');
 
-        Assert::keyExists($data, 'description', 'Field description is required');
-        Assert::keyExists($data, 'name', 'Field name is required');
-        Assert::keyExists($data, 'cnpj', 'Field CNPJ is required');
-        Assert::keyExists($data, 'mother', 'Field mother is required');
-        Assert::keyExists($data, 'active', 'Field active is required');
-
         Assert::string($data['name'], ' Field name is not a string');
         Assert::string($data['description'], ' Field description is not a string');
         Assert::string($data['cnpj'], ' Field CNPJ is not a string');
