@@ -7,12 +7,21 @@ namespace App\Wiki\Application\Command;
 use App\Core\Infrastructure\Container\Application\Utils\Command\CommandInterface;
 use Webmozart\Assert\Assert;
 
+/**
+ * Class UpdateArticleCommand
+ * @package App\Wiki\Application\Command
+ */
 class UpdateArticleCommand implements CommandInterface
 {
     /**
      * @var int
      */
     private $id;
+
+    /**
+     * @var int
+     */
+    private $idCompany;
 
     /**
      * @var string
@@ -25,26 +34,41 @@ class UpdateArticleCommand implements CommandInterface
     private $description;
 
     /**
+     * @var array
+     */
+    private $categories;
+
+    /**
      * UpdateArticleCommand constructor.
      * @param int $id
+     * @param int $idCompany
      * @param string $title
      * @param string $description
+     * @param array $categories
      */
-    public function __construct(int $id, string $title, string $description)
+    public function __construct(int $id, int $idCompany, string $title, string $description, array $categories)
     {
         $this->id = $id;
+        $this->idCompany = $idCompany;
         $this->title = $title;
         $this->description = $description;
+        $this->categories = $categories;
     }
 
 
+    /**
+     * @param array $data
+     * @return UpdateArticleCommand
+     */
     public static function fromArray($data)
     {
-        Assert::eq($data['url'], $data['id'], 'Id article not the same');
-
         Assert::keyExists($data, 'id', 'Field id is required');
+        Assert::eq($data['urlArticle'], $data['id'], 'Id article not the same');
+        $data['idCompany'] = $data['urlCompany'];
+
         Assert::keyExists($data, 'title', 'Field title is required');
         Assert::keyExists($data, 'description', 'Field description is required');
+        Assert::keyExists($data, 'categories', 'Field categories is required');
 
         Assert::integer($data['id'], ' Field id  is not an integer');
         Assert::string($data['title'], ' Field title is not a string');
@@ -53,13 +77,28 @@ class UpdateArticleCommand implements CommandInterface
         Assert::stringNotEmpty($data['title'], 'Field title is empty');
         Assert::stringNotEmpty($data['description'], 'Field description is empty');
 
+        $categories = $data['categories'];
+        Assert::isArray($categories, 'Field categories is not an array');
+
+        foreach ($categories as $category) {
+            Assert::keyExists($category, 'title', 'Field category title name is required');
+
+            Assert::stringNotEmpty($category['title'], 'Field category title is empty');
+
+            Assert::string($category['title'], 'Field category title is not a string');
+        }
         return new self(
             $data['id'],
+            $data['idCompany'],
             $data['description'],
-            $data['title']
+            $data['title'],
+            $data['categories']
         );
     }
 
+    /**
+     * @return array
+     */
     public function toArray(): array
     {
         return [];
@@ -111,6 +150,38 @@ class UpdateArticleCommand implements CommandInterface
     public function setDescription(string $description): void
     {
         $this->description = $description;
+    }
+
+    /**
+     * @return array
+     */
+    public function categories(): array
+    {
+        return $this->categories;
+    }
+
+    /**
+     * @param array $categories
+     */
+    public function setCategories(array $categories): void
+    {
+        $this->categories = $categories;
+    }
+
+    /**
+     * @return int
+     */
+    public function idCompany(): int
+    {
+        return $this->idCompany;
+    }
+
+    /**
+     * @param int $idCompany
+     */
+    public function setIdCompany(int $idCompany): void
+    {
+        $this->idCompany = $idCompany;
     }
 
 

@@ -7,6 +7,10 @@ namespace App\Company\Application\Command;
 use App\Core\Infrastructure\Container\Application\Utils\Command\CommandInterface;
 use Webmozart\Assert\Assert;
 
+/**
+ * Class UpdateSectionCommand
+ * @package App\Company\Application\Command
+ */
 class UpdateSectionCommand implements CommandInterface
 {
 
@@ -69,7 +73,7 @@ class UpdateSectionCommand implements CommandInterface
      */
     public function toArray(): array
     {
-        // TODO: Implement toArray() method.
+        return [];
     }
 
     /**

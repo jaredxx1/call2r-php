@@ -7,6 +7,10 @@ namespace App\Company\Application\Exception;
 use Exception;
 use Throwable;
 
+/**
+ * Class SectionNotFoundException
+ * @package App\Company\Application\Exception
+ */
 class SectionNotFoundException extends Exception
 {
 

@@ -7,6 +7,10 @@ namespace App\Company\Application\Exception;
 use Exception;
 use Throwable;
 
+/**
+ * Class NonUniqueMotherCompanyException
+ * @package App\Company\Application\Exception
+ */
 class NonUniqueMotherCompanyException extends Exception
 {
     /**

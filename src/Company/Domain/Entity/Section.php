@@ -6,6 +6,10 @@ namespace App\Company\Domain\Entity;
 
 use JsonSerializable;
 
+/**
+ * Class Section
+ * @package App\Company\Domain\Entity
+ */
 class Section implements JsonSerializable
 {
 

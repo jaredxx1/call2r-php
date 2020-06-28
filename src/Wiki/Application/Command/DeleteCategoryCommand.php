@@ -1,17 +1,14 @@
 <?php
 
 
-namespace App\Wiki\Application\Query;
+namespace App\Wiki\Application\Command;
 
 
 use App\Core\Infrastructure\Container\Application\Utils\Query\QueryInterface;
+use App\Wiki\Application\Query\FindArticlesByIdQuery;
 use Webmozart\Assert\Assert;
 
-/**
- * Class FindArticlesByIdQuery
- * @package App\Wiki\Application\Query
- */
-class FindArticlesByIdQuery implements QueryInterface
+class DeleteCategoryCommand implements QueryInterface
 {
     /**
      * @var int
@@ -21,34 +18,33 @@ class FindArticlesByIdQuery implements QueryInterface
     /**
      * @var int
      */
-    private $idArticle;
+    private $idCategory;
 
     /**
-     * FindArticlesByIdQuery constructor.
+     * DeleteCategoryCommand constructor.
      * @param int $idCompany
-     * @param int $idArticle
+     * @param int $idCategory
      */
-    public function __construct(int $idCompany, int $idArticle)
+    public function __construct(int $idCompany, int $idCategory)
     {
         $this->idCompany = $idCompany;
-        $this->idArticle = $idArticle;
+        $this->idCategory = $idCategory;
     }
-
 
     /**
      * @param array $data
-     * @return FindArticlesByIdQuery
+     * @return DeleteCategoryCommand
      */
     public static function fromArray($data)
     {
         Assert::keyExists($data, 'urlCompany', "Id company must be a integer");
-        Assert::keyExists($data, 'urlArticle', "Id article must be a integer");
+        Assert::keyExists($data, 'urlCategory', "Id category must be a integer");
         Assert::integer($data['urlCompany'], "Id company must be a integer");
-        Assert::integer($data['urlArticle'], "Id article must be a integer");
+        Assert::integer($data['urlCategory'], "Id category must be a integer");
 
         return new self(
             $data['urlCompany'],
-            $data['urlArticle']
+            $data['urlCategory']
         );
     }
 
@@ -79,16 +75,17 @@ class FindArticlesByIdQuery implements QueryInterface
     /**
      * @return int
      */
-    public function idArticle(): int
+    public function idCategory(): int
     {
-        return $this->idArticle;
+        return $this->idCategory;
     }
 
     /**
-     * @param int $idArticle
+     * @param int $idCategory
      */
-    public function setIdArticle(int $idArticle): void
+    public function setIdCategory(int $idCategory): void
     {
-        $this->idArticle = $idArticle;
+        $this->idCategory = $idCategory;
     }
+
 }

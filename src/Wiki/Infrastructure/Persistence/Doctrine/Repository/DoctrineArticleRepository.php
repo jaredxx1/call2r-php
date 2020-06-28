@@ -9,6 +9,10 @@ use App\Wiki\Domain\Repository\ArticleRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ObjectRepository;
 
+/**
+ * Class DoctrineArticleRepository
+ * @package App\Wiki\Infrastructure\Persistence\Doctrine\Repository
+ */
 class DoctrineArticleRepository implements ArticleRepository
 {
     /**
@@ -55,6 +59,9 @@ class DoctrineArticleRepository implements ArticleRepository
      */
     public function create(Article $article): ?Article
     {
+        foreach ($article->categories() as $category) {
+            $this->entityManager->persist($category);
+        }
         $this->entityManager->persist($article);
         $this->entityManager->flush();
         return $article;
@@ -75,6 +82,9 @@ class DoctrineArticleRepository implements ArticleRepository
      */
     public function update(Article $article): ?Article
     {
+        foreach ($article->categories() as $category) {
+            $this->entityManager->persist($category);
+        }
         $this->entityManager->flush();
         return $article;
     }
