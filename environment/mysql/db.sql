@@ -81,3 +81,30 @@ create table tb_article_category
     FOREIGN KEY (id_article) REFERENCES tb_article (id_article),
     FOREIGN KEY (id_category) REFERENCES tb_category (id_category)
 );
+
+create table tb_request_status (
+    id_request_status int auto_increment primary key,
+    name varchar(255) unique
+);
+
+drop table tb_request;
+
+create table tb_request
+(
+    id_request   int auto_increment primary key,
+    id_status    int,
+    id_company int,
+    requested_by int,
+    assigned_to  int,
+    title        varchar(255),
+    created_at   datetime default now() null,
+    updated_at   datetime default now() null,
+    finished_at  datetime,
+    section      varchar(255),
+    priority     int,
+    description  longtext,
+    FOREIGN KEY (id_status) REFERENCES tb_request_status (id_request_status),
+    FOREIGN KEY (id_company) REFERENCES tb_company (id_company),
+    FOREIGN KEY (requested_by) REFERENCES tb_user (id_user),
+    FOREIGN KEY (assigned_to) REFERENCES tb_user (id_user)
+);
