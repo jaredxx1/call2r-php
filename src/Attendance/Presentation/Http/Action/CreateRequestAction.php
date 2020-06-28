@@ -4,13 +4,15 @@
 namespace App\Attendance\Presentation\Http\Action;
 
 
+use App\Attendance\Application\Command\CreateRequestCommand;
 use App\Attendance\Application\Service\RequestService;
 use App\Core\Presentation\Http\AbstractAction;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Throwable;
 
-class FindAllRequestsAction extends AbstractAction
+class CreateRequestAction extends AbstractAction
 {
     /**
      * @var RequestService
@@ -18,7 +20,7 @@ class FindAllRequestsAction extends AbstractAction
     private $service;
 
     /**
-     * FindAllRequestsAction constructor.
+     * CreateRequestAction constructor.
      * @param RequestService $service
      */
     public function __construct(RequestService $service)
@@ -26,15 +28,18 @@ class FindAllRequestsAction extends AbstractAction
         $this->service = $service;
     }
 
-    public function __invoke()
+
+    public function __invoke(Request $request)
     {
         try {
-            $requests = $this->service->findAllRequests();
+            $data = json_decode($request->getContent(), true);
+            $command = CreateRequestCommand::fromArray($data);
+            $request = $this->service->create($command);
         } catch (Exception $exception) {
             return $this->errorResponse($exception->getMessage(), $exception->getCode() ? $exception->getCode() : 400);
         } catch (Throwable $exception) {
             return $this->errorResponse($exception->getMessage(), $exception->getCode() ? $exception->getCode() : 400);
         }
-        return new JsonResponse($requests, 200);
+        return new JsonResponse($request, 201);
     }
 }
