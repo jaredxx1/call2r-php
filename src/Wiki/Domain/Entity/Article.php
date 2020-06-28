@@ -6,6 +6,10 @@ namespace App\Wiki\Domain\Entity;
 
 use JsonSerializable;
 
+/**
+ * Class Article
+ * @package App\Wiki\Domain\Entity
+ */
 class Article implements JsonSerializable
 {
 
@@ -30,20 +34,31 @@ class Article implements JsonSerializable
     private $description;
 
     /**
+     * @var array
+     */
+    private $categories;
+
+    /**
      * Article constructor.
-     * @param int|null $id
+     * @param int $id
      * @param int $idCompany
      * @param string $title
      * @param string $description
+     * @param array $categories
      */
-    public function __construct(?int $id, int $idCompany, string $title, string $description)
+    public function __construct(?int $id, int $idCompany, string $title, string $description, array $categories)
     {
         $this->id = $id;
         $this->idCompany = $idCompany;
         $this->title = $title;
         $this->description = $description;
+        $this->categories = $categories;
     }
 
+
+    /**
+     * @return array|mixed
+     */
     public function jsonSerialize()
     {
         return $this->toArray();
@@ -58,7 +73,8 @@ class Article implements JsonSerializable
             'id' => $this->id(),
             'idCompany' => $this->idCompany(),
             'title' => $this->title(),
-            'description' => $this->description()
+            'description' => $this->description(),
+            'categories' => $this->categories()->getIterator()
         ];
     }
 
@@ -125,5 +141,22 @@ class Article implements JsonSerializable
     {
         $this->description = $description;
     }
+
+    /**
+     * @return array
+     */
+    public function categories()
+    {
+        return $this->categories;
+    }
+
+    /**
+     * @param array $categories
+     */
+    public function setCategories(array $categories): void
+    {
+        $this->categories = $categories;
+    }
+
 
 }

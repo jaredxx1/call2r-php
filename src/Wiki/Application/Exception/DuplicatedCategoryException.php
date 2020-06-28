@@ -8,18 +8,19 @@ use Exception;
 use Throwable;
 
 /**
- * Class ArticleNotFoundException
+ * Class DuplicatedCategoryException
  * @package App\Wiki\Application\Exception
  */
-class ArticleNotFoundException extends Exception
+class DuplicatedCategoryException extends Exception
 {
+
     /**
-     * CompanyNotFoundException constructor.
+     * DuplicatedCompanyException constructor.
      * @param string $message
      * @param int $code
      * @param Throwable|null $previous
      */
-    public function __construct($message = "Article not found", $code = 404, Throwable $previous = null)
+    public function __construct($message = "The category already exists.", $code = 422, Throwable $previous = null)
     {
         parent::__construct($message, $code, $previous);
     }

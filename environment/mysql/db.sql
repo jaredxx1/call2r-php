@@ -1,8 +1,8 @@
-drop database call2r;
-
 create database call2r;
 
 use call2r;
+
+-- Company
 
 create table tb_sla
 (
@@ -25,14 +25,6 @@ create table tb_company
     sla_id      int,
     FOREIGN KEY (sla_id) REFERENCES tb_sla (id_sla),
     UNIQUE KEY (cnpj)
-);
-
-create table tb_wiki_article(
-    id_wiki_article int auto_increment primary key,
-    id_company int,
-    title varchar(255),
-    description varchar(255),
-    FOREIGN KEY (id_company) REFERENCES tb_company(id_company)
 );
 
 create table tb_section
@@ -62,4 +54,28 @@ create table tb_user
     active     tinyint(1)                                       null,
     id_company int                                              null,
     FOREIGN KEY (id_company) REFERENCES tb_company (id_company)
+-- Article
+
+create table tb_article(
+    id_article int auto_increment primary key,
+    id_company int,
+    title varchar(255),
+    description varchar(255),
+    FOREIGN KEY (id_company) REFERENCES tb_company(id_company)
+);
+
+create table tb_category
+(
+    id_category int auto_increment primary key,
+    id_company int,
+    title       varchar(255),
+    FOREIGN KEY (id_company) REFERENCES tb_company(id_company)
+);
+
+create table tb_article_category
+(
+    id_article int,
+    id_category int,
+    FOREIGN KEY (id_article) REFERENCES tb_article (id_article),
+    FOREIGN KEY (id_category) REFERENCES tb_category (id_category)
 );

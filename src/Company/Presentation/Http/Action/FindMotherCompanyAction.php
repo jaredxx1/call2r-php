@@ -10,6 +10,10 @@ use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Throwable;
 
+/**
+ * Class FindMotherCompanyAction
+ * @package App\Company\Presentation\Http\Action
+ */
 class FindMotherCompanyAction extends AbstractAction
 {
     /**

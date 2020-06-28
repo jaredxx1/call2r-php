@@ -4,7 +4,6 @@
 namespace App\Company\Presentation\Http\Action;
 
 
-use App\Company\Application\Service\CompanyService;
 use App\Company\Application\Service\SectionService;
 use App\Core\Presentation\Http\AbstractAction;
 use Exception;
@@ -12,6 +11,10 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Throwable;
 
+/**
+ * Class FindAllSectionsAction
+ * @package App\Company\Presentation\Http\Action
+ */
 class FindAllSectionsAction extends AbstractAction
 {
     /**

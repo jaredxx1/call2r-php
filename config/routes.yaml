@@ -1,3 +1,4 @@
+## =============== Core routes
 alive:
   path: /alive
   controller: App\Core\Presentation\Http\Action\AliveAction
@@ -8,6 +9,7 @@ login:
   controller: App\Security\Presentation\Http\Action\LoginAction
   methods:    POST
 
+## =============== Company routes
 get_all_companies:
   path: /api/v1/companies
   controller: App\Company\Presentation\Http\Action\FindAllCompaniesAction
@@ -41,23 +43,29 @@ get_all_sections:
   path: /api/v1/sections
   controller: App\Company\Presentation\Http\Action\FindAllSectionsAction
   methods:    GET
-  
+
 update_section:
   path: /api/v1/sections/{id}
   controller: App\Company\Presentation\Http\Action\UpdateSectionAction
   methods:    PUT
+  requirements:
+    id: '\d+'
 
+## =============== Wiki routes
 get_all_articles_from_company:
-  path: /api/v1/companies/{id}/wiki
+  path: /api/v1/companies/{id}/articles
   controller: App\Wiki\Presentation\Http\Action\FindAllArticlesFromCompanyAction
-  methods:    GET
-
-get_article_by_id:
-  path: /api/v1/articles/{id}
-  controller: App\Wiki\Presentation\Http\Action\FindArticlesByIdAction
   methods:    GET
   requirements:
     id: '\d+'
+
+get_article_by_id:
+  path: /api/v1/companies/{idCompany}/articles/{idArticle}
+  controller: App\Wiki\Presentation\Http\Action\FindArticlesByIdAction
+  methods:    GET
+  requirements:
+    idCompany: '\d+'
+    idArticle: '\d+'
 
 create_article:
   path: /api/v1/articles
@@ -65,12 +73,45 @@ create_article:
   methods:    POST
 
 update_article:
-  path: /api/v1/articles/{id}
+  path: /api/v1/companies/{idCompany}/articles/{idArticle}
   controller: App\Wiki\Presentation\Http\Action\UpdateArticleAction
   methods:    PUT
   requirements:
+    idCompany: '\d+'
+    idArticle: '\d+'
+    
+delete_article:
+  path: /api/v1/companies/{idCompany}/articles/{idArticle}
+  controller: App\Wiki\Presentation\Http\Action\DeleteArticleAction
+  methods:    DELETE
+  requirements:
+    idCompany: '\d+'
+    idArticle: '\d+'
+
+get_all_categories:
+  path: /api/v1/companies/{id}/categories/
+  controller: App\Wiki\Presentation\Http\Action\FindAllCategoriesFromCompanyAction
+  methods:    GET
+  requirements:
     id: '\d+'
 
+update_category:
+  path: /api/v1/companies/{idCompany}/categories/{idCategory}
+  controller: App\Wiki\Presentation\Http\Action\UpdateCategoryAction
+  methods:    PUT
+  requirements:
+    idCompany: '\d+'
+    idCategory: '\d+'
+
+delete_category:
+  path: /api/v1/companies/{idCompany}/categories/{idCategory}
+  controller: App\Wiki\Presentation\Http\Action\DeleteCategoryAction
+  methods:    DELETE
+  requirements:
+    idCompany: '\d+'
+    idCategory: '\d+'
+
+## =============== User routes
 get_user_by_id:
   path: /api/v1/users/{id}
   controller: App\Security\Presentation\Http\Action\FindUserByIdAction
@@ -94,5 +135,5 @@ update_user:
   path: /api/v1/users/{id}
   controller: App\Security\Presentation\Http\Action\UpdateUserAction
   methods:    PUT
-  requirements:
+    requirements:
     id: '\d+'

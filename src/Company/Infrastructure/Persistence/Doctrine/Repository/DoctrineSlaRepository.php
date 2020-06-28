@@ -9,6 +9,10 @@ use App\Company\Domain\Repository\SlaRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ObjectRepository;
 
+/**
+ * Class DoctrineSlaRepository
+ * @package App\Company\Infrastructure\Persistence\Doctrine\Repository
+ */
 class DoctrineSlaRepository implements SlaRepository
 {
     /**

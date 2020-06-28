@@ -12,6 +12,10 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Throwable;
 
+/**
+ * Class FindArticlesByIdAction
+ * @package App\Wiki\Presentation\Http\Action
+ */
 class FindArticlesByIdAction extends AbstractAction
 {
     /**
@@ -28,10 +32,17 @@ class FindArticlesByIdAction extends AbstractAction
         $this->service = $service;
     }
 
-    public function __invoke(Request $request, int $id)
+    /**
+     * @param Request $request
+     * @param int $idCompany
+     * @param int $idArticle
+     * @return JsonResponse
+     */
+    public function __invoke(Request $request, int $idCompany, int $idArticle)
     {
         try {
-            $data = ['id' => $id];
+            $data['urlCompany'] = $idCompany;
+            $data['urlArticle'] = $idArticle;
             $query = FindArticlesByIdQuery::fromArray($data);
             $articles = $this->service->fromArticle($query);
         } catch (Exception $exception) {

@@ -8,6 +8,10 @@ use App\Company\Domain\Entity\SLA;
 use App\Core\Infrastructure\Container\Application\Utils\Command\CommandInterface;
 use Webmozart\Assert\Assert;
 
+/**
+ * Class CreateCompanyCommand
+ * @package App\Company\Application\Command
+ */
 class CreateCompanyCommand implements CommandInterface
 {
 
@@ -149,6 +153,9 @@ class CreateCompanyCommand implements CommandInterface
         );
     }
 
+    /**
+     * @return array
+     */
     public function toArray(): array
     {
         return [];

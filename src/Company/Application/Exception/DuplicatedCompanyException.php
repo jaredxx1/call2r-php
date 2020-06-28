@@ -7,6 +7,10 @@ namespace App\Company\Application\Exception;
 use Exception;
 use Throwable;
 
+/**
+ * Class DuplicatedCompanyException
+ * @package App\Company\Application\Exception
+ */
 class DuplicatedCompanyException extends Exception
 {
 

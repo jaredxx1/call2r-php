@@ -5,6 +5,10 @@ declare(strict_types=1);
 namespace App\Core\Infrastructure\Container\Application\Utils\Command;
 
 
+/**
+ * Interface CommandInterface
+ * @package App\Core\Infrastructure\Container\Application\Utils\Command
+ */
 interface CommandInterface
 {
 

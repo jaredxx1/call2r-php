@@ -12,6 +12,10 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Throwable;
 
+/**
+ * Class UpdateArticleAction
+ * @package App\Wiki\Presentation\Http\Action
+ */
 class UpdateArticleAction extends AbstractAction
 {
     /**
@@ -28,11 +32,18 @@ class UpdateArticleAction extends AbstractAction
         $this->service = $service;
     }
 
-    public function __invoke(Request $request, int $id)
+    /**
+     * @param Request $request
+     * @param int $idCompany
+     * @param int $idArticle
+     * @return JsonResponse
+     */
+    public function __invoke(Request $request, int $idCompany, int $idArticle)
     {
         try {
             $data = json_decode($request->getContent(), true);
-            $data['url'] = $id;
+            $data['urlCompany'] = $idCompany;
+            $data['urlArticle'] = $idArticle;
             $command = UpdateArticleCommand::fromArray($data);
             $article = $this->service->update($command);
         } catch (Exception $exception) {

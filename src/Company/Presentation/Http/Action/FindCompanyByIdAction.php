@@ -12,6 +12,10 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Throwable;
 
+/**
+ * Class FindCompanyByIdAction
+ * @package App\Company\Presentation\Http\Action
+ */
 class FindCompanyByIdAction extends AbstractAction
 {
     /**

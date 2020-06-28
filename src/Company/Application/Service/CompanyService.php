@@ -17,6 +17,10 @@ use App\Company\Domain\Repository\CompanyRepository;
 use App\Company\Domain\Repository\SectionRepository;
 use App\Company\Domain\Repository\SlaRepository;
 
+/**
+ * Class CompanyService
+ * @package App\Company\Application\Service
+ */
 class CompanyService
 {
 

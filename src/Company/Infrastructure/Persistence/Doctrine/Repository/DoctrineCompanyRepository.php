@@ -11,6 +11,10 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\Persistence\ObjectRepository;
 
+/**
+ * Class DoctrineCompanyRepository
+ * @package App\Company\Infrastructure\Persistence\Doctrine\Repository
+ */
 class DoctrineCompanyRepository implements CompanyRepository
 {
 
