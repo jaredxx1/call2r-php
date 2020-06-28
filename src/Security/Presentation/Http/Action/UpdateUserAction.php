@@ -38,14 +38,11 @@ class UpdateUserAction extends AbstractAction
      */
     public function __invoke(Request $request, int $id)
     {
-        $data = json_decode($request->getContent(), true);
-        $data['id'] = $id;
-
-        $command = UpdateUserCommand::fromArray($data);
-        $user = $this->userService->updateUser($command);
-
         try {
-
+            $data = json_decode($request->getContent(), true);
+            $data['id'] = $id;
+            $command = UpdateUserCommand::fromArray($data);
+            $user = $this->userService->updateUser($command);
         } catch (Exception $exception) {
             return $this->errorResponse($exception->getMessage(), $exception->getCode() ? $exception->getCode() : 400);
         } catch (Throwable $exception) {

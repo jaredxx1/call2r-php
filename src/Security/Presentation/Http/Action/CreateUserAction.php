@@ -31,12 +31,10 @@ class CreateUserAction extends AbstractAction
 
     public function __invoke(Request $request)
     {
-        $data = json_decode($request->getContent(), true);
-        $command = CreateUserCommand::fromArray($data);
-        $user = $this->userService->createUser($command);
-
         try {
-
+            $data = json_decode($request->getContent(), true);
+            $command = CreateUserCommand::fromArray($data);
+            $user = $this->userService->createUser($command);
         } catch (Exception $exception) {
             return $this->errorResponse($exception->getMessage(), $exception->getCode() ? $exception->getCode() : 400);
         } catch (Throwable $exception) {
