@@ -51,7 +51,7 @@ class UpdateArticleAction extends AbstractAction
         } catch (Throwable $exception) {
             return $this->errorResponse($exception->getMessage(), $exception->getCode() ? $exception->getCode() : 400);
         }
-        return new JsonResponse($article, 201);
+        return new JsonResponse($article, 200);
     }
 
 }
