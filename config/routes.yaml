@@ -90,9 +90,9 @@ create_user:
   controller: App\Security\Presentation\Http\Action\CreateUserAction
   methods:    POST
 
-#update_user:
-#  path: /api/v1/users/{id}
-#  controller: App\Security\Presentation\Http\Action\UpdateUserAction
-#  methods:    PUT
-#  requirements:
-#    id: '\d+'
+update_user:
+  path: /api/v1/users/{id}
+  controller: App\Security\Presentation\Http\Action\UpdateUserAction
+  methods:    PUT
+  requirements:
+    id: '\d+'

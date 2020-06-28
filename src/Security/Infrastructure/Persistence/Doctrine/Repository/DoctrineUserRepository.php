@@ -125,4 +125,15 @@ class DoctrineUserRepository implements UserRepository
 
         return $user;
     }
+
+    /**
+     * @param User $user
+     * @return User
+     */
+    public function updateUser(User $user): User
+    {
+        $this->entityManager->flush();
+
+        return $user;
+    }
 }
