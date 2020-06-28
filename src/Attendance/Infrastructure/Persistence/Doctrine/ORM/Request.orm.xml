@@ -1,0 +1,23 @@
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                          https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+    <entity name="App\Attendance\Domain\Entity\Request" table="tb_request">
+        <id name="id" type="integer" column="id_request">
+            <generator strategy="AUTO"/>
+        </id>
+        <field name="companyId" column="id_company" type="integer"/>
+        <field name="title" column="title" type="string"/>
+        <field name="description" column="description" type="string"/>
+        <field name="priority" column="priority" type="integer"/>
+        <field name="section" column="section" type="string"/>
+        <field name="assignedTo" column="assigned_to" type="integer"/>
+        <field name="requestedBy" column="requested_by" type="integer"/>
+        <field name="createdAt" column="created_at" type="datetime"/>
+        <field name="updatedAt" column="updated_at" type="datetime"/>
+        <field name="finishedAt" column="finished_at" type="datetime"/>
+        <one-to-one field="status" target-entity="App\Attendance\Domain\Entity\Status">
+            <join-column name="id_status" referenced-column-name="id_request_status"/>
+        </one-to-one>
+    </entity>
+</doctrine-mapping>
