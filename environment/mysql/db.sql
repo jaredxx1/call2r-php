@@ -54,6 +54,8 @@ create table tb_user
     active     tinyint(1)                                       null,
     id_company int                                              null,
     FOREIGN KEY (id_company) REFERENCES tb_company (id_company)
+);
+
 -- Article
 
 create table tb_article(

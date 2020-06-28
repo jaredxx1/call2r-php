@@ -126,7 +126,7 @@ class DoctrineCategoryRepository implements CategoryRepository
      */
     public function delete(Category $category): void
     {
-
         $this->entityManager->remove($category);
+        $this->entityManager->flush();
     }
 }
