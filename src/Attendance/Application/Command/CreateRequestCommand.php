@@ -10,11 +10,6 @@ use Webmozart\Assert\Assert;
 class CreateRequestCommand implements CommandInterface
 {
     /**
-     * @var array
-     */
-    private $status;
-
-    /**
      * @var int
      */
     private $companyId;
@@ -46,7 +41,6 @@ class CreateRequestCommand implements CommandInterface
 
     /**
      * CreateRequestCommand constructor.
-     * @param array $status
      * @param int $companyId
      * @param string $title
      * @param string $description
@@ -54,9 +48,8 @@ class CreateRequestCommand implements CommandInterface
      * @param string $section
      * @param int $assignedTo
      */
-    public function __construct(array $status, int $companyId, string $title, string $description, int $priority, string $section, int $assignedTo)
+    public function __construct(int $companyId, string $title, string $description, int $priority, string $section, int $assignedTo)
     {
-        $this->status = $status;
         $this->companyId = $companyId;
         $this->title = $title;
         $this->description = $description;
@@ -71,7 +64,6 @@ class CreateRequestCommand implements CommandInterface
      */
     public static function fromArray($data)
     {
-        Assert::keyExists($data, 'status', "Field status is required");
         Assert::keyExists($data, 'companyId', 'Field companyId is required');
         Assert::keyExists($data, 'title', 'Field title is required');
         Assert::keyExists($data, 'description', 'Field description is required');
@@ -79,7 +71,6 @@ class CreateRequestCommand implements CommandInterface
         Assert::keyExists($data, 'section', 'Field section is required');
         Assert::keyExists($data, 'assignedTo', 'Field assigned to is required');
 
-        Assert::isArray($data['status'], ' Field status is not an array');
         Assert::integer($data['companyId'], ' Field company id is not an integer');
         Assert::string($data['title'], ' Field title is not a string');
         Assert::string($data['description'], ' Field description is not a string');
@@ -91,18 +82,7 @@ class CreateRequestCommand implements CommandInterface
         Assert::stringNotEmpty($data['description'], 'Field description is empty');
         Assert::stringNotEmpty($data['section'], 'Field section is empty');
 
-        $status = $data['status'];
-
-        Assert::keyExists($status, 'id', 'Field status id is required');
-        Assert::keyExists($status, 'name', 'Field status name is required');
-
-        Assert::integer($status['id'], ' Field status id is not an integer');
-        Assert::string($status['name'], ' Field status name is not a string');
-
-        Assert::stringNotEmpty($status['name'], 'Field status name is empty');
-
         return new self(
-            $data['status'],
             $data['companyId'],
             $data['title'],
             $data['description'],
@@ -118,22 +98,6 @@ class CreateRequestCommand implements CommandInterface
     public function toArray(): array
     {
         return [];
-    }
-
-    /**
-     * @return array
-     */
-    public function getStatus(): array
-    {
-        return $this->status;
-    }
-
-    /**
-     * @param array $status
-     */
-    public function setStatus(array $status): void
-    {
-        $this->status = $status;
     }
 
     /**

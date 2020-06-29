@@ -7,6 +7,7 @@ namespace App\Attendance\Application\Service;
 use App\Attendance\Application\Command\CreateRequestCommand;
 use App\Attendance\Application\Exception\StatusNotFoundException;
 use App\Attendance\Domain\Entity\Request;
+use App\Attendance\Domain\Entity\Status;
 use App\Attendance\Domain\Repository\RequestRepository;
 use App\Attendance\Domain\Repository\StatusRepository;
 use App\Company\Application\Exception\CompanyNotFoundException;
@@ -74,11 +75,7 @@ class RequestService
      */
     public function create(CreateRequestCommand $command)
     {
-        $status = $this->statusRepository->fromId($command->getStatus()['id']);
-
-        if(is_null($status)){
-            throw new StatusNotFoundException();
-        }
+        $status = $this->statusRepository->fromId(Status::awaitingSupport);
 
         $company = $this->companyRepository->fromId($command->getCompanyId());
 

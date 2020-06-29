@@ -5,6 +5,7 @@ namespace App\Attendance\Domain\Entity;
 
 
 use JsonSerializable;
+use DateTime;
 
 /**
  * Class Request
@@ -58,17 +59,17 @@ class Request implements JsonSerializable
     private $requestedBy;
 
     /**
-     * @var \DateTime
+     * @var DateTime
      */
     private $createdAt;
 
     /**
-     * @var \DateTime
+     * @var DateTime
      */
     private $updatedAt;
 
     /**
-     * @var \DateTime
+     * @var DateTime
      */
     private $finishedAt;
 
@@ -278,49 +279,49 @@ class Request implements JsonSerializable
     }
 
     /**
-     * @return \DateTime
+     * @return DateTime
      */
-    public function getCreatedAt(): ?\DateTime
+    public function getCreatedAt(): ?DateTime
     {
         return $this->createdAt;
     }
 
     /**
-     * @param \DateTime $createdAt
+     * @param DateTime $createdAt
      */
-    public function setCreatedAt(\DateTime $createdAt): void
+    public function setCreatedAt(DateTime $createdAt): void
     {
         $this->createdAt = $createdAt;
     }
 
     /**
-     * @return \DateTime
+     * @return DateTime
      */
-    public function getUpdatedAt(): ?\DateTime
+    public function getUpdatedAt(): ?DateTime
     {
         return $this->updatedAt;
     }
 
     /**
-     * @param \DateTime $updatedAt
+     * @param DateTime $updatedAt
      */
-    public function setUpdatedAt(\DateTime $updatedAt): void
+    public function setUpdatedAt(DateTime $updatedAt): void
     {
         $this->updatedAt = $updatedAt;
     }
 
     /**
-     * @return \DateTime
+     * @return DateTime
      */
-    public function getFinishedAt(): ?\DateTime
+    public function getFinishedAt(): ?DateTime
     {
         return $this->finishedAt;
     }
 
     /**
-     * @param \DateTime $finishedAt
+     * @param DateTime $finishedAt
      */
-    public function setFinishedAt(\DateTime $finishedAt): void
+    public function setFinishedAt(DateTime $finishedAt): void
     {
         $this->finishedAt = $finishedAt;
     }

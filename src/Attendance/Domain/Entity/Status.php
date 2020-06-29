@@ -23,6 +23,12 @@ class Status implements JsonSerializable
      */
     private $name;
 
+    const awaitingSupport = 1;
+    const inAttendance = 2;
+    const awaitingResponse = 3;
+    const approved = 4;
+    const canceled = 5;
+
     /**
      * Status constructor.
      * @param int $id
