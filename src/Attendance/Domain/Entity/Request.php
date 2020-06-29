@@ -249,7 +249,7 @@ class Request implements JsonSerializable
     /**
      * @return int
      */
-    public function getAssignedTo(): int
+    public function getAssignedTo(): ?int
     {
         return $this->assignedTo;
     }
@@ -265,7 +265,7 @@ class Request implements JsonSerializable
     /**
      * @return int
      */
-    public function getRequestedBy(): ?int
+    public function getRequestedBy(): int
     {
         return $this->requestedBy;
     }
