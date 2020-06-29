@@ -88,7 +88,7 @@ class Request implements JsonSerializable
      * @param object $updatedAt
      * @param object $finishedAt
      */
-    public function __construct(?int $id, Status $status, int $companyId, string $title, string $description, int $priority, string $section, int $assignedTo, ?int $requestedBy, object $createdAt, object $updatedAt, ?object $finishedAt)
+    public function __construct(?int $id, Status $status, int $companyId, string $title, string $description, int $priority, string $section, ?int $assignedTo, int $requestedBy, object $createdAt, object $updatedAt, ?object $finishedAt)
     {
         $this->id = $id;
         $this->status = $status;

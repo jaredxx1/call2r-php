@@ -83,7 +83,7 @@ class RequestService
             throw new CompanyNotFoundException();
         }
 
-        $user = $this->userRepository->fromId($command->getAssignedTo());
+        $user = $this->userRepository->fromId($command->getrequestedBy());
 
         if(is_null($user)){
             throw new UserNotFoundException();
@@ -103,8 +103,8 @@ class RequestService
             $command->getDescription(),
             $command->getPriority(),
             $command->getSection(),
-            $command->getAssignedTo(),
             null,
+            $command->getrequestedBy(),
             new DateTime(date("Y-m-d H:i:s")),
             new DateTime(date("Y-m-d H:i:s")),
             null
