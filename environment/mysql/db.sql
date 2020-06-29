@@ -87,8 +87,6 @@ create table tb_request_status (
     name varchar(255) unique
 );
 
-drop table tb_request;
-
 create table tb_request
 (
     id_request   int auto_increment primary key,
@@ -107,4 +105,16 @@ create table tb_request
     FOREIGN KEY (id_company) REFERENCES tb_company (id_company),
     FOREIGN KEY (requested_by) REFERENCES tb_user (id_user),
     FOREIGN KEY (assigned_to) REFERENCES tb_user (id_user)
+);
+
+create table tb_request_log
+(
+    id_log int auto_increment,
+    message longtext null,
+    created_at datetime default NOW() null,
+    request_id int null,
+    constraint tb_request_log_pk
+        primary key (id_log),
+    constraint tb_request_log_tb_request_id_request_fk
+        foreign key (request_id) references tb_request (id_request)
 );

@@ -1,0 +1,12 @@
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                          https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+    <entity name="App\Attendance\Domain\Entity\Log" table="tb_request_log">
+        <id name="id" type="integer" column="id_log">
+            <generator strategy="AUTO"/>
+        </id>
+        <field name="message" column="message" type="string" unique="true"/>
+        <field name="createdAt" column="created_at" type="datetime" unique="true"/>
+    </entity>
+</doctrine-mapping>
