@@ -5,7 +5,7 @@ namespace App\Attendance\Domain\Entity;
 
 
 use JsonSerializable;
-use PhpParser\Node\Expr\Cast\Object_;
+use DateTime;
 
 /**
  * Class Request
@@ -59,17 +59,17 @@ class Request implements JsonSerializable
     private $requestedBy;
 
     /**
-     * @var object
+     * @var DateTime
      */
     private $createdAt;
 
     /**
-     * @var object
+     * @var DateTime
      */
     private $updatedAt;
 
     /**
-     * @var object
+     * @var DateTime
      */
     private $finishedAt;
 
@@ -88,7 +88,7 @@ class Request implements JsonSerializable
      * @param object $updatedAt
      * @param object $finishedAt
      */
-    public function __construct(int $id, Status $status, int $companyId, string $title, string $description, int $priority, string $section, int $assignedTo, int $requestedBy, object $createdAt, object $updatedAt, object $finishedAt)
+    public function __construct(?int $id, Status $status, int $companyId, string $title, string $description, int $priority, string $section, ?int $assignedTo, int $requestedBy, object $createdAt, object $updatedAt, ?object $finishedAt)
     {
         $this->id = $id;
         $this->status = $status;
@@ -249,7 +249,7 @@ class Request implements JsonSerializable
     /**
      * @return int
      */
-    public function getAssignedTo(): int
+    public function getAssignedTo(): ?int
     {
         return $this->assignedTo;
     }
@@ -279,49 +279,49 @@ class Request implements JsonSerializable
     }
 
     /**
-     * @return object
+     * @return DateTime
      */
-    public function getCreatedAt(): object
+    public function getCreatedAt(): ?DateTime
     {
         return $this->createdAt;
     }
 
     /**
-     * @param object $createdAt
+     * @param DateTime $createdAt
      */
-    public function setCreatedAt(object $createdAt): void
+    public function setCreatedAt(DateTime $createdAt): void
     {
         $this->createdAt = $createdAt;
     }
 
     /**
-     * @return object
+     * @return DateTime
      */
-    public function getUpdatedAt(): object
+    public function getUpdatedAt(): ?DateTime
     {
         return $this->updatedAt;
     }
 
     /**
-     * @param object $updatedAt
+     * @param DateTime $updatedAt
      */
-    public function setUpdatedAt(object $updatedAt): void
+    public function setUpdatedAt(DateTime $updatedAt): void
     {
         $this->updatedAt = $updatedAt;
     }
 
     /**
-     * @return object
+     * @return DateTime
      */
-    public function getFinishedAt(): object
+    public function getFinishedAt(): ?DateTime
     {
         return $this->finishedAt;
     }
 
     /**
-     * @param object $finishedAt
+     * @param DateTime $finishedAt
      */
-    public function setFinishedAt(object $finishedAt): void
+    public function setFinishedAt(DateTime $finishedAt): void
     {
         $this->finishedAt = $finishedAt;
     }
