@@ -39,14 +39,6 @@ class DoctrineRequestRepository implements RequestRepository
     }
 
     /**
-     * @return array
-     */
-    public function getAll(): array
-    {
-        return $this->repository->findAll();
-    }
-
-    /**
      * @param Request $request
      * @return Request|null
      */

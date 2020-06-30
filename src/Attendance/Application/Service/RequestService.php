@@ -62,12 +62,6 @@ class RequestService
         $this->sectionRepository = $sectionRepository;
     }
 
-
-    public function findAllRequests()
-    {
-        return $this->requestRepository->getAll();
-    }
-
     /**
      * @param CreateRequestCommand $command
      * @return Request|null

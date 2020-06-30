@@ -13,11 +13,6 @@ use App\Attendance\Domain\Entity\Request;
 interface RequestRepository
 {
     /**
-     * @return array
-     */
-    public function getAll(): array;
-
-    /**
      * @param Request $request
      * @return Request|null
      */
