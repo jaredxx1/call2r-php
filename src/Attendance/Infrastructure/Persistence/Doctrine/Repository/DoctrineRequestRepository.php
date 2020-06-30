@@ -45,4 +45,16 @@ class DoctrineRequestRepository implements RequestRepository
     {
         return $this->repository->findAll();
     }
+
+    /**
+     * @param Request $request
+     * @return Request|null
+     */
+    public function create(Request $request): ?Request
+    {
+        $this->entityManager->persist($request);
+        $this->entityManager->flush();
+
+        return $request;
+    }
 }
