@@ -4,6 +4,7 @@
 namespace App\Attendance\Application\Service;
 
 
+use App\Attendance\Application\Command\CreateLogCommand;
 use App\Attendance\Application\Command\CreateRequestCommand;
 use App\Attendance\Application\Exception\StatusNotFoundException;
 use App\Attendance\Domain\Entity\Request;
@@ -17,6 +18,7 @@ use App\Company\Domain\Repository\SectionRepository;
 use App\Security\Application\Exception\UserNotFoundException;
 use App\Security\Domain\Repository\UserRepository;
 use DateTime;
+use Exception;
 
 class RequestService
 {
@@ -65,28 +67,15 @@ class RequestService
     /**
      * @param CreateRequestCommand $command
      * @return Request|null
-     * @throws \Exception
+     * @throws Exception
      */
     public function create(CreateRequestCommand $command)
     {
         $status = $this->statusRepository->fromId(Status::awaitingSupport);
-
         $company = $this->companyRepository->fromId($command->getCompanyId());
 
         if(is_null($company)){
             throw new CompanyNotFoundException();
-        }
-
-        $user = $this->userRepository->fromId($command->getrequestedBy());
-
-        if(is_null($user)){
-            throw new UserNotFoundException();
-        }
-
-        $section = $this->sectionRepository->fromName($command->getSection());
-
-        if(is_null($section)){
-            throw new SectionNotFoundException();
         }
 
         $request = new Request(
@@ -98,11 +87,13 @@ class RequestService
             $command->getPriority(),
             $command->getSection(),
             null,
-            $command->getrequestedBy(),
-            new DateTime(date("Y-m-d H:i:s")),
-            new DateTime(date("Y-m-d H:i:s")),
+            null,
+            null,
+            null,
             null
         );
+
+        LogService::registerEvent('', 'init');
 
         return $this->requestRepository->create($request);
     }

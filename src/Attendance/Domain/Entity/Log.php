@@ -30,6 +30,11 @@ class Log implements JsonSerializable
     private $createdAt;
 
     /**
+     * @var string
+     */
+    private $command;
+
+    /**
      * @var int
      */
     private $requestId;
@@ -39,13 +44,15 @@ class Log implements JsonSerializable
      * @param int $id
      * @param string $message
      * @param DateTime $createdAt
+     * @param string $command
      * @param int $requestId
      */
-    public function __construct(int $id, string $message, DateTime $createdAt, int $requestId)
+    public function __construct(?int $id, string $message, ?DateTime $createdAt, string $command, int $requestId)
     {
         $this->id = $id;
         $this->message = $message;
         $this->createdAt = $createdAt;
+        $this->command = $command;
         $this->requestId = $requestId;
     }
 
@@ -65,7 +72,8 @@ class Log implements JsonSerializable
         return [
             'id' => $this->getId(),
             'message' => $this->getMessage(),
-            'createdAt' => $this->getCreatedAt(),
+            'command' => $this->getCommand(),
+            'createdAt' => $this->getCreatedAt()
         ];
     }
 
@@ -115,6 +123,22 @@ class Log implements JsonSerializable
     public function setCreatedAt(DateTime $createdAt): void
     {
         $this->createdAt = $createdAt;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCommand(): string
+    {
+        return $this->command;
+    }
+
+    /**
+     * @param string $command
+     */
+    public function setCommand(string $command): void
+    {
+        $this->command = $command;
     }
 
     /**

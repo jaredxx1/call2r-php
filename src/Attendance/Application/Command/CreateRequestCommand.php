@@ -35,27 +35,20 @@ class CreateRequestCommand implements CommandInterface
     private $section;
 
     /**
-     * @var int
-     */
-    private $requestedBy;
-
-    /**
      * CreateRequestCommand constructor.
      * @param int $companyId
      * @param string $title
      * @param string $description
      * @param int $priority
      * @param string $section
-     * @param int $requestedBy
      */
-    public function __construct(int $companyId, string $title, string $description, int $priority, string $section, int $requestedBy)
+    public function __construct(int $companyId, string $title, string $description, int $priority, string $section)
     {
         $this->companyId = $companyId;
         $this->title = $title;
         $this->description = $description;
         $this->priority = $priority;
         $this->section = $section;
-        $this->requestedBy = $requestedBy;
     }
 
     /**
@@ -69,14 +62,12 @@ class CreateRequestCommand implements CommandInterface
         Assert::keyExists($data, 'description', 'Field description is required');
         Assert::keyExists($data, 'priority', 'Field priority is required');
         Assert::keyExists($data, 'section', 'Field section is required');
-        Assert::keyExists($data, 'requestedBy', 'Field assigned to is required');
 
         Assert::integer($data['companyId'], ' Field company id is not an integer');
         Assert::string($data['title'], ' Field title is not a string');
         Assert::string($data['description'], ' Field description is not a string');
         Assert::integer($data['priority'], ' Field priority is not an integer');
         Assert::string($data['section'], ' Field section is not a string');
-        Assert::integer($data['requestedBy'], ' Field assigned to is not an integer');
 
         Assert::stringNotEmpty($data['title'], 'Field title is empty');
         Assert::stringNotEmpty($data['description'], 'Field description is empty');
@@ -87,8 +78,7 @@ class CreateRequestCommand implements CommandInterface
             $data['title'],
             $data['description'],
             $data['priority'],
-            $data['section'],
-            $data['requestedBy']
+            $data['section']
         );
     }
 
@@ -178,21 +168,5 @@ class CreateRequestCommand implements CommandInterface
     public function setSection(string $section): void
     {
         $this->section = $section;
-    }
-
-    /**
-     * @return int
-     */
-    public function getrequestedBy(): int
-    {
-        return $this->requestedBy;
-    }
-
-    /**
-     * @param int $requestedBy
-     */
-    public function setrequestedBy(int $requestedBy): void
-    {
-        $this->requestedBy = $requestedBy;
     }
 }
