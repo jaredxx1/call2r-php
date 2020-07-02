@@ -118,3 +118,10 @@ create table tb_request_log
     constraint tb_request_log_tb_request_id_request_fk
         foreign key (request_id) references tb_request (id_request)
 );
+
+insert into tb_request_status(name)
+values ('Aguardando suporte'),
+       ('Em atendimento'),
+       ('Esperando usuário'),
+       ('Aprovado'),
+       ('Cancelado');
