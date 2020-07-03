@@ -17,6 +17,7 @@ use App\Wiki\Domain\Entity\Article;
 use App\Wiki\Domain\Entity\Category;
 use App\Wiki\Domain\Repository\ArticleRepository;
 use App\Wiki\Domain\Repository\CategoryRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * Class ArticleService
@@ -74,17 +75,18 @@ class ArticleService
             throw new CompanyNotFoundException();
         }
 
+        $categories = new ArrayCollection();
+
         foreach ($command->categories() as $category) {
             $foundCategory = $this->categoryRepository->fromArticleTitle($category['title'], $category['idCompany']);
             if (is_null($foundCategory)) {
-                $categories[] = new Category(
+                $categories->add(new Category(
                     null,
                     $category['idCompany'],
-                    $category['title'],
-                    $category['active']
-                );
+                    $category['title']
+                ));
             } else {
-                $categories[] = $foundCategory;
+                $categories->add($foundCategory);
             }
         }
 
@@ -118,17 +120,18 @@ class ArticleService
             throw new CompanyNotFoundException();
         }
 
+        $categories = new ArrayCollection();
+
         foreach ($command->categories() as $category) {
             $foundCategory = $this->categoryRepository->fromArticleTitle($category['title'], $category['idCompany']);
             if (is_null($foundCategory)) {
-                $categories[] = new Category(
+                $categories->add(new Category(
                     null,
                     $category['idCompany'],
-                    $category['title'],
-                    $category['active']
-                );
+                    $category['title']
+                ));
             } else {
-                $categories[] = $foundCategory;
+                $categories->add($foundCategory);
             }
         }
 
@@ -156,7 +159,7 @@ class ArticleService
             throw new ArticleNotFoundException();
         }
 
-        if($article->idCompany() != $company->id()){
+        if ($article->getIdCompany() != $company->id()) {
             throw new ArticleNotAuthorized();
         }
 
@@ -181,7 +184,7 @@ class ArticleService
             throw new CompanyNotFoundException();
         }
 
-        if($article->idCompany() != $query->idCompany()){
+        if ($article->getIdCompany() != $query->idCompany()) {
             throw new ArticleNotAuthorized();
         }
 
