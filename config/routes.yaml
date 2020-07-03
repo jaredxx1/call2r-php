@@ -9,6 +9,11 @@ login:
   controller: App\Security\Presentation\Http\Action\LoginAction
   methods:    POST
 
+test:
+  path: /test
+  controller: App\Core\Presentation\Http\Action\TestAction
+  methods:    GET
+
 ## =============== Company routes
 get_all_companies:
   path: /api/v1/companies
