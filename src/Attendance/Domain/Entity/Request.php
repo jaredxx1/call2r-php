@@ -4,8 +4,8 @@
 namespace App\Attendance\Domain\Entity;
 
 
-use JsonSerializable;
 use DateTime;
+use JsonSerializable;
 
 /**
  * Class Request
@@ -116,7 +116,7 @@ class Request implements JsonSerializable
     /**
      * @return array
      */
-    public function toArray():array
+    public function toArray(): array
     {
         return [
             'id' => $this->getId(),
@@ -265,7 +265,7 @@ class Request implements JsonSerializable
     /**
      * @return int
      */
-    public function getRequestedBy(): int
+    public function getRequestedBy(): ?int
     {
         return $this->requestedBy;
     }
@@ -325,5 +325,4 @@ class Request implements JsonSerializable
     {
         $this->finishedAt = $finishedAt;
     }
-
 }

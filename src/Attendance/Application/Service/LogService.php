@@ -26,19 +26,29 @@ final class LogService
     }
 
     /**
-     * @param CreateLogCommand $command
+     * @param string $message
+     * @param string $command
+     * @param int $requestId
+     * @return Log
      */
-    public function create(CreateLogCommand $command) {
-        dd($command);
+    public function registerEvent(string $message, string $command, int $requestId): Log
+    {
+        $log = new Log(
+            null,
+            $message,
+            null,
+            $command,
+            $requestId
+        );
+
+        return $this->logRepository->create($log);
     }
 
     /**
-     * @param string $message
-     * @param string $command
+     * @param CreateLogCommand $command
      */
-    public static function registerEvent(string $message, string $command) {
-        $log = new Log(null, $message, null, $command);
-
-        dd($log);
+    public function create(CreateLogCommand $command)
+    {
+        dd($command);
     }
 }
