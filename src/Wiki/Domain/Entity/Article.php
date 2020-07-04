@@ -4,6 +4,7 @@
 namespace App\Wiki\Domain\Entity;
 
 
+use Doctrine\Common\Collections\ArrayCollection;
 use JsonSerializable;
 
 /**
@@ -34,7 +35,7 @@ class Article implements JsonSerializable
     private $description;
 
     /**
-     * @var array
+     * @var ArrayCollection
      */
     private $categories;
 
@@ -44,9 +45,9 @@ class Article implements JsonSerializable
      * @param int $idCompany
      * @param string $title
      * @param string $description
-     * @param array $categories
+     * @param ArrayCollection $categories
      */
-    public function __construct(?int $id, int $idCompany, string $title, string $description, array $categories)
+    public function __construct(?int $id, int $idCompany, string $title, string $description, ArrayCollection $categories)
     {
         $this->id = $id;
         $this->idCompany = $idCompany;
@@ -58,6 +59,7 @@ class Article implements JsonSerializable
 
     /**
      * @return array|mixed
+     * @throws \Exception
      */
     public function jsonSerialize()
     {
@@ -66,48 +68,25 @@ class Article implements JsonSerializable
 
     /**
      * @return array
+     * @throws \Exception
      */
     public function toArray(): array
     {
         return [
-            'id' => $this->id(),
-            'idCompany' => $this->idCompany(),
-            'title' => $this->title(),
-            'description' => $this->description(),
-            'categories' => $this->categories()->getIterator()
+            'id' => $this->getId(),
+            'idCompany' => $this->getIdCompany(),
+            'title' => $this->getTitle(),
+            'description' => $this->getDescription(),
+            'categories' => $this->getCategories()->getValues()
         ];
     }
 
     /**
      * @return int
      */
-    public function id(): int
+    public function getId(): int
     {
         return $this->id;
-    }
-
-    /**
-     * @return int
-     */
-    public function idCompany(): int
-    {
-        return $this->idCompany;
-    }
-
-    /**
-     * @return string
-     */
-    public function title(): string
-    {
-        return $this->title;
-    }
-
-    /**
-     * @return string
-     */
-    public function description(): string
-    {
-        return $this->description;
     }
 
     /**
@@ -119,11 +98,27 @@ class Article implements JsonSerializable
     }
 
     /**
+     * @return int
+     */
+    public function getIdCompany(): int
+    {
+        return $this->idCompany;
+    }
+
+    /**
      * @param int $idCompany
      */
     public function setIdCompany(int $idCompany): void
     {
         $this->idCompany = $idCompany;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTitle(): string
+    {
+        return $this->title;
     }
 
     /**
@@ -135,6 +130,14 @@ class Article implements JsonSerializable
     }
 
     /**
+     * @return string
+     */
+    public function getDescription(): string
+    {
+        return $this->description;
+    }
+
+    /**
      * @param string $description
      */
     public function setDescription(string $description): void
@@ -143,17 +146,17 @@ class Article implements JsonSerializable
     }
 
     /**
-     * @return array
+     * @return ArrayCollection
      */
-    public function categories()
+    public function getCategories()
     {
         return $this->categories;
     }
 
     /**
-     * @param array $categories
+     * @param ArrayCollection $categories
      */
-    public function setCategories(array $categories): void
+    public function setCategories(ArrayCollection $categories): void
     {
         $this->categories = $categories;
     }

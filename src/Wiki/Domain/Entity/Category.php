@@ -56,16 +56,16 @@ class Category implements JsonSerializable
     public function toArray(): array
     {
         return [
-            'id' => $this->id(),
-            'idCompany' => $this->idCompany(),
-            'title' => $this->title(),
+            'id' => $this->getId(),
+            'idCompany' => $this->getIdCompany(),
+            'title' => $this->getTitle(),
         ];
     }
 
     /**
      * @return int
      */
-    public function id(): int
+    public function getId(): int
     {
         return $this->id;
     }
@@ -79,9 +79,25 @@ class Category implements JsonSerializable
     }
 
     /**
+     * @return int
+     */
+    public function getIdCompany(): int
+    {
+        return $this->idCompany;
+    }
+
+    /**
+     * @param int $idCompany
+     */
+    public function setIdCompany(int $idCompany): void
+    {
+        $this->idCompany = $idCompany;
+    }
+
+    /**
      * @return string
      */
-    public function title(): string
+    public function getTitle(): string
     {
         return $this->title;
     }
@@ -94,20 +110,5 @@ class Category implements JsonSerializable
         $this->title = $title;
     }
 
-    /**
-     * @return int
-     */
-    public function idCompany(): int
-    {
-        return $this->idCompany;
-    }
-
-    /**
-     * @param int $idCompany
-     */
-    public function setIdCompany(int $idCompany): void
-    {
-        $this->idCompany = $idCompany;
-    }
 
 }

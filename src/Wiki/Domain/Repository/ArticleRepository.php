@@ -22,6 +22,10 @@ interface ArticleRepository
      */
     public function fromId(int $id): ?Article;
 
+    /**
+     * @param Article $article
+     * @return Article|null
+     */
     public function create(Article $article): ?Article;
 
     /**
