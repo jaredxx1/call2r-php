@@ -3,6 +3,7 @@
 
 namespace App\Core\Infrastructure\Email;
 
+use App\Core\Infrastructure\Container\Application\Exception\EmailException;
 use PHPMailer\PHPMailer\PHPMailer;
 
 class EmailService
@@ -24,15 +25,16 @@ class EmailService
         $this->phpMailer = new PHPMailer(true);
     }
 
-
     /**
      * @param string $email
-     * @param string $name
-     * @param string $password
-     * @return bool|string
+     * @param string $nameEmail
+     * @param string $subject
+     * @param string $template
+     * @return bool
+     * @throws EmailException
      * @throws \PHPMailer\PHPMailer\Exception
      */
-    public function sendEmail(string $email, string $name, string $password)
+    public function sendEmail(string $email, string $nameEmail, string $subject, string $template)
     {
 
         /*
@@ -54,17 +56,17 @@ class EmailService
         /*
          * Who will receive the email
          */
-        $this->phpMailer->addAddress($email, $name);
+        $this->phpMailer->addAddress($email, $nameEmail);
 
         /*
          * Title of email
          */
-        $this->phpMailer->Subject = 'Your new password';
+        $this->phpMailer->Subject = $subject;
 
         /*
          * Template of email
          */
-        $this->phpMailer->msgHTML('<H1> ' . $name . ', your new password has arrived ' . $password . '</H1>');
+        $this->phpMailer->msgHTML($template);
 
         /*
          * send email
@@ -72,8 +74,9 @@ class EmailService
         $response = $this->phpMailer->send();
 
         if (!$response) {
-            return $this->phpMailer->ErrorInfo;
+            throw new EmailException();
         }
+
         return $response;
     }
 }
