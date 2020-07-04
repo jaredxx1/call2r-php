@@ -50,27 +50,20 @@ class RequestService
     private $sectionRepository;
 
     /**
-     * @var LogService
-     */
-    private $logService;
-
-    /**
      * RequestService constructor.
      * @param RequestRepository $requestRepository
      * @param StatusRepository $statusRepository
      * @param CompanyRepository $companyRepository
      * @param UserRepository $userRepository
      * @param SectionRepository $sectionRepository
-     * @param LogService $logService
      */
-    public function __construct(RequestRepository $requestRepository, StatusRepository $statusRepository, CompanyRepository $companyRepository, UserRepository $userRepository, SectionRepository $sectionRepository, LogService $logService)
+    public function __construct(RequestRepository $requestRepository, StatusRepository $statusRepository, CompanyRepository $companyRepository, UserRepository $userRepository, SectionRepository $sectionRepository)
     {
         $this->requestRepository = $requestRepository;
         $this->statusRepository = $statusRepository;
         $this->companyRepository = $companyRepository;
         $this->userRepository = $userRepository;
         $this->sectionRepository = $sectionRepository;
-        $this->logService = $logService;
     }
 
     /**

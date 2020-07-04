@@ -12,9 +12,5 @@ use App\Attendance\Domain\Entity\Log;
  */
 interface LogRepository
 {
-    /**
-     * @param Log $log
-     * @return Log
-     */
-    public function create(Log $log): Log;
+
 }
