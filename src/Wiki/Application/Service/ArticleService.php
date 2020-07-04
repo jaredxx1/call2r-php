@@ -145,7 +145,8 @@ class ArticleService
     /**
      * @param FindArticlesByIdQuery $query
      * @return Article
-     * @throws ArticleNotFoundException|CompanyNotFoundException|ArticleNotAuthorized
+     * @throws ArticleNotFoundException
+     * @throws CompanyNotFoundException
      */
     public function fromArticle(FindArticlesByIdQuery $query)
     {
@@ -159,16 +160,11 @@ class ArticleService
             throw new ArticleNotFoundException();
         }
 
-        if ($article->getIdCompany() != $company->id()) {
-            throw new ArticleNotAuthorized();
-        }
-
         return $article;
     }
 
     /**
      * @param DeleteArticleCommand $query
-     * @throws ArticleNotAuthorized
      * @throws ArticleNotFoundException
      * @throws CompanyNotFoundException
      */
@@ -182,10 +178,6 @@ class ArticleService
         $company = $this->categoryRepository->fromId($query->idCompany());
         if(is_null($company)){
             throw new CompanyNotFoundException();
-        }
-
-        if ($article->getIdCompany() != $query->idCompany()) {
-            throw new ArticleNotAuthorized();
         }
 
         $this->articleRepository->delete($article);
