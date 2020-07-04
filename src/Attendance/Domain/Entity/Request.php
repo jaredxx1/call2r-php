@@ -137,7 +137,7 @@ class Request implements JsonSerializable
             'updatedAt' => $this->getUpdatedAt(),
             'finishedAt' => $this->getFinishedAt(),
             'companyId' => $this->getCompanyId(),
-            'status' => $this->getStatus(),
+            'status' => $this->getStatus()->getName(),
             'logs' => $this->getLogs()->getValues()
         ];
     }
@@ -161,7 +161,7 @@ class Request implements JsonSerializable
     /**
      * @return Status
      */
-    public function getStatus(): Status
+    public function getStatus(): ?Status
     {
         return $this->status;
     }

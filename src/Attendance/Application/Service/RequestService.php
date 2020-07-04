@@ -14,6 +14,7 @@ use App\Company\Application\Exception\CompanyNotFoundException;
 use App\Company\Domain\Repository\CompanyRepository;
 use App\Company\Domain\Repository\SectionRepository;
 use App\Security\Domain\Repository\UserRepository;
+use Carbon\Carbon;
 use Doctrine\Common\Collections\ArrayCollection;
 use Exception;
 
@@ -88,7 +89,7 @@ class RequestService
 
         $logs = new ArrayCollection();
 
-        $logs->add(new Log(null, '', null, 'init'));
+        $logs->add(new Log(null, 'O chamado foi criado.', Carbon::now(), 'init'));
 
         $request = new Request(
             null,
@@ -100,8 +101,8 @@ class RequestService
             $command->getSection(),
             null,
             null,
-            null,
-            null,
+            Carbon::now(),
+            Carbon::now(),
             null,
             $logs
         );
