@@ -6,6 +6,7 @@ namespace App\Core\Infrastructure\Storaged\AWS;
 
 use Aws\S3\Exception\S3Exception;
 use Aws\S3\S3Client;
+use Exception;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class S3
@@ -35,11 +36,13 @@ class S3
     }
 
     /**
-     * @param string $cpf
+     * @param string $directory
+     * @param string $key
      * @param UploadedFile $uploadedFile
      * @return mixed|null
+     * @throws Exception
      */
-    public function sendImage(string $cpf, UploadedFile $uploadedFile)
+    public function sendImage(string $directory, string $key, UploadedFile $uploadedFile)
     {
         /*
          * Validates if it's an image
@@ -57,14 +60,15 @@ class S3
             $fileName = $uploadedFile->getPathname();
             $url = $this->s3Client->putObject(array(
                 'Bucket' => self::bucket,
-                'Key' => 'user/' . $cpf . '/image',
+                'Key' => $directory . '/' . $key . '/image',
                 'SourceFile' => $fileName,
                 'ACL' => "public-read",
                 'ContentType' => $uploadedFile->getMimeType()
             ))->toArray()['@metadata']['effectiveUri'];
         } catch (S3Exception $e) {
-            echo $e->getMessage() . PHP_EOL;
+            throw new Exception($e->getAwsErrorMessage());
         }
+
         return $url;
     }
 }
