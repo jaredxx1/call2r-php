@@ -1,5 +1,7 @@
 create database call2r;
 
+create database call2r;
+
 use call2r;
 
 -- Company
@@ -58,40 +60,51 @@ create table tb_user
 
 -- Article
 
-create table tb_article(
-    id_article int auto_increment primary key,
-    id_company int,
-    title varchar(255),
+create table tb_article
+(
+    id_article  int auto_increment primary key,
+    id_company  int,
+    title       varchar(255),
     description varchar(255),
-    FOREIGN KEY (id_company) REFERENCES tb_company(id_company)
+    FOREIGN KEY (id_company) REFERENCES tb_company (id_company)
 );
 
 create table tb_category
 (
     id_category int auto_increment primary key,
-    id_company int,
+    id_company  int,
     title       varchar(255),
-    FOREIGN KEY (id_company) REFERENCES tb_company(id_company)
+    FOREIGN KEY (id_company) REFERENCES tb_company (id_company)
 );
 
 create table tb_article_category
 (
-    id_article int,
+    id_article  int,
     id_category int,
     FOREIGN KEY (id_article) REFERENCES tb_article (id_article),
     FOREIGN KEY (id_category) REFERENCES tb_category (id_category)
 );
 
-create table tb_request_status (
+-- Request
+
+create table tb_request_status
+(
     id_request_status int auto_increment primary key,
-    name varchar(255) unique
+    name              varchar(255) unique
 );
+
+insert into tb_request_status(name)
+values ('Aguardando suporte'),
+       ('Em atendimento'),
+       ('Esperando usuário'),
+       ('Aprovado'),
+       ('Cancelado');
 
 create table tb_request
 (
     id_request   int auto_increment primary key,
     id_status    int,
-    id_company int,
+    id_company   int,
     requested_by int,
     assigned_to  int,
     title        varchar(255),
@@ -109,19 +122,23 @@ create table tb_request
 
 create table tb_request_log
 (
-    id_log int auto_increment,
-    message longtext null,
+    id_log     int auto_increment,
+    message    longtext               null,
     created_at datetime default NOW() null,
-    request_id int null,
+    command    varchar(255),
     constraint tb_request_log_pk
-        primary key (id_log),
-    constraint tb_request_log_tb_request_id_request_fk
-        foreign key (request_id) references tb_request (id_request)
+        primary key (id_log)
 );
 
-insert into tb_request_status(name)
-values ('Aguardando suporte'),
-       ('Em atendimento'),
-       ('Esperando usuário'),
-       ('Aprovado'),
-       ('Cancelado');
+create table tb_requests_logs
+(
+    log_id     int not null,
+    request_id int not null,
+    constraint tb_requests_logs_log_pk
+        primary key (log_id, request_id),
+    constraint tb_requests_logs_tb_request_id_request_fk
+        foreign key (request_id) references tb_request (id_request),
+    constraint tb_requests_logs_tb_request_log_id_log_fk
+        foreign key (log_id) references tb_request_log (id_log)
+);
+

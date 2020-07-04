@@ -5,6 +5,7 @@ namespace App\Attendance\Application\Service;
 
 
 use App\Attendance\Application\Command\CreateRequestCommand;
+use App\Attendance\Domain\Entity\Log;
 use App\Attendance\Domain\Entity\Request;
 use App\Attendance\Domain\Entity\Status;
 use App\Attendance\Domain\Repository\RequestRepository;
@@ -13,6 +14,7 @@ use App\Company\Application\Exception\CompanyNotFoundException;
 use App\Company\Domain\Repository\CompanyRepository;
 use App\Company\Domain\Repository\SectionRepository;
 use App\Security\Domain\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Exception;
 
 /**
@@ -84,6 +86,10 @@ class RequestService
             throw new CompanyNotFoundException();
         }
 
+        $logs = new ArrayCollection();
+
+        $logs->add(new Log(null, '', null, 'init'));
+
         $request = new Request(
             null,
             $status,
@@ -96,14 +102,9 @@ class RequestService
             null,
             null,
             null,
-            null
+            null,
+            $logs
         );
-
-        // Create the request
-        $this->requestRepository->create($request);
-
-        // Create log
-        $this->logService->registerEvent('', 'init', $request->getId());
 
         return $this->requestRepository->create($request);
     }

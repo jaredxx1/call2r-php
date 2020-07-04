@@ -5,6 +5,7 @@ namespace App\Attendance\Domain\Entity;
 
 
 use DateTime;
+use Doctrine\Common\Collections\ArrayCollection;
 use JsonSerializable;
 
 /**
@@ -74,6 +75,11 @@ class Request implements JsonSerializable
     private $finishedAt;
 
     /**
+     * @var array|ArrayCollection|null
+     */
+    private $logs;
+
+    /**
      * Request constructor.
      * @param int $id
      * @param Status $status
@@ -87,8 +93,9 @@ class Request implements JsonSerializable
      * @param object $createdAt
      * @param object $updatedAt
      * @param object $finishedAt
+     * @param ArrayCollection $logs
      */
-    public function __construct(?int $id, Status $status, int $companyId, string $title, string $description, int $priority, string $section, ?int $assignedTo, ?int $requestedBy, ?object $createdAt, ?object $updatedAt, ?object $finishedAt)
+    public function __construct(?int $id, Status $status, int $companyId, string $title, string $description, int $priority, string $section, ?int $assignedTo, ?int $requestedBy, ?object $createdAt, ?object $updatedAt, ?object $finishedAt, ?ArrayCollection $logs)
     {
         $this->id = $id;
         $this->status = $status;
@@ -102,8 +109,8 @@ class Request implements JsonSerializable
         $this->createdAt = $createdAt;
         $this->updatedAt = $updatedAt;
         $this->finishedAt = $finishedAt;
+        $this->logs = $logs;
     }
-
 
     /**
      * @return mixed
@@ -120,8 +127,6 @@ class Request implements JsonSerializable
     {
         return [
             'id' => $this->getId(),
-            'status' => $this->getStatus(),
-            'companyId' => $this->getCompanyId(),
             'title' => $this->getTitle(),
             'description' => $this->getDescription(),
             'priority' => $this->getPriority(),
@@ -130,7 +135,10 @@ class Request implements JsonSerializable
             'requestedBy' => $this->getRequestedBy(),
             'createdAt' => $this->getCreatedAt(),
             'updatedAt' => $this->getUpdatedAt(),
-            'finishedAt' => $this->getFinishedAt()
+            'finishedAt' => $this->getFinishedAt(),
+            'companyId' => $this->getCompanyId(),
+            'status' => $this->getStatus(),
+            'logs' => $this->getLogs()->getValues()
         ];
     }
 
@@ -324,5 +332,21 @@ class Request implements JsonSerializable
     public function setFinishedAt(DateTime $finishedAt): void
     {
         $this->finishedAt = $finishedAt;
+    }
+
+    /**
+     * @return array|ArrayCollection|null
+     */
+    public function getLogs()
+    {
+        return $this->logs;
+    }
+
+    /**
+     * @param array|ArrayCollection|null $logs
+     */
+    public function setLogs($logs): void
+    {
+        $this->logs = $logs;
     }
 }
