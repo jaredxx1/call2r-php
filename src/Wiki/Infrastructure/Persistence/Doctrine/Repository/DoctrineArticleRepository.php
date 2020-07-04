@@ -50,7 +50,7 @@ class DoctrineArticleRepository implements ArticleRepository
             ->where('a.idCompany = :id')
             ->setParameter('id', $id)
             ->getQuery()
-            ->getArrayResult();
+            ->getResult();
     }
 
     /**
@@ -59,7 +59,7 @@ class DoctrineArticleRepository implements ArticleRepository
      */
     public function create(Article $article): ?Article
     {
-        foreach ($article->categories() as $category) {
+        foreach ($article->getCategories() as $category) {
             $this->entityManager->persist($category);
         }
         $this->entityManager->persist($article);
@@ -82,7 +82,7 @@ class DoctrineArticleRepository implements ArticleRepository
      */
     public function update(Article $article): ?Article
     {
-        foreach ($article->categories() as $category) {
+        foreach ($article->getCategories() as $category) {
             $this->entityManager->persist($category);
         }
         $this->entityManager->flush();

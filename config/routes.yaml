@@ -53,7 +53,7 @@ update_section:
 
 ## =============== Wiki routes
 get_all_articles_from_company:
-  path: /api/v1/companies/{id}/articles
+  path: /api/v1/companies/{idCompany}/articles
   controller: App\Wiki\Presentation\Http\Action\FindAllArticlesFromCompanyAction
   methods:    GET
   requirements:
@@ -94,22 +94,6 @@ get_all_categories:
   methods:    GET
   requirements:
     id: '\d+'
-
-update_category:
-  path: /api/v1/companies/{idCompany}/categories/{idCategory}
-  controller: App\Wiki\Presentation\Http\Action\UpdateCategoryAction
-  methods:    PUT
-  requirements:
-    idCompany: '\d+'
-    idCategory: '\d+'
-
-delete_category:
-  path: /api/v1/companies/{idCompany}/categories/{idCategory}
-  controller: App\Wiki\Presentation\Http\Action\DeleteCategoryAction
-  methods:    DELETE
-  requirements:
-    idCompany: '\d+'
-    idCategory: '\d+'
 
 ## =============== User routes
 get_user_by_id:

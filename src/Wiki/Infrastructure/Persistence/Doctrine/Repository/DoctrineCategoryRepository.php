@@ -4,13 +4,11 @@
 namespace App\Wiki\Infrastructure\Persistence\Doctrine\Repository;
 
 
-use App\Wiki\Application\Exception\DuplicatedCategoryException;
 use App\Wiki\Domain\Entity\Category;
 use App\Wiki\Domain\Repository\CategoryRepository;
 use Doctrine\Common\Persistence\ObjectRepository;
-use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
-use \Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\NonUniqueResultException;
 
 /**
  * Class DoctrineCategoryRepository
@@ -66,17 +64,6 @@ class DoctrineCategoryRepository implements CategoryRepository
     }
 
     /**
-     * @param Category $category
-     * @return Category|null
-     */
-    public function update(Category $category): ?Category
-    {
-        $this->entityManager->flush();
-
-        return $category;
-    }
-
-    /**
      * @param int $id
      * @return Category|null
      */
@@ -117,16 +104,6 @@ class DoctrineCategoryRepository implements CategoryRepository
             ->where('c.idCompany = :id')
             ->setParameter('id', $id)
             ->getQuery()
-            ->getArrayResult();
-    }
-
-    /**
-     * @param Category $category
-     * @return mixed
-     */
-    public function delete(Category $category): void
-    {
-        $this->entityManager->remove($category);
-        $this->entityManager->flush();
+            ->getResult();
     }
 }
