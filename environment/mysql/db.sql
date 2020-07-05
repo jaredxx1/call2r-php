@@ -98,7 +98,8 @@ values ('Aguardando suporte'),
        ('Em atendimento'),
        ('Esperando usuário'),
        ('Aprovado'),
-       ('Cancelado');
+       ('Cancelado'),
+       ('Finalizado');
 
 create table tb_request
 (
