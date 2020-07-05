@@ -28,6 +28,7 @@ class Status implements JsonSerializable
     const awaitingResponse = 3;
     const approved = 4;
     const canceled = 5;
+    const finished = 6;
 
     /**
      * Status constructor.

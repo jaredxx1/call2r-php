@@ -153,3 +153,10 @@ move_request_to_in_attendance:
   methods:    POST
   requirements:
     requestId: '\d+'
+
+move_request_to_finished:
+  path: /api/v1/requests/move/{requestId}/finished
+  controller: App\Attendance\Presentation\Http\Action\MoveToFinishedAction
+  methods:    POST
+  requirements:
+    requestId: '\d+'
