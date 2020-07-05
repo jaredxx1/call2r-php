@@ -5,6 +5,7 @@ namespace App\Attendance\Presentation\Http\Action;
 
 
 use App\Attendance\Application\Service\RequestService;
+use App\Core\Presentation\Http\AbstractAction;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -14,7 +15,7 @@ use Throwable;
  * Class MoveToCanceledAction
  * @package App\Attendance\Presentation\Http\Action
  */
-class MoveToCanceledAction
+class MoveToCanceledAction extends AbstractAction
 {
 
     /**
@@ -39,6 +40,7 @@ class MoveToCanceledAction
     {
         try {
             $request = $this->service->findById($requestId);
+            $request = $this->service->moveToCanceled($request);
         } catch (Exception $exception) {
             return $this->errorResponse($exception->getMessage(), $exception->getCode() ? $exception->getCode() : 400);
         } catch (Throwable $exception) {
