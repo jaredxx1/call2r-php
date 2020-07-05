@@ -5,6 +5,7 @@ namespace App\Attendance\Application\Exception;
 
 
 use Exception;
+use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
 class StatusNotFoundException extends Exception
@@ -15,7 +16,7 @@ class StatusNotFoundException extends Exception
      * @param int $code
      * @param Throwable|null $previous
      */
-    public function __construct($message = "Status not found", $code = 404, Throwable $previous = null)
+    public function __construct($message = "Status not found", $code = Response::HTTP_NOT_FOUND, Throwable $previous = null)
     {
         parent::__construct($message, $code, $previous);
     }
