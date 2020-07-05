@@ -38,6 +38,11 @@ class User implements UserInterface, JsonSerializable
     private $email;
 
     /**
+     * @var string|null
+     */
+    private $image;
+
+    /**
      * @var
      */
     private $birthdate;
@@ -59,17 +64,19 @@ class User implements UserInterface, JsonSerializable
      * @param string $password
      * @param string $role
      * @param string $email
+     * @param string|null $image
      * @param $birthdate
      * @param bool $active
      * @param int $companyId
      */
-    public function __construct(?int $id, string $cpf, string $password, string $role, string $email, $birthdate, bool $active, int $companyId)
+    public function __construct(?int $id, string $cpf, string $password, string $role, string $email, ?string $image, $birthdate, bool $active, int $companyId)
     {
         $this->id = $id;
         $this->cpf = $cpf;
         $this->password = $password;
         $this->role = $role;
         $this->email = $email;
+        $this->image = $image;
         $this->birthdate = $birthdate;
         $this->active = $active;
         $this->companyId = $companyId;
@@ -93,6 +100,7 @@ class User implements UserInterface, JsonSerializable
             'cpf' => $this->getCpf(),
             'birthdate' => $this->getBirthdate(),
             'email' => $this->getEmail(),
+            'image' => $this->getImage(),
             'companyId' => $this->getCompanyId(),
             'isActive' => $this->isActive(),
             'roles' => $this->getRoles(),
@@ -261,5 +269,21 @@ class User implements UserInterface, JsonSerializable
     public function setRole(string $role): void
     {
         $this->role = $role;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getImage(): ?string
+    {
+        return $this->image;
+    }
+
+    /**
+     * @param string|null $image
+     */
+    public function setImage(?string $image): void
+    {
+        $this->image = $image;
     }
 }

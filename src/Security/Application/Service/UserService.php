@@ -4,6 +4,7 @@
 namespace App\Security\Application\Service;
 
 
+use App\Core\Infrastructure\Storaged\AWS\S3;
 use App\Security\Application\Command\CreateUserCommand;
 use App\Security\Application\Command\LoginCommand;
 use App\Security\Application\Command\UpdateUserCommand;
@@ -14,6 +15,8 @@ use App\Security\Domain\Entity\User;
 use App\Security\Domain\Repository\UserRepository;
 use Exception;
 use Firebase\JWT\JWT;
+use Ramsey\Uuid\Uuid;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
  * Class UserService
@@ -28,12 +31,19 @@ final class UserService
     private $userRepository;
 
     /**
+     * @var S3
+     */
+    private $s3;
+
+    /**
      * UserService constructor.
      * @param UserRepository $userRepository
+     * @param S3 $s3
      */
-    public function __construct(UserRepository $userRepository)
+    public function __construct(UserRepository $userRepository, S3 $s3)
     {
         $this->userRepository = $userRepository;
+        $this->s3 = $s3;
     }
 
     /**
@@ -117,6 +127,7 @@ final class UserService
             $command->getPassword(),
             $command->getRole(),
             $command->getEmail(),
+            null,
             $command->getBirthdate(),
             $command->isActive(),
             $command->getCompanyId()
@@ -167,5 +178,22 @@ final class UserService
         }
 
         return $user;
+    }
+
+    /**
+     * @param User $user
+     * @param $image
+     * @return User
+     * @throws Exception
+     */
+    public function updateImage(User $user, $image)
+    {
+        $uuid = Uuid::uuid4();
+        $url = null;
+        if(!is_null($image) && preg_match('/image\//', $image->getMimeType())){
+            $url = $this->s3->sendFile('user',$uuid->serialize(),$image);
+        }
+        $user->setImage($url);
+        return $this->userRepository->updateUser($user);
     }
 }
