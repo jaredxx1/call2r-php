@@ -84,7 +84,7 @@ update_article:
   requirements:
     idCompany: '\d+'
     idArticle: '\d+'
-    
+
 delete_article:
   path: /api/v1/companies/{idCompany}/articles/{idArticle}
   controller: App\Wiki\Presentation\Http\Action\DeleteArticleAction
@@ -133,6 +133,11 @@ create_request:
   controller: App\Attendance\Presentation\Http\Action\CreateRequestAction
   methods:    POST
 
+find_requests:
+  path: /api/v1/requests
+  controller: App\Attendance\Presentation\Http\Action\FindRequestsAction
+  methods:    GET
+
 move_request_to_awaiting_support:
   path: /api/v1/requests/move/{requestId}/awaiting-support
   controller: App\Attendance\Presentation\Http\Action\MoveToAwaitingSupportAction
@@ -146,7 +151,7 @@ move_request_to_awaiting_response:
   methods:    POST
   requirements:
     requestId: '\d+'
-    
+
 move_request_to_in_attendance:
   path: /api/v1/requests/move/{requestId}/in-attendance
   controller: App\Attendance\Presentation\Http\Action\MoveToInAttendanceAction

@@ -6,6 +6,7 @@ namespace App\Attendance\Infrastructure\Persistence\Doctrine\Repository;
 
 use App\Attendance\Domain\Entity\Request;
 use App\Attendance\Domain\Repository\RequestRepository;
+use App\Security\Domain\Entity\User;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -68,5 +69,56 @@ class DoctrineRequestRepository implements RequestRepository
         $this->entityManager->flush();
 
         return $request;
+    }
+
+    /**
+     * @param User $user
+     * @return array
+     */
+    public function findRequestsToClient(User $user): array
+    {
+        return $this->entityManager
+            ->createQueryBuilder()
+            ->select('r')
+            ->from('Attendance:Request', 'r')
+            ->where('r.requestedBy = :userId')
+            ->setParameter('userId', $user->getId())
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * @param User $user
+     * @return array
+     */
+    public function findRequestsToManager(User $user): array
+    {
+        return $this->entityManager
+            ->createQueryBuilder()
+            ->select('r')
+            ->from('Attendance:Request', 'r')
+            ->where('r.companyId = :companyId')
+            ->setParameter('companyId', $user->getCompanyId())
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * @param User $user
+     * @return array
+     */
+    public function findRequestsToSupport(User $user): array
+    {
+        return $this->entityManager
+            ->createQueryBuilder()
+            ->select('r')
+            ->from('Attendance:Request', 'r')
+            ->where('r.requestedBy = :userId')
+            ->orWhere('r.assignedTo = :userId')
+            ->orWhere('r.companyId = :companyId AND r.assignedTo IS NULL')
+            ->setParameter('companyId', $user->getCompanyId())
+            ->setParameter('userId', $user->getId())
+            ->getQuery()
+            ->getResult();
     }
 }
