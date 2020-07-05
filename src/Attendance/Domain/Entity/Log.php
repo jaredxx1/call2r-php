@@ -4,7 +4,9 @@
 namespace App\Attendance\Domain\Entity;
 
 
+use Carbon\Carbon;
 use DateTime;
+use Exception;
 use JsonSerializable;
 
 /**
@@ -51,6 +53,7 @@ class Log implements JsonSerializable
 
     /**
      * @return array|mixed
+     * @throws Exception
      */
     public function jsonSerialize()
     {
@@ -59,6 +62,7 @@ class Log implements JsonSerializable
 
     /**
      * @return array
+     * @throws Exception
      */
     public function toArray()
     {
@@ -66,7 +70,7 @@ class Log implements JsonSerializable
             'id' => $this->getId(),
             'message' => $this->getMessage(),
             'command' => $this->getCommand(),
-            'createdAt' => $this->getCreatedAt()
+            'createdAt' => (new Carbon($this->getCreatedAt()))
         ];
     }
 

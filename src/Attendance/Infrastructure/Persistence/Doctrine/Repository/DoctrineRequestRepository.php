@@ -49,4 +49,24 @@ class DoctrineRequestRepository implements RequestRepository
 
         return $request;
     }
+
+    /**
+     * @param int $id
+     * @return Request|null
+     */
+    public function fromId(int $id): ?Request
+    {
+        return $this->repository->find($id);
+    }
+
+    /**
+     * @param Request $request
+     * @return Request|null
+     */
+    public function update(Request $request): ?Request
+    {
+        $this->entityManager->flush();
+
+        return $request;
+    }
 }

@@ -4,19 +4,20 @@
 namespace App\Attendance\Presentation\Http\Action;
 
 
-use App\Attendance\Application\Command\CreateRequestCommand;
+use App\Attendance\Application\Exception\RequestNotFoundException;
 use App\Attendance\Application\Service\RequestService;
 use App\Core\Presentation\Http\AbstractAction;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
 /**
- * Class CreateRequestAction
+ * Class MoveToAwaitingSupportAction
  * @package App\Attendance\Presentation\Http\Action
  */
-class CreateRequestAction extends AbstractAction
+class MoveToAwaitingSupportAction extends AbstractAction
 {
     /**
      * @var RequestService
@@ -34,19 +35,20 @@ class CreateRequestAction extends AbstractAction
 
     /**
      * @param Request $request
+     * @param int $requestId
      * @return JsonResponse
      */
-    public function __invoke(Request $request)
+    public function __invoke(Request $request, int $requestId)
     {
         try {
-            $data = json_decode($request->getContent(), true);
-            $command = CreateRequestCommand::fromArray($data);
-            $request = $this->service->create($command);
+            $request = $this->service->findById($requestId);
+            $request = $this->service->moveToAwaitingSupport($request);
         } catch (Exception $exception) {
             return $this->errorResponse($exception->getMessage(), $exception->getCode() ? $exception->getCode() : 400);
         } catch (Throwable $exception) {
             return $this->errorResponse($exception->getMessage(), $exception->getCode() ? $exception->getCode() : 400);
         }
-        return new JsonResponse($request, 201);
+
+        return new JsonResponse($request, Response::HTTP_ACCEPTED);
     }
 }

@@ -132,3 +132,10 @@ create_request:
   path: /api/v1/requests
   controller: App\Attendance\Presentation\Http\Action\CreateRequestAction
   methods:    POST
+
+move_request_to_awaiting_support:
+  path: /api/v1/requests/move/{requestId}/awaiting-support
+  controller: App\Attendance\Presentation\Http\Action\MoveToAwaitingSupportAction
+  methods:    POST
+  requirements:
+    requestId: '\d+'
