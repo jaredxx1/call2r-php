@@ -150,6 +150,30 @@ class RequestService
      * @return Request
      * @throws UnauthorizedStatusChangeException
      */
+    public function moveToInAttendance(Request $request): Request
+    {
+        if (
+            !($request->getStatus()->getId() == Status::awaitingSupport) ||
+            !($request->getStatus()->getId() == Status::awaitingResponse)
+        ) {
+            throw new UnauthorizedStatusChangeException();
+        }
+
+        $log = new Log(null, 'Chamado em atendimento.', Carbon::now(), 'inAttendance');
+        $status = $this->statusRepository->fromId(Status::inAttendance);
+
+        $request->getLogs()->add($log);
+        $request->setStatus($status);
+        $request->setUpdatedAt(Carbon::now());
+
+        return $this->requestRepository->update($request);
+    }
+
+    /**
+     * @param Request $request
+     * @return Request
+     * @throws UnauthorizedStatusChangeException
+     */
     public function moveToAwaitingResponse(Request $request): Request
     {
         if (!($request->getStatus()->getId() == Status::inAttendance)) {
@@ -165,5 +189,4 @@ class RequestService
 
         return $this->requestRepository->update($request);
     }
-
 }
