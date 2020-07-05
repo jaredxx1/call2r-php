@@ -121,3 +121,9 @@ update_user:
   methods:    PUT
   requirements:
     id: '\d+'
+
+## =============== Attendance Routes
+create_request:
+  path: /api/v1/requests
+  controller: App\Attendance\Presentation\Http\Action\CreateRequestAction
+  methods:    POST
