@@ -5,6 +5,7 @@ namespace App\Attendance\Application\Service;
 
 
 use App\Attendance\Application\Command\CreateRequestCommand;
+use App\Attendance\Application\Exception\RequestNotFoundException;
 use App\Attendance\Domain\Entity\Log;
 use App\Attendance\Domain\Entity\Request;
 use App\Attendance\Domain\Entity\Status;
@@ -101,6 +102,38 @@ class RequestService
         );
 
         return $this->requestRepository->create($request);
+    }
+
+    /**
+     * @param int $id
+     * @return Request
+     * @throws RequestNotFoundException
+     */
+    public function findById(int $id)
+    {
+        $request = $this->requestRepository->fromId($id);
+
+        if (is_null($request)) {
+            throw new RequestNotFoundException();
+        }
+
+        return $request;
+    }
+
+    /**
+     * @param Request $request
+     * @return Request
+     */
+    public function moveToAwaitingSupport(Request $request): Request
+    {
+        $log = new Log(null, 'Chamado aguardando atendimento.', Carbon::now(), 'awaitingSupport');
+        $status = $this->statusRepository->fromId(Status::awaitingSupport);
+
+        $request->getLogs()->add($log);
+        $request->setStatus($status);
+        $request->setUpdatedAt(Carbon::now());
+
+        return $this->requestRepository->update($request);
     }
 
 }

@@ -17,4 +17,17 @@ interface RequestRepository
      * @return Request|null
      */
     public function create(Request $request): ?Request;
+
+    /**
+     * @param int $id
+     * @return Request|null
+     */
+    public function fromId(int $id): ?Request;
+
+
+    /**
+     * @param Request $request
+     * @return Request|null
+     */
+    public function update(Request $request): ?Request;
 }
