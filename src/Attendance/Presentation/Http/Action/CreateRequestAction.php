@@ -23,6 +23,7 @@ class CreateRequestAction extends AbstractAction
      */
     private $service;
 
+
     /**
      * CreateRequestAction constructor.
      * @param RequestService $service
