@@ -97,8 +97,11 @@ class DoctrineRequestRepository implements RequestRepository
             ->createQueryBuilder()
             ->select('r')
             ->from('Attendance:Request', 'r')
-            ->where('r.companyId = :companyId')
+            ->where('r.requestedBy = :userId')
+            ->orWhere('r.assignedTo = :userId')
+            ->orWhere('r.companyId = :companyId')
             ->setParameter('companyId', $user->getCompanyId())
+            ->setParameter('userId', $user->getId())
             ->getQuery()
             ->getResult();
     }
