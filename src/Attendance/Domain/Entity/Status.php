@@ -23,7 +23,7 @@ class Status implements JsonSerializable
      */
     private $name;
 
-    const    = 1;
+    const awaitingSupport = 1;
     const inAttendance = 2;
     const awaitingResponse = 3;
     const approved = 4;

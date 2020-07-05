@@ -6,6 +6,7 @@ namespace App\Attendance\Presentation\Http\Action;
 
 use App\Attendance\Application\Exception\RequestNotFoundException;
 use App\Attendance\Application\Service\RequestService;
+use App\Core\Presentation\Http\AbstractAction;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -16,7 +17,7 @@ use Throwable;
  * Class MoveToAwaitingSupportAction
  * @package App\Attendance\Presentation\Http\Action
  */
-class MoveToAwaitingSupportAction
+class MoveToAwaitingSupportAction extends AbstractAction
 {
     /**
      * @var RequestService
@@ -36,11 +37,9 @@ class MoveToAwaitingSupportAction
      * @param Request $request
      * @param int $requestId
      * @return JsonResponse
-     * @throws RequestNotFoundException
      */
     public function __invoke(Request $request, int $requestId)
     {
-
         try {
             $request = $this->service->findById($requestId);
             $request = $this->service->moveToAwaitingSupport($request);

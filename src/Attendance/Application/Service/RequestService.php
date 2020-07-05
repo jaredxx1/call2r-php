@@ -6,6 +6,7 @@ namespace App\Attendance\Application\Service;
 
 use App\Attendance\Application\Command\CreateRequestCommand;
 use App\Attendance\Application\Exception\RequestNotFoundException;
+use App\Attendance\Application\Exception\UnauthorizedStatusChangeException;
 use App\Attendance\Domain\Entity\Log;
 use App\Attendance\Domain\Entity\Request;
 use App\Attendance\Domain\Entity\Status;
@@ -123,9 +124,17 @@ class RequestService
     /**
      * @param Request $request
      * @return Request
+     * @throws UnauthorizedStatusChangeException
      */
     public function moveToAwaitingSupport(Request $request): Request
     {
+        if (
+            !($request->getStatus()->getId() == Status::inAttendance) ||
+            !($request->getStatus()->getId() == Status::approved)
+        ) {
+            throw new UnauthorizedStatusChangeException();
+        }
+
         $log = new Log(null, 'Chamado aguardando atendimento.', Carbon::now(), 'awaitingSupport');
         $status = $this->statusRepository->fromId(Status::awaitingSupport);
 

@@ -159,38 +159,6 @@ class Request implements JsonSerializable
     }
 
     /**
-     * @return Status
-     */
-    public function getStatus(): ?Status
-    {
-        return $this->status;
-    }
-
-    /**
-     * @param Status $status
-     */
-    public function setStatus(Status $status): void
-    {
-        $this->status = $status;
-    }
-
-    /**
-     * @return int
-     */
-    public function getCompanyId(): int
-    {
-        return $this->companyId;
-    }
-
-    /**
-     * @param int $companyId
-     */
-    public function setCompanyId(int $companyId): void
-    {
-        $this->companyId = $companyId;
-    }
-
-    /**
      * @return string
      */
     public function getTitle(): string
@@ -332,6 +300,38 @@ class Request implements JsonSerializable
     public function setFinishedAt(DateTime $finishedAt): void
     {
         $this->finishedAt = $finishedAt;
+    }
+
+    /**
+     * @return int
+     */
+    public function getCompanyId(): int
+    {
+        return $this->companyId;
+    }
+
+    /**
+     * @param int $companyId
+     */
+    public function setCompanyId(int $companyId): void
+    {
+        $this->companyId = $companyId;
+    }
+
+    /**
+     * @return Status
+     */
+    public function getStatus(): ?Status
+    {
+        return $this->status;
+    }
+
+    /**
+     * @param Status $status
+     */
+    public function setStatus(Status $status): void
+    {
+        $this->status = $status;
     }
 
     /**
