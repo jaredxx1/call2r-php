@@ -30,12 +30,6 @@ interface CategoryRepository
     public function fromId(int $id): ?Category;
 
     /**
-     * @param Category $category
-     * @return Category|null
-     */
-    public function update(Category $category): ?Category;
-
-    /**
      * @param int $id
      * @return Category|null
      */
@@ -47,10 +41,4 @@ interface CategoryRepository
      * @return Category|null
      */
     public function fromArticleTitle(string $title, int $idCompany): ?Category;
-
-    /**
-     * @param Category $category
-     * @return mixed
-     */
-    public function delete(Category $category);
 }

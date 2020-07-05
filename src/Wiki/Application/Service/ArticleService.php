@@ -17,6 +17,7 @@ use App\Wiki\Domain\Entity\Article;
 use App\Wiki\Domain\Entity\Category;
 use App\Wiki\Domain\Repository\ArticleRepository;
 use App\Wiki\Domain\Repository\CategoryRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * Class ArticleService
@@ -74,17 +75,18 @@ class ArticleService
             throw new CompanyNotFoundException();
         }
 
+        $categories = new ArrayCollection();
+
         foreach ($command->categories() as $category) {
             $foundCategory = $this->categoryRepository->fromArticleTitle($category['title'], $category['idCompany']);
             if (is_null($foundCategory)) {
-                $categories[] = new Category(
+                $categories->add(new Category(
                     null,
                     $category['idCompany'],
-                    $category['title'],
-                    $category['active']
-                );
+                    $category['title']
+                ));
             } else {
-                $categories[] = $foundCategory;
+                $categories->add($foundCategory);
             }
         }
 
@@ -118,17 +120,18 @@ class ArticleService
             throw new CompanyNotFoundException();
         }
 
+        $categories = new ArrayCollection();
+
         foreach ($command->categories() as $category) {
             $foundCategory = $this->categoryRepository->fromArticleTitle($category['title'], $category['idCompany']);
             if (is_null($foundCategory)) {
-                $categories[] = new Category(
+                $categories->add(new Category(
                     null,
                     $category['idCompany'],
-                    $category['title'],
-                    $category['active']
-                );
+                    $category['title']
+                ));
             } else {
-                $categories[] = $foundCategory;
+                $categories->add($foundCategory);
             }
         }
 
@@ -142,7 +145,8 @@ class ArticleService
     /**
      * @param FindArticlesByIdQuery $query
      * @return Article
-     * @throws ArticleNotFoundException|CompanyNotFoundException|ArticleNotAuthorized
+     * @throws ArticleNotFoundException
+     * @throws CompanyNotFoundException
      */
     public function fromArticle(FindArticlesByIdQuery $query)
     {
@@ -156,16 +160,11 @@ class ArticleService
             throw new ArticleNotFoundException();
         }
 
-        if($article->idCompany() != $company->id()){
-            throw new ArticleNotAuthorized();
-        }
-
         return $article;
     }
 
     /**
      * @param DeleteArticleCommand $query
-     * @throws ArticleNotAuthorized
      * @throws ArticleNotFoundException
      * @throws CompanyNotFoundException
      */
@@ -179,10 +178,6 @@ class ArticleService
         $company = $this->categoryRepository->fromId($query->idCompany());
         if(is_null($company)){
             throw new CompanyNotFoundException();
-        }
-
-        if($article->idCompany() != $query->idCompany()){
-            throw new ArticleNotAuthorized();
         }
 
         $this->articleRepository->delete($article);
