@@ -3,7 +3,7 @@
 
 namespace App\Core\Infrastructure\Email;
 
-use App\Core\Infrastructure\Container\Application\Exception\EmailException;
+use App\Core\Infrastructure\Container\Application\Exception\EmailSendException;
 use PHPMailer\PHPMailer\PHPMailer;
 
 class EmailService
@@ -27,14 +27,13 @@ class EmailService
 
     /**
      * @param string $email
-     * @param string $nameEmail
+     * @param string $emailName
      * @param string $subject
      * @param string $template
-     * @return bool
-     * @throws EmailException
-     * @throws \PHPMailer\PHPMailer\Exception
+     * @return mixed
+     * @throws EmailSendException
      */
-    public function sendEmail(string $email, string $nameEmail, string $subject, string $template)
+    public function sendEmail(string $email, string $emailName, string $subject, string $template)
     {
 
         /*
@@ -56,7 +55,7 @@ class EmailService
         /*
          * Who will receive the email
          */
-        $this->phpMailer->addAddress($email, $nameEmail);
+        $this->phpMailer->addAddress($email, $emailName);
 
         /*
          * Title of email
@@ -74,7 +73,7 @@ class EmailService
         $response = $this->phpMailer->send();
 
         if (!$response) {
-            throw new EmailException();
+            throw new EmailSendException();
         }
 
         return $response;
