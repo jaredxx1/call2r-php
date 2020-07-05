@@ -197,12 +197,38 @@ class RequestService
      */
     public function moveToFinished(Request $request): Request
     {
-         if (!($request->getStatus()->getId() == Status::approved)) {
+        if (!($request->getStatus()->getId() == Status::approved)) {
             throw new UnauthorizedStatusChangeException();
         }
 
         $log = new Log(null, 'Chamado finalizado.', Carbon::now(), 'finish');
         $status = $this->statusRepository->fromId(Status::finished);
+
+        $request->getLogs()->add($log);
+        $request->setStatus($status);
+        $request->setUpdatedAt(Carbon::now());
+
+        return $this->requestRepository->update($request);
+    }
+
+
+    /**
+     * @param Request $request
+     * @return Request
+     * @throws UnauthorizedStatusChangeException
+     */
+    public function moveToCanceled(Request $request): Request
+    {
+        if (
+            !($request->getStatus()->getId() == Status::awaitingSupport) ||
+            !($request->getStatus()->getId() == Status::inAttendance) ||
+            !($request->getStatus()->getId() == Status::awaitingResponse)
+        ) {
+            throw new UnauthorizedStatusChangeException();
+        }
+
+        $log = new Log(null, 'Chamado cancelado.', Carbon::now(), 'finish');
+        $status = $this->statusRepository->fromId(Status::canceled);
 
         $request->getLogs()->add($log);
         $request->setStatus($status);
