@@ -160,3 +160,10 @@ move_request_to_finished:
   methods:    POST
   requirements:
     requestId: '\d+'
+
+move_request_to_canceled:
+  path: /api/v1/requests/move/{requestId}/canceled
+  controller: App\Attendance\Presentation\Http\Action\MoveToCanceledAction
+  methods:    POST
+  requirements:
+    requestId: '\d+'
