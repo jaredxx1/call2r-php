@@ -137,7 +137,7 @@ class RequestService
                 $requests = $this->requestRepository->findRequestsToManager($user);
                 break;
             case 'ROLE_CLIENT':
-                $requests = [];
+                $requests = $this->requestRepository->findRequestsToClient($user);
                 break;
             default:
                 $requests = [];
