@@ -140,6 +140,13 @@ move_request_to_awaiting_support:
   requirements:
     requestId: '\d+'
 
+move_request_to_awaiting_response:
+  path: /api/v1/requests/move/{requestId}/awaiting-response
+  controller: App\Attendance\Presentation\Http\Action\MoveToAwaitingResponseAction
+  methods:    POST
+  requirements:
+    requestId: '\d+'
+    
 move_request_to_in_attendance:
   path: /api/v1/requests/move/{requestId}/in-attendance
   controller: App\Attendance\Presentation\Http\Action\MoveToInAttendanceAction
