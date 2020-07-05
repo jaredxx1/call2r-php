@@ -211,7 +211,6 @@ class RequestService
         return $this->requestRepository->update($request);
     }
 
-
     /**
      * @param Request $request
      * @return Request
@@ -227,8 +226,32 @@ class RequestService
             throw new UnauthorizedStatusChangeException();
         }
 
-        $log = new Log(null, 'Chamado cancelado.', Carbon::now(), 'finish');
+        $log = new Log(null, 'Chamado cancelado.', Carbon::now(), 'cancel');
         $status = $this->statusRepository->fromId(Status::canceled);
+
+        $request->getLogs()->add($log);
+        $request->setStatus($status);
+        $request->setUpdatedAt(Carbon::now());
+
+        return $this->requestRepository->update($request);
+    }
+
+    /**
+     * @param Request $request
+     * @return Request
+     * @throws UnauthorizedStatusChangeException
+     */
+    public function moveToApproved(Request $request): Request
+    {
+        if (
+            !($request->getStatus()->getId() == Status::inAttendance) ||
+            !($request->getStatus()->getId() == Status::awaitingResponse)
+        ) {
+            throw new UnauthorizedStatusChangeException();
+        }
+
+        $log = new Log(null, 'Chamado aprovado.', Carbon::now(), 'approve');
+        $status = $this->statusRepository->fromId(Status::approved);
 
         $request->getLogs()->add($log);
         $request->setStatus($status);
