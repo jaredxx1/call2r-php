@@ -167,3 +167,10 @@ move_request_to_canceled:
   methods:    POST
   requirements:
     requestId: '\d+'
+
+move_request_to_approved:
+  path: /api/v1/requests/move/{requestId}/approved
+  controller: App\Attendance\Presentation\Http\Action\MoveToApprovedAction
+  methods:    POST
+  requirements:
+    requestId: '\d+'
