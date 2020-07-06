@@ -60,6 +60,6 @@ class CreatePdfAction extends AbstractAction
             return $this->errorResponse($exception->getMessage(), $exception->getCode() ? $exception->getCode() : Response::HTTP_BAD_REQUEST);
         }
 
-        return new JsonResponse(["url" => $url], Response::HTTP_OK);
+        return new JsonResponse($url, Response::HTTP_OK);
     }
 }

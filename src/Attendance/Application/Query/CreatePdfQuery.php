@@ -78,20 +78,20 @@ class CreatePdfQuery implements CommandInterface
             Assert::stringNotEmpty($data['title'], 'Field title cannot be empty');
         }
 
-        if (key_exists('initial_date', $data) && key_exists('final_date', $data)) {
+        if (key_exists('initialDate', $data) && key_exists('finalDate', $data)) {
             try{
-                $initial_date = Carbon::createFromFormat('Y-m-d', $data['initial_date']);
-                $final_date = Carbon::createFromFormat('Y-m-d', $data['final_date']);
+                $initialDate = Carbon::createFromFormat('Y-m-d', $data['initialDate']);
+                $finalDate = Carbon::createFromFormat('Y-m-d', $data['finalDate']);
             }catch (Exception $e){
                 throw new InvalidDateFormatException();
             }
 
-            if($initial_date->gte($final_date)){
+            if($initialDate->gte($finalDate)){
                 throw new InitialDateIsGraterThenFinalException();
             }
 
-            $data['initial_date'] = $initial_date;
-            $data['final_date'] = $final_date;
+            $data['initialDate'] = $initialDate;
+            $data['finalDate'] = $finalDate;
         }
 
         if (key_exists('status', $data)) {
@@ -150,7 +150,7 @@ class CreatePdfQuery implements CommandInterface
      */
     public function getInitialDate(): ?string
     {
-        return $this->initial_date;
+        return $this->initialDate;
     }
 
     /**
@@ -158,7 +158,7 @@ class CreatePdfQuery implements CommandInterface
      */
     public function getFinalDate(): ?string
     {
-        return $this->final_date;
+        return $this->finalDate;
     }
 
     /**

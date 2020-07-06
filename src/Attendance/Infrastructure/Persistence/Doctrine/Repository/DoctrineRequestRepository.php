@@ -124,4 +124,52 @@ class DoctrineRequestRepository implements RequestRepository
             ->getQuery()
             ->getResult();
     }
+
+    /**
+     * @param string|null $title
+     * @param string|null $initialDate
+     * @param string|null $finalDate
+     * @param string|null $statusId
+     * @param string|null $assignedTo
+     * @param string|null $requestedBy
+     * @return array
+     */
+    public function chutulu(?string $title, ?string $initialDate, ?string $finalDate, ?string $statusId, ?string $assignedTo, ?string $requestedBy): array
+    {
+        $sqlTitle = '';
+        $sqlData = '';
+        $sqlStatus = '';
+        $sqlAssignedTo = '';
+        $sqlRequestedBy = '';
+
+        if (!is_null($title)) {
+            $sqlTitle = ' and title = \'' . $title.' \'';
+        }
+
+        if (!is_null($initialDate) && !is_null($finalDate)) {
+            $sqlData = ' and tr.created_at between \'' . $initialDate . '\' and \'' . $finalDate.'\'';
+        }
+
+        if (!is_null($statusId)) {
+            $sqlStatus = ' and id_status =' . $statusId;
+        }
+
+        if (!is_null($assignedTo)) {
+            $sqlAssignedTo = ' and assigned_to =' . $assignedTo;
+        }
+
+        if (!is_null($requestedBy)) {
+            $sqlRequestedBy = ' and requested_by =' . $requestedBy;
+        }
+
+        $sql = 'select * from tb_request tr '
+            . 'where 1 = 1'
+            . $sqlTitle
+            . $sqlStatus
+            . $sqlAssignedTo
+            . $sqlRequestedBy
+            . $sqlData;
+
+        return $this->entityManager->getConnection()->executeQuery($sql)->fetchAll();
+    }
 }

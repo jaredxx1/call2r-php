@@ -40,4 +40,21 @@ class DoctrineStatusRepository implements StatusRepository
     {
         return $this->repository->find($id);
     }
+
+    /**
+     * @param string $name
+     * @return Status|null
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    public function fromName(string $name): ?Status
+    {
+        return $this->entityManager
+            ->createQueryBuilder()
+            ->select('s')
+            ->from('Attendance:Status', 's')
+            ->where('s.name = :name')
+            ->setParameter('name', $name)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
 }

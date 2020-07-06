@@ -3,11 +3,10 @@
 
 namespace App\Attendance\Application\Service;
 
-
 use App\Attendance\Application\Command\ApproveRequestCommand;
 use App\Attendance\Application\Command\CreateRequestCommand;
-use App\Attendance\Application\Command\UpdateRequestCommand;
 use App\Attendance\Application\Command\DisapproveRequestCommand;
+use App\Attendance\Application\Command\UpdateRequestCommand;
 use App\Attendance\Application\Exception\RequestNotFoundException;
 use App\Attendance\Application\Exception\UnauthorizedStatusChangeException;
 use App\Attendance\Application\Exception\UnauthorizedStatusUpdateException;
@@ -20,11 +19,14 @@ use App\Attendance\Domain\Repository\StatusRepository;
 use App\Company\Application\Exception\CompanyNotFoundException;
 use App\Company\Domain\Repository\CompanyRepository;
 use App\Company\Domain\Repository\SectionRepository;
+use App\Core\Infrastructure\Storaged\AWS\S3;
 use App\Security\Domain\Entity\User;
 use App\Security\Domain\Repository\UserRepository;
 use Carbon\Carbon;
 use Doctrine\Common\Collections\ArrayCollection;
 use Exception;
+use Mpdf\Mpdf;
+use Ramsey\Uuid\Uuid;
 
 /**
  * Class RequestService
@@ -58,21 +60,29 @@ class RequestService
     private $sectionRepository;
 
     /**
+     * @var S3
+     */
+    private $s3;
+
+    /**
      * RequestService constructor.
      * @param RequestRepository $requestRepository
      * @param StatusRepository $statusRepository
      * @param CompanyRepository $companyRepository
      * @param UserRepository $userRepository
      * @param SectionRepository $sectionRepository
+     * @param S3 $s3
      */
-    public function __construct(RequestRepository $requestRepository, StatusRepository $statusRepository, CompanyRepository $companyRepository, UserRepository $userRepository, SectionRepository $sectionRepository)
+    public function __construct(RequestRepository $requestRepository, StatusRepository $statusRepository, CompanyRepository $companyRepository, UserRepository $userRepository, SectionRepository $sectionRepository, S3 $s3)
     {
         $this->requestRepository = $requestRepository;
         $this->statusRepository = $statusRepository;
         $this->companyRepository = $companyRepository;
         $this->userRepository = $userRepository;
         $this->sectionRepository = $sectionRepository;
+        $this->s3 = $s3;
     }
+
 
     /**
      * @param CreateRequestCommand $command
@@ -366,10 +376,36 @@ class RequestService
     /**
      * @param CreatePdfQuery $query
      * @return string
+     * @throws \Mpdf\MpdfException
      */
     public function createPdf(CreatePdfQuery $query)
     {
-        // TODO query to create a pdf.
-        return "url";
+        $title = $query->getTitle();
+        $initialDate = $query->getInitialDate();
+        $finalDate = $query->getFinalDate();
+        $assignedTo = $query->getAssignedTo();
+        $requestedBy = $query->getRequestedBy();
+        $statusId = null;
+        if(!is_null($query->getStatus())){
+            $status = $this->statusRepository->fromName($query->getStatus());
+            $statusId = $status->getId();
+        }
+
+        $result = $this->requestRepository->chutulu($title, $initialDate, $finalDate, $statusId, $assignedTo, $requestedBy);
+
+        $mpdf = new Mpdf();
+        $uuid = Uuid::uuid4();
+        $mpdf->WriteHTML('<h1>CALLR2 PDF</h1>');
+        $mpdf->WriteHTML('<table style="width:100%">');
+        $mpdf->WriteHTML('<tr>');
+        $mpdf->WriteHTML('<th>Title</th>');
+        $mpdf->WriteHTML('<th>Priority</th>');
+        $mpdf->WriteHTML('<th>section</th>');
+        $mpdf->WriteHTML('</tr>');
+        foreach ($result as $r){
+            $mpdf->WriteHTML('<tr><td>'.$r['title'].'</td><td>'.$r['priority'].'</td><td>'.$r['section'].'</td>');
+        }
+        $mpdf->WriteHTML('</table>');
+        return $mpdf->Output();
     }
 }
