@@ -44,6 +44,8 @@ class ApproveRequestCommand implements CommandInterface
         Assert::keyExists($data, 'requestId', 'Field requestId is required.');
         Assert::keyExists($data, 'message', 'Field message is required.');
 
+        Assert::stringNotEmpty($data['message'], 'Field message cannot be empty.');
+
         Assert::string($data['message'], 'Field message is not a string.');
         Assert::integer($data['requestId'], 'Field requestId not an integer.');
 
