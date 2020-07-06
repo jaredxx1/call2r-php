@@ -4,8 +4,10 @@
 namespace App\Attendance\Domain\Entity;
 
 
+use Carbon\Carbon;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
+use Exception;
 use JsonSerializable;
 
 /**
@@ -114,6 +116,7 @@ class Request implements JsonSerializable
 
     /**
      * @return mixed
+     * @throws Exception
      */
     public function jsonSerialize()
     {
@@ -122,6 +125,7 @@ class Request implements JsonSerializable
 
     /**
      * @return array
+     * @throws Exception
      */
     public function toArray(): array
     {
@@ -133,9 +137,9 @@ class Request implements JsonSerializable
             'section' => $this->getSection(),
             'assignedTo' => $this->getAssignedTo(),
             'requestedBy' => $this->getRequestedBy(),
-            'createdAt' => $this->getCreatedAt(),
-            'updatedAt' => $this->getUpdatedAt(),
-            'finishedAt' => $this->getFinishedAt(),
+            'createdAt' => $this->getCreatedAt() ? (new Carbon($this->getCreatedAt())) : null,
+            'updatedAt' => $this->getUpdatedAt() ? (new Carbon($this->getUpdatedAt())) : null,
+            'finishedAt' => $this->getFinishedAt() ? (new Carbon($this->getFinishedAt())) : null,
             'companyId' => $this->getCompanyId(),
             'status' => $this->getStatus()->getName(),
             'logs' => $this->getLogs()->getValues()

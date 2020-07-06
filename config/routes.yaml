@@ -84,7 +84,7 @@ update_article:
   requirements:
     idCompany: '\d+'
     idArticle: '\d+'
-    
+
 delete_article:
   path: /api/v1/companies/{idCompany}/articles/{idArticle}
   controller: App\Wiki\Presentation\Http\Action\DeleteArticleAction
@@ -139,6 +139,11 @@ update_request:
   methods:    PUT
   requirements:
     id: '\d+'
+    
+find_requests:
+  path: /api/v1/requests
+  controller: App\Attendance\Presentation\Http\Action\FindRequestsAction
+  methods:    GET
 
 move_request_to_awaiting_support:
   path: /api/v1/requests/move/{requestId}/awaiting-support
@@ -153,7 +158,7 @@ move_request_to_awaiting_response:
   methods:    POST
   requirements:
     requestId: '\d+'
-    
+
 move_request_to_in_attendance:
   path: /api/v1/requests/move/{requestId}/in-attendance
   controller: App\Attendance\Presentation\Http\Action\MoveToInAttendanceAction
@@ -178,6 +183,20 @@ move_request_to_canceled:
 move_request_to_approved:
   path: /api/v1/requests/move/{requestId}/approved
   controller: App\Attendance\Presentation\Http\Action\MoveToApprovedAction
+  methods:    POST
+  requirements:
+    requestId: '\d+'
+
+approve_request:
+  path: /api/v1/requests/{requestId}/approve
+  controller: App\Attendance\Presentation\Http\Action\ApproveRequestAction
+  methods:    POST
+  requirements:
+    requestId: '\d+'
+
+disapprove_request:
+  path: /api/v1/requests/{requestId}/disapprove
+  controller: App\Attendance\Presentation\Http\Action\DisapproveRequestAction
   methods:    POST
   requirements:
     requestId: '\d+'
