@@ -8,8 +8,10 @@ use App\Attendance\Application\Command\ApproveRequestCommand;
 use App\Attendance\Application\Command\CreateRequestCommand;
 use App\Attendance\Application\Command\UpdateRequestCommand;
 use App\Attendance\Application\Command\DisapproveRequestCommand;
+use App\Attendance\Application\Command\TransferCompanyCommand;
 use App\Attendance\Application\Exception\RequestNotFoundException;
 use App\Attendance\Application\Exception\UnauthorizedStatusChangeException;
+use App\Attendance\Application\Exception\UnauthorizedTransferCompanyException;
 use App\Attendance\Application\Exception\UnauthorizedStatusUpdateException;
 use App\Attendance\Domain\Entity\Log;
 use App\Attendance\Domain\Entity\Request;
@@ -17,6 +19,7 @@ use App\Attendance\Domain\Entity\Status;
 use App\Attendance\Domain\Repository\RequestRepository;
 use App\Attendance\Domain\Repository\StatusRepository;
 use App\Company\Application\Exception\CompanyNotFoundException;
+use App\Company\Application\Exception\SectionNotFoundException;
 use App\Company\Domain\Repository\CompanyRepository;
 use App\Company\Domain\Repository\SectionRepository;
 use App\Security\Domain\Entity\User;
@@ -217,6 +220,7 @@ class RequestService
     {
         if (
             !($request->getStatus()->getId() == Status::inAttendance) &&
+            !($request->getStatus()->getId() == Status::awaitingSupport) &&
             !($request->getStatus()->getId() == Status::approved)
         ) {
             throw new UnauthorizedStatusChangeException();
@@ -323,7 +327,7 @@ class RequestService
         return $this->requestRepository->update($request);
     }
 
-    /**
+     /**
      * @param UpdateRequestCommand $command
      * @return Request|null
      * @throws RequestNotFoundException
@@ -360,5 +364,60 @@ class RequestService
         $request->setUpdatedAt(Carbon::now());
 
         return $this->requestRepository->update($request);
+    }
+
+    /**
+     * @param TransferCompanyCommand $command
+     * @return Request
+     * @throws CompanyNotFoundException
+     * @throws RequestNotFoundException
+     * @throws SectionNotFoundException
+     * @throws UnauthorizedStatusChangeException
+     * @throws UnauthorizedTransferCompanyException
+     */
+    public function transferCompany(TransferCompanyCommand $command){
+
+        $request = $this->findById($command->getRequestId());
+        if (
+            !($request->getStatus()->getId() == Status::awaitingSupport) &&
+            !($request->getStatus()->getId() == Status::inAttendance) &&
+            !($request->getStatus()->getId() == Status::awaitingResponse)
+        ) {
+            throw new UnauthorizedStatusChangeException();
+        }
+
+        $company = $this->companyRepository->fromId($command->getCompanyId());
+
+        if(is_null($company)){
+            throw new CompanyNotFoundException();
+        }
+
+        $section = $this->sectionRepository->fromName($command->getSection());
+
+        if(is_null($section)){
+            throw new SectionNotFoundException();
+        }
+
+        if(!($company->sections()->contains($section))){
+            throw new UnauthorizedTransferCompanyException();
+        }
+
+        $request->setSection($section->name());
+
+        $request->setCompanyId($company->id());
+
+        $request->setAssignedTo(null);
+
+
+        $log = new Log(null, 'Chamado transferido', Carbon::now(), 'transfer');
+ 
+        $request->getLogs()->add($log);
+        $request->setUpdatedAt(Carbon::now());
+
+        $this->requestRepository->update($request);
+
+        $this->moveToAwaitingSupport($request);
+
+        return $request;
     }
 }

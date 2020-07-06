@@ -6,6 +6,7 @@ declare(strict_types=1);
 namespace App\Company\Domain\Entity;
 
 
+use Doctrine\Common\Collections\ArrayCollection;
 use JsonSerializable;
 
 /**
@@ -51,42 +52,35 @@ class Company implements JsonSerializable
     private $sla;
 
     /**
-     * @var array
+     * @var ArrayCollection
      */
     private $sections;
-
 
     /**
      * Company constructor.
      * @param string $name
-     * @param string $cnpj
      * @param string $description
+     * @param string $cnpj
      * @param bool $mother
      * @param bool $active
      * @param SLA $sla
-     * @param array $sections
+     * @param ArrayCollection $sections
      */
-    public function __construct(
-        string $name,
-        string $cnpj,
-        string $description,
-        bool $mother,
-        bool $active,
-        SLA $sla,
-        array $sections
-    )
+    public function __construct(string $name, string $description, string $cnpj, bool $mother, bool $active, SLA $sla, ArrayCollection $sections)
     {
         $this->name = $name;
-        $this->cnpj = $cnpj;
         $this->description = $description;
+        $this->cnpj = $cnpj;
         $this->mother = $mother;
         $this->active = $active;
         $this->sla = $sla;
         $this->sections = $sections;
     }
 
+
     /**
      * @return array|mixed
+     * @throws \Exception
      */
     public function jsonSerialize()
     {
@@ -95,6 +89,7 @@ class Company implements JsonSerializable
 
     /**
      * @return array
+     * @throws \Exception
      */
     public function toArray(): array
     {
@@ -106,7 +101,7 @@ class Company implements JsonSerializable
             'isMother' => $this->isMother(),
             'isActive' => $this->isActive(),
             'sla' => $this->sla(),
-            'sections' => $this->sections()->getIterator()
+            'sections' => $this->sections()->getValues()
         ];
     }
 
@@ -167,13 +162,12 @@ class Company implements JsonSerializable
     }
 
     /**
-     * @return array
+     * @return ArrayCollection
      */
     public function sections()
     {
         return $this->sections;
     }
-
 
     /**
      * @param int $id
@@ -232,9 +226,9 @@ class Company implements JsonSerializable
     }
 
     /**
-     * @param array $sections
+     * @param ArrayCollection $sections
      */
-    public function setSections($sections): void
+    public function setSections(ArrayCollection $sections): void
     {
         $this->sections = $sections;
     }

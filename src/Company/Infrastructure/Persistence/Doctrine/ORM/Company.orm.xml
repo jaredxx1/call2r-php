@@ -12,9 +12,15 @@
         <field name="mother" column="mother" type="boolean"/>
         <field name="name" column="name" type="string"/>
         <one-to-one field="sla" target-entity="SLA">
+            <cascade>
+                <cascade-persist />
+            </cascade>
             <join-column name="sla_id" referenced-column-name="id_sla" />
         </one-to-one>
         <many-to-many field="sections" target-entity="Section" fetch="EAGER">
+            <cascade>
+                <cascade-persist />
+            </cascade>
             <join-table name="tb_company_section">
                 <join-columns>
                     <join-column name="id_company" referenced-column-name="id_company" />
