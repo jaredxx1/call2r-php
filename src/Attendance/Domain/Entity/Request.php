@@ -90,7 +90,7 @@ class Request implements JsonSerializable
      * @param string $description
      * @param int $priority
      * @param string $section
-     * @param int $assignedTo
+     * @param int|null $assignedTo
      * @param int $requestedBy
      * @param object $createdAt
      * @param object $updatedAt
@@ -235,9 +235,9 @@ class Request implements JsonSerializable
     }
 
     /**
-     * @param int $assignedTo
+     * @param int|null $assignedTo
      */
-    public function setAssignedTo(int $assignedTo): void
+    public function setAssignedTo(?int $assignedTo): void
     {
         $this->assignedTo = $assignedTo;
     }

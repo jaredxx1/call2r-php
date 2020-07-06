@@ -193,3 +193,10 @@ disapprove_request:
   methods:    POST
   requirements:
     requestId: '\d+'
+
+transfer_company:
+  path: /api/v1/requests/{requestId}/transfer-company
+  controller: App\Attendance\Presentation\Http\Action\TransferCompanyAction
+  methods:    POST
+  requirements:
+    requestId: '\d+'
