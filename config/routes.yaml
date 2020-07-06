@@ -212,3 +212,10 @@ disapprove_request:
   methods:    POST
   requirements:
     requestId: '\d+'
+
+export_pdf:
+  path: /api/v1/requests/exportPdf
+  controller: App\Attendance\Presentation\Http\Action\PdfGeneratorAction
+  methods:    POST
+  requirements:
+    requestId: '\d+'
