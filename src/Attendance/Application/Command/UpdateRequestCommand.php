@@ -27,16 +27,6 @@ class UpdateRequestCommand implements CommandInterface
     /**
      * @var integer|null
      */
-    private $companyId;
-
-    /**
-     * @var string|null
-     */
-    private $section;
-
-    /**
-     * @var integer|null
-     */
     private $priority;
 
     /**
@@ -44,20 +34,15 @@ class UpdateRequestCommand implements CommandInterface
      * @param int|null $id
      * @param string|null $title
      * @param string|null $description
-     * @param int|null $companyId
-     * @param string|null $section
      * @param int|null $priority
      */
-    public function __construct(?int $id, ?string $title, ?string $description, ?int $companyId, ?string $section, ?int $priority)
+    public function __construct(?int $id, ?string $title, ?string $description, ?int $priority)
     {
         $this->id = $id;
         $this->title = $title;
         $this->description = $description;
-        $this->companyId = $companyId;
-        $this->section = $section;
         $this->priority = $priority;
     }
-
 
     /**
      * @param array $data
@@ -76,14 +61,6 @@ class UpdateRequestCommand implements CommandInterface
             Assert::stringNotEmpty($data['description'], 'Field description cannot be empty');
         }
 
-        if (key_exists('companyId', $data)) {
-            Assert::integer($data['companyId'], 'Field companyId is not an integer');
-        }
-
-        if (key_exists('section', $data)) {
-            Assert::stringNotEmpty($data['section'], 'Field section cannot be empty');
-        }
-
         if (key_exists('priority', $data)) {
             Assert::integer($data['priority'], 'Field priority is not an integer');
             Assert::oneOf($data['priority'], [1,2,3,4,5], 'Field priority is neither 1 neither 2 neither 3 neither 4 or 5');
@@ -93,8 +70,6 @@ class UpdateRequestCommand implements CommandInterface
             $data['id'],
             $data['title'] ?? null,
             $data['description'] ?? null,
-            $data['companyId'] ?? null,
-            $data['section'] ?? null,
             $data['priority'] ?? null
         );
     }
@@ -129,22 +104,6 @@ class UpdateRequestCommand implements CommandInterface
     public function getDescription(): ?string
     {
         return $this->description;
-    }
-
-    /**
-     * @return int|null
-     */
-    public function getCompanyId(): ?int
-    {
-        return $this->companyId;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getSection(): ?string
-    {
-        return $this->section;
     }
 
     /**

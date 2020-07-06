@@ -15,7 +15,6 @@ use App\Attendance\Domain\Entity\Status;
 use App\Attendance\Domain\Repository\RequestRepository;
 use App\Attendance\Domain\Repository\StatusRepository;
 use App\Company\Application\Exception\CompanyNotFoundException;
-use App\Company\Application\Exception\SectionNotFoundException;
 use App\Company\Domain\Repository\CompanyRepository;
 use App\Company\Domain\Repository\SectionRepository;
 use App\Security\Domain\Repository\UserRepository;
@@ -266,75 +265,34 @@ class RequestService
     /**
      * @param UpdateRequestCommand $command
      * @return Request|null
-     * @throws CompanyNotFoundException
      * @throws RequestNotFoundException
-     * @throws SectionNotFoundException
      * @throws UnauthorizedStatusUpdateException
      */
     public function update(UpdateRequestCommand $command)
     {
         $request = $this->findById($command->getId());
+
         if (
-            ($request->getStatus()->getId() == Status::canceled) ||
-            ($request->getStatus()->getId() == Status::approved)
+            ($request->getStatus()->getId() == Status::canceled)    ||
+            ($request->getStatus()->getId() == Status::approved)    ||
+            ($request->getStatus()->getId() == Status::inAttendance)
         ) {
             throw new UnauthorizedStatusUpdateException();
         }
 
-        $section = $this->sectionRepository->fromName($command->getSection());
-
-        if (is_null($section)) {
-            throw new SectionNotFoundException();
+        if (!is_null($command->getTitle())) {
+            $request->setTitle($command->getTitle());
         }
 
-        $company = $this->companyRepository->fromId($command->getCompanyId());
-
-        if (is_null($company)) {
-            throw new CompanyNotFoundException();
+        if (!is_null($command->getDescription())) {
+            $request->setDescription($command->getDescription());
         }
 
-        if (
-            ($request->getStatus()->getId() == Status::awaitingSupport) ||
-            ($request->getStatus()->getId() == Status::awaitingResponse)
-        ) {
-            if (!is_null($command->getTitle())) {
-                $request->setTitle($command->getTitle());
-            }
-
-            if (!is_null($command->getDescription())) {
-                $request->setDescription($command->getDescription());
-            }
-
-            if (!is_null($command->getSection())) {
-                $request->setSection($command->getSection());
-            }
-
-            if (!is_null($command->getCompanyId())) {
-                $request->setCompanyId($command->getCompanyId());
-            }
-
-            if (!is_null($command->getPriority())) {
-                $request->setPriority($command->getPriority());
-            }
-
-            $statusName = $request->getStatus()->getId() == Status::awaitingSupport ? 'awaitingSupport' : 'awaitingResponse';
-
+        if (!is_null($command->getPriority())) {
+            $request->setPriority($command->getPriority());
         }
 
-        if ($request->getStatus()->getId() == Status::inAttendance) {
-            if (!is_null($command->getCompanyId())) {
-                $request->setCompanyId($command->getCompanyId());
-            }
-
-            if (!is_null($command->getSection())) {
-                $request->setSection($command->getSection());
-            }
-
-            $request->setAssignedTo(null);
-
-            $statusName = 'inAttendance';
-        }
-
+        $statusName = $request->getStatus()->getId() == Status::awaitingSupport ? 'awaitingSupport' : 'awaitingResponse';
 
         $log = new Log(null, 'Chamado alterado', Carbon::now(), $statusName);
 
