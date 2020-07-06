@@ -44,7 +44,10 @@ class UpdateUserImageAction extends AbstractAction
         try {
             $user = $this->userService->fromId($idUser);
             $image = $request->files->getIterator()['image'];
-            $user = $this->userService->updateImage($user, $image);
+            $data['user'] = $user;
+            $data['uploadFile'] = $image;
+            $command = UpdateUserImageCommand::fromArray($data);
+            $user = $this->userService->updateImage($command);
         } catch (Exception $exception) {
             return $this->errorResponse($exception->getMessage(), $exception->getCode() ? $exception->getCode() : Response::HTTP_BAD_REQUEST);
         } catch (Throwable $exception) {

@@ -7,6 +7,7 @@ namespace App\Security\Application\Service;
 use App\Core\Infrastructure\Storaged\AWS\S3;
 use App\Security\Application\Command\CreateUserCommand;
 use App\Security\Application\Command\LoginCommand;
+use App\Security\Application\Command\UpdateUserImageCommand;
 use App\Security\Application\Command\UpdateUserCommand;
 use App\Security\Application\Exception\InvalidCredentialsException;
 use App\Security\Application\Exception\UserNotFoundException;
@@ -181,19 +182,20 @@ final class UserService
     }
 
     /**
-     * @param User $user
-     * @param $image
+     * @param UpdateUserImageCommand $command
      * @return User
      * @throws Exception
      */
-    public function updateImage(User $user, $image)
+    public function updateImage(UpdateUserImageCommand $command)
     {
         $uuid = Uuid::uuid4();
-        $url = null;
-        if(!is_null($image) && preg_match('/image\//', $image->getMimeType())){
-            $url = $this->s3->sendFile('user',$uuid->serialize(),$image);
-        }
+
+        $user = $command->getUser();
+
+        $url = $this->s3->sendFile('user',$uuid->serialize(),$command->getUploadFile());
+
         $user->setImage($url);
+
         return $this->userRepository->updateUser($user);
     }
 }
