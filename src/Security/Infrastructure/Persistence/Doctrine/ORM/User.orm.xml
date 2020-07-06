@@ -9,6 +9,7 @@
         <field name="cpf" column="cpf" type="string"/>
         <field name="password" column="password" type="string"/>
         <field name="email" column="email" type="string"/>
+        <field name="image" column="image" type="string"/>
         <field name="role" column="role" type="string"/>
         <field name="birthdate" column="birthdate" type="string"/>
         <field name="active" column="active" type="boolean"/>

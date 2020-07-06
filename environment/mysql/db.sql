@@ -51,6 +51,7 @@ create table tb_user
     cpf        varchar(11)                                      null,
     password   varchar(255)                                     null,
     email      varchar(255)                                     null,
+    image      varchar(255)                                     null,
     role       enum ('ROLE_USER', 'ROLE_ADMIN', 'ROLE_MANAGER') null,
     birthdate  date                                             null,
     active     tinyint(1)                                       null,

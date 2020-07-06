@@ -127,6 +127,13 @@ update_user:
   requirements:
     id: '\d+'
 
+update_image:
+  path: /api/v1/users/{idUser}/image
+  controller: App\Security\Presentation\Http\Action\UpdateUserImageAction
+  methods:    POST
+  requirements:
+    idUser: '\d+'
+    
 reset_password:
   path: /api/v1/users/reset-password
   controller: App\Security\Presentation\Http\Action\ResetPasswordAction
