@@ -365,19 +365,19 @@ class RequestService
 
         return $this->requestRepository->update($request);
     }
-      
-     /**
+
+    /**
      * @param TransferCompanyCommand $command
      * @return Request
      * @throws CompanyNotFoundException
+     * @throws RequestNotFoundException
      * @throws SectionNotFoundException
      * @throws UnauthorizedStatusChangeException
      * @throws UnauthorizedTransferCompanyException
      */
     public function transferCompany(TransferCompanyCommand $command){
 
-        $request = $command->getRequest();
-
+        $request = $this->findById($command->getRequestId());
         if (
             !($request->getStatus()->getId() == Status::awaitingSupport) &&
             !($request->getStatus()->getId() == Status::inAttendance) &&

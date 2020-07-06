@@ -8,6 +8,10 @@ use App\Attendance\Domain\Entity\Request;
 use App\Core\Infrastructure\Container\Application\Utils\Command\CommandInterface;
 use Webmozart\Assert\Assert;
 
+/**
+ * Class TransferCompanyCommand
+ * @package App\Attendance\Application\Command
+ */
 class TransferCompanyCommand  implements CommandInterface
 {
 
@@ -22,41 +26,49 @@ class TransferCompanyCommand  implements CommandInterface
     private $companyId;
 
     /**
-     * @var Request
+     * @var integer
      */
-    private $request;
+    private $requestId;
 
     /**
      * TransferCompanyCommand constructor.
      * @param string $section
      * @param int $companyId
-     * @param Request $request
+     * @param int $requestId
      */
-    public function __construct(string $section, int $companyId, Request $request)
+    public function __construct(string $section, int $companyId, int $requestId)
     {
         $this->section = $section;
         $this->companyId = $companyId;
-        $this->request = $request;
+        $this->requestId = $requestId;
     }
 
-
+    /**
+     * @param array $data
+     * @return TransferCompanyCommand
+     */
     public static function fromArray($data)
     {
         Assert::keyExists($data, 'section', 'Field section is required.');
         Assert::keyExists($data, 'companyId', 'Field companyId is required.');
+        Assert::keyExists($data, 'requestId', 'Field requestId is required.');
 
         Assert::stringNotEmpty($data['section'], 'Field section cannot be empty.');
 
         Assert::string($data['section'], 'Field section is not a string.');
         Assert::integer($data['companyId'], 'Field companyId not an integer.');
+        Assert::integer($data['requestId'], 'Field requestId not an integer.');
 
         return new self(
             $data['section'],
             $data['companyId'],
-            $data['request']
+            $data['requestId']
         );
     }
 
+    /**
+     * @return array
+     */
     public function toArray(): array
     {
         return [];
@@ -79,10 +91,10 @@ class TransferCompanyCommand  implements CommandInterface
     }
 
     /**
-     * @return Request
+     * @return int
      */
-    public function getRequest(): Request
+    public function getRequestId(): int
     {
-        return $this->request;
+        return $this->requestId;
     }
 }
