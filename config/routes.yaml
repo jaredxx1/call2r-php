@@ -213,9 +213,9 @@ disapprove_request:
   requirements:
     requestId: '\d+'
 
-export_pdf:
-  path: /api/v1/requests/exportPdf
-  controller: App\Attendance\Presentation\Http\Action\PdfGeneratorAction
-  methods:    POST
+create_pdf:
+  path: /api/v1/requests/pdf/
+  controller: App\Attendance\Presentation\Http\Action\CreatePdfAction
+  methods:    GET
   requirements:
     requestId: '\d+'

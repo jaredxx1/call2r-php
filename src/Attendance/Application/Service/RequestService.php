@@ -11,6 +11,7 @@ use App\Attendance\Application\Command\DisapproveRequestCommand;
 use App\Attendance\Application\Exception\RequestNotFoundException;
 use App\Attendance\Application\Exception\UnauthorizedStatusChangeException;
 use App\Attendance\Application\Exception\UnauthorizedStatusUpdateException;
+use App\Attendance\Application\Query\CreatePdfQuery;
 use App\Attendance\Domain\Entity\Log;
 use App\Attendance\Domain\Entity\Request;
 use App\Attendance\Domain\Entity\Status;
@@ -360,5 +361,15 @@ class RequestService
         $request->setUpdatedAt(Carbon::now());
 
         return $this->requestRepository->update($request);
+    }
+
+    /**
+     * @param CreatePdfQuery $query
+     * @return string
+     */
+    public function createPdf(CreatePdfQuery $query)
+    {
+        // TODO query to create a pdf.
+        return "url";
     }
 }

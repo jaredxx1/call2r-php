@@ -94,7 +94,7 @@ class UpdateUserCommand implements CommandInterface
      */
     public function toArray(): array
     {
-        // TODO: Implement toArray() method.
+        return [];
     }
 
     /**
