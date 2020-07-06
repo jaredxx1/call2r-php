@@ -386,6 +386,7 @@ class RequestService
         $assignedTo = $query->getAssignedTo();
         $requestedBy = $query->getRequestedBy();
         $statusId = null;
+
         if(!is_null($query->getStatus())){
             $status = $this->statusRepository->fromName($query->getStatus());
             $statusId = $status->getId();
