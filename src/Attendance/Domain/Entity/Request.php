@@ -142,7 +142,7 @@ class Request implements JsonSerializable
             'finishedAt' => $this->getFinishedAt() ? (new Carbon($this->getFinishedAt())) : null,
             'companyId' => $this->getCompanyId(),
             'status' => $this->getStatus()->getName(),
-//            'logs' => $this->getLogs()->getValues()
+            'logs' => $this->getLogs()->getValues()
         ];
     }
 
