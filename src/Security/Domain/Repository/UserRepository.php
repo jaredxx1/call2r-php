@@ -52,4 +52,11 @@ interface UserRepository
      * @return User
      */
     public function updateUser(User $user): User;
+
+    /**
+     * @param string $cpf
+     * @param $birthdate
+     * @return User|null
+     */
+    public function fromCpfBirthdate(string $cpf, $birthdate): ?User;
 }

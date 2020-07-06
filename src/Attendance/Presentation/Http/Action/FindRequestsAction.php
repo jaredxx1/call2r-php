@@ -1,23 +1,28 @@
 <?php
 
 
-namespace App\Security\Presentation\Http\Action;
+namespace App\Attendance\Presentation\Http\Action;
 
 
+use App\Attendance\Application\Service\RequestService;
 use App\Core\Presentation\Http\AbstractAction;
-use App\Security\Application\Command\LoginCommand;
 use App\Security\Application\Service\UserService;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
 /**
- * Class LoginAction
- * @package App\Security\Presentation\Http\Action
+ * Class FindRequestsAction
+ * @package App\Attendance\Presentation\Http\Action
  */
-class LoginAction extends AbstractAction
+class FindRequestsAction extends AbstractAction
 {
+    /**
+     * @var RequestService
+     */
+    private $service;
 
     /**
      * @var UserService
@@ -25,11 +30,13 @@ class LoginAction extends AbstractAction
     private $userService;
 
     /**
-     * LoginAction constructor.
+     * FindRequestsAction constructor.
+     * @param RequestService $service
      * @param UserService $userService
      */
-    public function __construct(UserService $userService)
+    public function __construct(RequestService $service, UserService $userService)
     {
+        $this->service = $service;
         $this->userService = $userService;
     }
 
@@ -40,23 +47,14 @@ class LoginAction extends AbstractAction
     public function __invoke(Request $request)
     {
         try {
-            $data = json_decode($request->getContent(), true);
-            $command = LoginCommand::fromArray($data);
-
-            $user = $this->userService->fromLoginCredentials($command);
-            $token = $this->userService->generateAuthToken($user);
-
-            $response = [
-                'token' => $token,
-                'roles' => $user->getRoles()
-            ];
+            $user = $this->userService->fromId(1);
+            $requests = $this->service->findAll($user);
         } catch (Exception $exception) {
             return $this->errorResponse($exception->getMessage(), $exception->getCode() ? $exception->getCode() : 400);
         } catch (Throwable $exception) {
             return $this->errorResponse($exception->getMessage(), $exception->getCode() ? $exception->getCode() : 400);
         }
 
-        return new JsonResponse($response, 200);
+        return new JsonResponse($requests, Response::HTTP_OK);
     }
-
 }

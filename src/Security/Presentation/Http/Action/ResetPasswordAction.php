@@ -5,7 +5,7 @@ namespace App\Security\Presentation\Http\Action;
 
 
 use App\Core\Presentation\Http\AbstractAction;
-use App\Security\Application\Command\UpdateUserCommand;
+use App\Security\Application\Command\ResetPasswordCommand;
 use App\Security\Application\Service\UserService;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -14,11 +14,12 @@ use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
 /**
- * Class UpdateUserAction
+ * Class ResetPasswordAction
  * @package App\Security\Presentation\Http\Action
  */
-class UpdateUserAction extends AbstractAction
+class ResetPasswordAction extends AbstractAction
 {
+
     /**
      * @var UserService
      */
@@ -35,22 +36,20 @@ class UpdateUserAction extends AbstractAction
 
     /**
      * @param Request $request
-     * @param int $id
      * @return JsonResponse
      */
-    public function __invoke(Request $request, int $id)
+    public function __invoke(Request $request)
     {
         try {
             $data = json_decode($request->getContent(), true);
-            $data['id'] = $id;
-            $command = UpdateUserCommand::fromArray($data);
-            $user = $this->userService->updateUser($command);
+            $command = ResetPasswordCommand::fromArray($data);
+            $this->userService->resetPassword($command);
         } catch (Exception $exception) {
             return $this->errorResponse($exception->getMessage(), $exception->getCode() ? $exception->getCode() : Response::HTTP_BAD_REQUEST);
         } catch (Throwable $exception) {
             return $this->errorResponse($exception->getMessage(), $exception->getCode() ? $exception->getCode() : Response::HTTP_BAD_REQUEST);
         }
 
-        return new JsonResponse($user, Response::HTTP_OK);
+        return new JsonResponse([], Response::HTTP_NO_CONTENT);
     }
 }

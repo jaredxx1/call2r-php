@@ -5,9 +5,11 @@ namespace App\Security\Application\Service;
 
 
 use App\Core\Infrastructure\Storaged\AWS\S3;
+use App\Core\Infrastructure\Email\EmailService;
 use App\Security\Application\Command\CreateUserCommand;
 use App\Security\Application\Command\LoginCommand;
 use App\Security\Application\Command\UpdateUserImageCommand;
+use App\Security\Application\Command\ResetPasswordCommand;
 use App\Security\Application\Command\UpdateUserCommand;
 use App\Security\Application\Exception\InvalidCredentialsException;
 use App\Security\Application\Exception\UserNotFoundException;
@@ -35,16 +37,23 @@ final class UserService
      * @var S3
      */
     private $s3;
+  
+    /**
+     * @var EmailService
+     */
+    private $emailService;
 
     /**
      * UserService constructor.
      * @param UserRepository $userRepository
      * @param S3 $s3
+     * @param EmailService $emailService
      */
-    public function __construct(UserRepository $userRepository, S3 $s3)
+    public function __construct(UserRepository $userRepository, S3 $s3, EmailService $emailService)
     {
         $this->userRepository = $userRepository;
         $this->s3 = $s3;
+        $this->emailService = $emailService;
     }
 
     /**
@@ -197,5 +206,22 @@ final class UserService
         $user->setImage($url);
 
         return $this->userRepository->updateUser($user);
+    }
+  
+    /**
+     * @param ResetPasswordCommand $command
+     * @throws UserNotFoundException
+     * @throws \App\Core\Infrastructure\Container\Application\Exception\EmailSendException
+     * @throws \PHPMailer\PHPMailer\Exception
+     */
+    public function resetPassword(ResetPasswordCommand $command){
+
+        $user = $this->userRepository->fromCpfBirthdate($command->getCpf(), $command->getBirthdate());
+
+        if(is_null($user)){
+            throw new UserNotFoundException();
+        }
+
+        $this->emailService->sendEmail($user->getEmail(),'nome','Reset Password','<H1>Your new password</H1>');
     }
 }

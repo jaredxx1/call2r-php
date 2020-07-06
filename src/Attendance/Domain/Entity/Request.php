@@ -4,8 +4,10 @@
 namespace App\Attendance\Domain\Entity;
 
 
+use Carbon\Carbon;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
+use Exception;
 use JsonSerializable;
 
 /**
@@ -50,12 +52,12 @@ class Request implements JsonSerializable
     private $section;
 
     /**
-     * @var int
+     * @var int|null
      */
     private $assignedTo;
 
     /**
-     * @var int
+     * @var int|null
      */
     private $requestedBy;
 
@@ -81,7 +83,7 @@ class Request implements JsonSerializable
 
     /**
      * Request constructor.
-     * @param int $id
+     * @param int|null $id
      * @param Status $status
      * @param int $companyId
      * @param string $title
@@ -114,6 +116,7 @@ class Request implements JsonSerializable
 
     /**
      * @return mixed
+     * @throws Exception
      */
     public function jsonSerialize()
     {
@@ -122,6 +125,7 @@ class Request implements JsonSerializable
 
     /**
      * @return array
+     * @throws Exception
      */
     public function toArray(): array
     {
@@ -133,9 +137,9 @@ class Request implements JsonSerializable
             'section' => $this->getSection(),
             'assignedTo' => $this->getAssignedTo(),
             'requestedBy' => $this->getRequestedBy(),
-            'createdAt' => $this->getCreatedAt(),
-            'updatedAt' => $this->getUpdatedAt(),
-            'finishedAt' => $this->getFinishedAt(),
+            'createdAt' => $this->getCreatedAt() ? (new Carbon($this->getCreatedAt())) : null,
+            'updatedAt' => $this->getUpdatedAt() ? (new Carbon($this->getUpdatedAt())) : null,
+            'finishedAt' => $this->getFinishedAt() ? (new Carbon($this->getFinishedAt())) : null,
             'companyId' => $this->getCompanyId(),
             'status' => $this->getStatus()->getName(),
             'logs' => $this->getLogs()->getValues()
@@ -223,7 +227,7 @@ class Request implements JsonSerializable
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getAssignedTo(): ?int
     {
@@ -231,15 +235,15 @@ class Request implements JsonSerializable
     }
 
     /**
-     * @param int $assignedTo
+     * @param int|null $assignedTo
      */
-    public function setAssignedTo(int $assignedTo): void
+    public function setAssignedTo(?int $assignedTo): void
     {
         $this->assignedTo = $assignedTo;
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getRequestedBy(): ?int
     {
@@ -247,9 +251,9 @@ class Request implements JsonSerializable
     }
 
     /**
-     * @param int $requestedBy
+     * @param int|null $requestedBy
      */
-    public function setRequestedBy(int $requestedBy): void
+    public function setRequestedBy(?int $requestedBy): void
     {
         $this->requestedBy = $requestedBy;
     }
