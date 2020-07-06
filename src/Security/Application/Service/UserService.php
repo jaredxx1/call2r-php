@@ -4,8 +4,12 @@
 namespace App\Security\Application\Service;
 
 
+use App\Core\Infrastructure\Storaged\AWS\S3;
+use App\Core\Infrastructure\Email\EmailService;
 use App\Security\Application\Command\CreateUserCommand;
 use App\Security\Application\Command\LoginCommand;
+use App\Security\Application\Command\UpdateUserImageCommand;
+use App\Security\Application\Command\ResetPasswordCommand;
 use App\Security\Application\Command\UpdateUserCommand;
 use App\Security\Application\Exception\InvalidCredentialsException;
 use App\Security\Application\Exception\UserNotFoundException;
@@ -14,6 +18,8 @@ use App\Security\Domain\Entity\User;
 use App\Security\Domain\Repository\UserRepository;
 use Exception;
 use Firebase\JWT\JWT;
+use Ramsey\Uuid\Uuid;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
  * Class UserService
@@ -28,12 +34,26 @@ final class UserService
     private $userRepository;
 
     /**
+     * @var S3
+     */
+    private $s3;
+  
+    /**
+     * @var EmailService
+     */
+    private $emailService;
+
+    /**
      * UserService constructor.
      * @param UserRepository $userRepository
+     * @param S3 $s3
+     * @param EmailService $emailService
      */
-    public function __construct(UserRepository $userRepository)
+    public function __construct(UserRepository $userRepository, S3 $s3, EmailService $emailService)
     {
         $this->userRepository = $userRepository;
+        $this->s3 = $s3;
+        $this->emailService = $emailService;
     }
 
     /**
@@ -117,6 +137,7 @@ final class UserService
             $command->getPassword(),
             $command->getRole(),
             $command->getEmail(),
+            null,
             $command->getBirthdate(),
             $command->isActive(),
             $command->getCompanyId()
@@ -167,5 +188,40 @@ final class UserService
         }
 
         return $user;
+    }
+
+    /**
+     * @param UpdateUserImageCommand $command
+     * @return User
+     * @throws Exception
+     */
+    public function updateImage(UpdateUserImageCommand $command)
+    {
+        $uuid = Uuid::uuid4();
+
+        $user = $command->getUser();
+
+        $url = $this->s3->sendFile('user',$uuid->serialize(),$command->getUploadFile());
+
+        $user->setImage($url);
+
+        return $this->userRepository->updateUser($user);
+    }
+  
+    /**
+     * @param ResetPasswordCommand $command
+     * @throws UserNotFoundException
+     * @throws \App\Core\Infrastructure\Container\Application\Exception\EmailSendException
+     * @throws \PHPMailer\PHPMailer\Exception
+     */
+    public function resetPassword(ResetPasswordCommand $command){
+
+        $user = $this->userRepository->fromCpfBirthdate($command->getCpf(), $command->getBirthdate());
+
+        if(is_null($user)){
+            throw new UserNotFoundException();
+        }
+
+        $this->emailService->sendEmail($user->getEmail(),'nome','Reset Password','<H1>Your new password</H1>');
     }
 }

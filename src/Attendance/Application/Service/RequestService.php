@@ -6,11 +6,13 @@ namespace App\Attendance\Application\Service;
 
 use App\Attendance\Application\Command\ApproveRequestCommand;
 use App\Attendance\Application\Command\CreateRequestCommand;
+use App\Attendance\Application\Command\UpdateRequestCommand;
 use App\Attendance\Application\Command\DisapproveRequestCommand;
 use App\Attendance\Application\Command\TransferCompanyCommand;
 use App\Attendance\Application\Exception\RequestNotFoundException;
 use App\Attendance\Application\Exception\UnauthorizedStatusChangeException;
 use App\Attendance\Application\Exception\UnauthorizedTransferCompanyException;
+use App\Attendance\Application\Exception\UnauthorizedStatusUpdateException;
 use App\Attendance\Domain\Entity\Log;
 use App\Attendance\Domain\Entity\Request;
 use App\Attendance\Domain\Entity\Status;
@@ -325,7 +327,46 @@ class RequestService
         return $this->requestRepository->update($request);
     }
 
-    /**
+     /**
+     * @param UpdateRequestCommand $command
+     * @return Request|null
+     * @throws RequestNotFoundException
+     * @throws UnauthorizedStatusUpdateException
+     */
+    public function update(UpdateRequestCommand $command)
+    {
+        $request = $this->findById($command->getId());
+
+        if (
+            !($request->getStatus()->getId() == Status::awaitingResponse) &&
+            !($request->getStatus()->getId() == Status::awaitingSupport)
+        ) {
+            throw new UnauthorizedStatusUpdateException();
+        }
+
+        if (!is_null($command->getTitle())) {
+            $request->setTitle($command->getTitle());
+        }
+
+        if (!is_null($command->getDescription())) {
+            $request->setDescription($command->getDescription());
+        }
+
+        if (!is_null($command->getPriority())) {
+            $request->setPriority($command->getPriority());
+        }
+
+        $statusName = $request->getStatus()->getId() == Status::awaitingSupport ? 'awaitingSupport' : 'awaitingResponse';
+
+        $log = new Log(null, 'Chamado alterado', Carbon::now(), $statusName);
+
+        $request->getLogs()->add($log);
+        $request->setUpdatedAt(Carbon::now());
+
+        return $this->requestRepository->update($request);
+    }
+      
+     /**
      * @param TransferCompanyCommand $command
      * @return Request
      * @throws CompanyNotFoundException
@@ -369,7 +410,7 @@ class RequestService
 
 
         $log = new Log(null, 'Chamado transferido', Carbon::now(), 'transfer');
-
+ 
         $request->getLogs()->add($log);
         $request->setUpdatedAt(Carbon::now());
 

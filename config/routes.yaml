@@ -127,12 +127,31 @@ update_user:
   requirements:
     id: '\d+'
 
+update_image:
+  path: /api/v1/users/{idUser}/image
+  controller: App\Security\Presentation\Http\Action\UpdateUserImageAction
+  methods:    POST
+  requirements:
+    idUser: '\d+'
+    
+reset_password:
+  path: /api/v1/users/reset-password
+  controller: App\Security\Presentation\Http\Action\ResetPasswordAction
+  methods:    POST
+
 ## =============== Attendance Routes
 create_request:
   path: /api/v1/requests
   controller: App\Attendance\Presentation\Http\Action\CreateRequestAction
   methods:    POST
 
+update_request:
+  path: /api/v1/requests/{id}
+  controller: App\Attendance\Presentation\Http\Action\UpdateRequestAction
+  methods:    PUT
+  requirements:
+    id: '\d+'
+    
 find_requests:
   path: /api/v1/requests
   controller: App\Attendance\Presentation\Http\Action\FindRequestsAction

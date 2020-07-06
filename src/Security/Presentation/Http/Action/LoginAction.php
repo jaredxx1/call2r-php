@@ -7,6 +7,7 @@ namespace App\Security\Presentation\Http\Action;
 use App\Core\Presentation\Http\AbstractAction;
 use App\Security\Application\Command\LoginCommand;
 use App\Security\Application\Service\UserService;
+use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Throwable;

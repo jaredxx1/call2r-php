@@ -39,20 +39,11 @@ class S3
      * @param string $directory
      * @param string $key
      * @param UploadedFile $uploadedFile
-     * @return mixed|null
+     * @return mixed
      * @throws Exception
      */
-    public function sendImage(string $directory, string $key, UploadedFile $uploadedFile)
+    public function sendFile(string $directory, string $key, UploadedFile $uploadedFile)
     {
-        /*
-         * Validates if it's an image
-         */
-        $tmp = explode("/", $uploadedFile->getMimeType());
-
-        if ($tmp[0] != "image") {
-            return null;
-        }
-
         try {
             /*
              * Send image to amazon S3 and return a URL to this image
@@ -60,7 +51,7 @@ class S3
             $fileName = $uploadedFile->getPathname();
             $url = $this->s3Client->putObject(array(
                 'Bucket' => self::bucket,
-                'Key' => $directory . '/' . $key . '/image',
+                'Key' => $directory . '/' . $key . '/'.$uploadedFile->getMimeType(),
                 'SourceFile' => $fileName,
                 'ACL' => "public-read",
                 'ContentType' => $uploadedFile->getMimeType()
@@ -68,7 +59,6 @@ class S3
         } catch (S3Exception $e) {
             throw new Exception($e->getAwsErrorMessage());
         }
-
         return $url;
     }
 }
