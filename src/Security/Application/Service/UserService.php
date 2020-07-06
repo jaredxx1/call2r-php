@@ -180,7 +180,6 @@ final class UserService
 
     /**
      * @param ResetPasswordCommand $command
-     * @return array
      * @throws UserNotFoundException
      * @throws \App\Core\Infrastructure\Container\Application\Exception\EmailSendException
      * @throws \PHPMailer\PHPMailer\Exception
@@ -193,6 +192,6 @@ final class UserService
             throw new UserNotFoundException();
         }
 
-        return $this->emailService->sendEmail($user->getEmail(),'nome','Reset Password','<H1>Your new password</H1>');
+        $this->emailService->sendEmail($user->getEmail(),'nome','Reset Password','<H1>Your new password</H1>');
     }
 }

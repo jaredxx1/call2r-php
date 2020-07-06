@@ -43,13 +43,13 @@ class ResetPasswordAction extends AbstractAction
         try {
             $data = json_decode($request->getContent(), true);
             $command = ResetPasswordCommand::fromArray($data);
-            $result = $this->userService->resetPassword($command);
+            $this->userService->resetPassword($command);
         } catch (Exception $exception) {
             return $this->errorResponse($exception->getMessage(), $exception->getCode() ? $exception->getCode() : Response::HTTP_BAD_REQUEST);
         } catch (Throwable $exception) {
             return $this->errorResponse($exception->getMessage(), $exception->getCode() ? $exception->getCode() : Response::HTTP_BAD_REQUEST);
         }
 
-        return new JsonResponse($result, Response::HTTP_OK);
+        return new JsonResponse([], Response::HTTP_NO_CONTENT);
     }
 }

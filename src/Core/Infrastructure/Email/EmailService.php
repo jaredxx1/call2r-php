@@ -34,7 +34,6 @@ class EmailService
      * @param string $emailName
      * @param string $subject
      * @param string $template
-     * @return array
      * @throws EmailSendException
      * @throws \PHPMailer\PHPMailer\Exception
      */
@@ -80,7 +79,5 @@ class EmailService
         if (!$response) {
             throw new EmailSendException();
         }
-
-        return ["response" => $response];
     }
 }
