@@ -136,4 +136,23 @@ class DoctrineUserRepository implements UserRepository
 
         return $user;
     }
+
+    /**
+     * @param string $cpf
+     * @param $birthdate
+     * @return User|null
+     * @throws NonUniqueResultException
+     */
+    public function fromCpfBirthdate(string $cpf, $birthdate): ?User
+    {
+        return $this->entityManager
+            ->createQueryBuilder()
+            ->select('u')
+            ->from('App\Security\Domain\Entity\User', 'u')
+            ->where('u.cpf=:cpf and u.birthdate=:birthdate')
+            ->setParameter('cpf', $cpf)
+            ->setParameter('birthdate', $birthdate)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
 }

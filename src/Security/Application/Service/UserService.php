@@ -4,8 +4,10 @@
 namespace App\Security\Application\Service;
 
 
+use App\Core\Infrastructure\Email\EmailService;
 use App\Security\Application\Command\CreateUserCommand;
 use App\Security\Application\Command\LoginCommand;
+use App\Security\Application\Command\ResetPasswordCommand;
 use App\Security\Application\Command\UpdateUserCommand;
 use App\Security\Application\Exception\InvalidCredentialsException;
 use App\Security\Application\Exception\UserNotFoundException;
@@ -28,12 +30,19 @@ final class UserService
     private $userRepository;
 
     /**
+     * @var EmailService
+     */
+    private $emailService;
+
+    /**
      * UserService constructor.
      * @param UserRepository $userRepository
+     * @param EmailService $emailService
      */
-    public function __construct(UserRepository $userRepository)
+    public function __construct(UserRepository $userRepository, EmailService $emailService)
     {
         $this->userRepository = $userRepository;
+        $this->emailService = $emailService;
     }
 
     /**
@@ -167,5 +176,23 @@ final class UserService
         }
 
         return $user;
+    }
+
+    /**
+     * @param ResetPasswordCommand $command
+     * @return array
+     * @throws UserNotFoundException
+     * @throws \App\Core\Infrastructure\Container\Application\Exception\EmailSendException
+     * @throws \PHPMailer\PHPMailer\Exception
+     */
+    public function resetPassword(ResetPasswordCommand $command){
+
+        $user = $this->userRepository->fromCpfBirthdate($command->getCpf(), $command->getBirthdate());
+
+        if(is_null($user)){
+            throw new UserNotFoundException();
+        }
+
+        return $this->emailService->sendEmail($user->getEmail(),'nome','Reset Password','<H1>Your new password</H1>');
     }
 }
