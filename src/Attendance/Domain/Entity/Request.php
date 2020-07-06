@@ -52,12 +52,12 @@ class Request implements JsonSerializable
     private $section;
 
     /**
-     * @var int
+     * @var int|null
      */
     private $assignedTo;
 
     /**
-     * @var int
+     * @var int|null
      */
     private $requestedBy;
 
@@ -83,7 +83,7 @@ class Request implements JsonSerializable
 
     /**
      * Request constructor.
-     * @param int $id
+     * @param int|null $id
      * @param Status $status
      * @param int $companyId
      * @param string $title
@@ -227,7 +227,7 @@ class Request implements JsonSerializable
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getAssignedTo(): ?int
     {
@@ -235,15 +235,15 @@ class Request implements JsonSerializable
     }
 
     /**
-     * @param int $assignedTo
+     * @param int|null $assignedTo
      */
-    public function setAssignedTo(int $assignedTo): void
+    public function setAssignedTo(?int $assignedTo): void
     {
         $this->assignedTo = $assignedTo;
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getRequestedBy(): ?int
     {
@@ -251,9 +251,9 @@ class Request implements JsonSerializable
     }
 
     /**
-     * @param int $requestedBy
+     * @param int|null $requestedBy
      */
-    public function setRequestedBy(int $requestedBy): void
+    public function setRequestedBy(?int $requestedBy): void
     {
         $this->requestedBy = $requestedBy;
     }

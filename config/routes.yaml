@@ -138,6 +138,13 @@ create_request:
   controller: App\Attendance\Presentation\Http\Action\CreateRequestAction
   methods:    POST
 
+update_request:
+  path: /api/v1/requests/{id}
+  controller: App\Attendance\Presentation\Http\Action\UpdateRequestAction
+  methods:    PUT
+  requirements:
+    id: '\d+'
+    
 find_requests:
   path: /api/v1/requests
   controller: App\Attendance\Presentation\Http\Action\FindRequestsAction

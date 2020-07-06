@@ -1,36 +1,33 @@
 <?php
 
 
-namespace App\Security\Presentation\Http\Action;
+namespace App\Attendance\Presentation\Http\Action;
 
 
+use App\Attendance\Application\Command\UpdateRequestCommand;
+use App\Attendance\Application\Service\RequestService;
 use App\Core\Presentation\Http\AbstractAction;
-use App\Security\Application\Command\UpdateUserCommand;
-use App\Security\Application\Service\UserService;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
-/**
- * Class UpdateUserAction
- * @package App\Security\Presentation\Http\Action
- */
-class UpdateUserAction extends AbstractAction
+class UpdateRequestAction  extends AbstractAction
 {
     /**
-     * @var UserService
+     * @var RequestService
      */
-    private $userService;
+    private $service;
+
 
     /**
-     * LoginAction constructor.
-     * @param UserService $userService
+     * CreateRequestAction constructor.
+     * @param RequestService $service
      */
-    public function __construct(UserService $userService)
+    public function __construct(RequestService $service)
     {
-        $this->userService = $userService;
+        $this->service = $service;
     }
 
     /**
@@ -43,14 +40,13 @@ class UpdateUserAction extends AbstractAction
         try {
             $data = json_decode($request->getContent(), true);
             $data['id'] = $id;
-            $command = UpdateUserCommand::fromArray($data);
-            $user = $this->userService->updateUser($command);
+            $command = UpdateRequestCommand::fromArray($data);
+            $request = $this->service->update($command);
         } catch (Exception $exception) {
             return $this->errorResponse($exception->getMessage(), $exception->getCode() ? $exception->getCode() : Response::HTTP_BAD_REQUEST);
         } catch (Throwable $exception) {
             return $this->errorResponse($exception->getMessage(), $exception->getCode() ? $exception->getCode() : Response::HTTP_BAD_REQUEST);
         }
-
-        return new JsonResponse($user, Response::HTTP_OK);
+        return new JsonResponse($request, Response::HTTP_OK);
     }
 }
