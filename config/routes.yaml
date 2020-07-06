@@ -127,6 +127,11 @@ update_user:
   requirements:
     id: '\d+'
 
+reset_password:
+  path: /api/v1/users/reset-password
+  controller: App\Security\Presentation\Http\Action\ResetPasswordAction
+  methods:    POST
+
 ## =============== Attendance Routes
 create_request:
   path: /api/v1/requests

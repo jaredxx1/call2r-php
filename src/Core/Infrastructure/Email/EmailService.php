@@ -6,6 +6,10 @@ namespace App\Core\Infrastructure\Email;
 use App\Core\Infrastructure\Container\Application\Exception\EmailSendException;
 use PHPMailer\PHPMailer\PHPMailer;
 
+/**
+ * Class EmailService
+ * @package App\Core\Infrastructure\Email
+ */
 class EmailService
 {
 
@@ -30,8 +34,8 @@ class EmailService
      * @param string $emailName
      * @param string $subject
      * @param string $template
-     * @return mixed
      * @throws EmailSendException
+     * @throws \PHPMailer\PHPMailer\Exception
      */
     public function sendEmail(string $email, string $emailName, string $subject, string $template)
     {
@@ -75,7 +79,5 @@ class EmailService
         if (!$response) {
             throw new EmailSendException();
         }
-
-        return $response;
     }
 }
