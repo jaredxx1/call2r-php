@@ -17,6 +17,7 @@ use App\Attendance\Domain\Repository\StatusRepository;
 use App\Company\Application\Exception\CompanyNotFoundException;
 use App\Company\Domain\Repository\CompanyRepository;
 use App\Company\Domain\Repository\SectionRepository;
+use App\Security\Domain\Entity\User;
 use App\Security\Domain\Repository\UserRepository;
 use Carbon\Carbon;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -138,6 +139,30 @@ class RequestService
         }
 
         return $request;
+    }
+
+
+    /**
+     * @param User $user
+     * @return array
+     */
+    public function findAll(User $user)
+    {
+        switch ($user->getRole()) {
+            case 'ROLE_USER':
+                $requests = $this->requestRepository->findRequestsToSupport($user);
+                break;
+            case 'ROLE_MANAGER':
+                $requests = $this->requestRepository->findRequestsToManager($user);
+                break;
+            case 'ROLE_CLIENT':
+                $requests = $this->requestRepository->findRequestsToClient($user);
+                break;
+            default:
+                $requests = [];
+        }
+
+        return $requests;
     }
 
     /**

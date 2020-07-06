@@ -12,5 +12,6 @@
         <field name="role" column="role" type="string"/>
         <field name="birthdate" column="birthdate" type="string"/>
         <field name="active" column="active" type="boolean"/>
+        <field name="companyId" column="id_company" type="integer"/>
     </entity>
 </doctrine-mapping>
