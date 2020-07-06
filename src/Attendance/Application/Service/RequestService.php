@@ -273,9 +273,8 @@ class RequestService
         $request = $this->findById($command->getId());
 
         if (
-            ($request->getStatus()->getId() == Status::canceled)    ||
-            ($request->getStatus()->getId() == Status::approved)    ||
-            ($request->getStatus()->getId() == Status::inAttendance)
+            !($request->getStatus()->getId() == Status::awaitingResponse) &&
+            !($request->getStatus()->getId() == Status::awaitingSupport)
         ) {
             throw new UnauthorizedStatusUpdateException();
         }
