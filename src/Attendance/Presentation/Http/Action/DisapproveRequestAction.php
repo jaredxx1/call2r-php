@@ -4,6 +4,8 @@
 namespace App\Attendance\Presentation\Http\Action;
 
 
+use App\Attendance\Application\Command\ApproveRequestCommand;
+use App\Attendance\Application\Command\DisapproveRequestCommand;
 use App\Attendance\Application\Service\RequestService;
 use App\Core\Presentation\Http\AbstractAction;
 use Exception;
@@ -41,8 +43,10 @@ class DisapproveRequestAction extends AbstractAction
     public function __invoke(Request $request, int $requestId)
     {
         try {
-            $request = $this->service->findById($requestId);
-
+            $data = json_decode($request->getContent(), true);
+            $data['requestId'] = $requestId;
+            $command = DisapproveRequestCommand::fromArray($data);
+            $request = $this->service->disapproveRequest($command);
         } catch (Exception $exception) {
             return $this->errorResponse($exception->getMessage(), $exception->getCode() ? $exception->getCode() : 400);
         } catch (Throwable $exception) {

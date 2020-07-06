@@ -4,7 +4,9 @@
 namespace App\Attendance\Application\Service;
 
 
+use App\Attendance\Application\Command\ApproveRequestCommand;
 use App\Attendance\Application\Command\CreateRequestCommand;
+use App\Attendance\Application\Command\DisapproveRequestCommand;
 use App\Attendance\Application\Exception\RequestNotFoundException;
 use App\Attendance\Application\Exception\UnauthorizedStatusChangeException;
 use App\Attendance\Domain\Entity\Log;
@@ -106,6 +108,23 @@ class RequestService
     }
 
     /**
+     * @param ApproveRequestCommand $command
+     * @return Request
+     * @throws RequestNotFoundException
+     * @throws UnauthorizedStatusChangeException
+     */
+    public function approveRequest(ApproveRequestCommand $command): Request
+    {
+        $request = $this->findById($command->getRequestId());
+        $log = new Log(null, $command->getMessage(), Carbon::now(), 'message');
+        $request->getLogs()->add($log);
+        $this->requestRepository->update($request);
+        $request = $this->moveToApproved($request);
+
+        return $request;
+    }
+
+    /**
      * @param int $id
      * @return Request
      * @throws RequestNotFoundException
@@ -126,10 +145,51 @@ class RequestService
      * @return Request
      * @throws UnauthorizedStatusChangeException
      */
+    public function moveToApproved(Request $request): Request
+    {
+        if (
+            !($request->getStatus()->getId() == Status::inAttendance) &&
+            !($request->getStatus()->getId() == Status::awaitingResponse)
+        ) {
+            throw new UnauthorizedStatusChangeException();
+        }
+
+        $log = new Log(null, 'Chamado aprovado.', Carbon::now(), 'approve');
+        $status = $this->statusRepository->fromId(Status::approved);
+
+        $request->getLogs()->add($log);
+        $request->setStatus($status);
+        $request->setUpdatedAt(Carbon::now());
+
+        return $this->requestRepository->update($request);
+    }
+
+    /**
+     * @param DisapproveRequestCommand $command
+     * @return Request
+     * @throws RequestNotFoundException
+     * @throws UnauthorizedStatusChangeException
+     */
+    public function disapproveRequest(DisapproveRequestCommand $command): Request
+    {
+        $request = $this->findById($command->getRequestId());
+        $log = new Log(null, $command->getMessage(), Carbon::now(), 'message');
+        $request->getLogs()->add($log);
+        $this->requestRepository->update($request);
+        $request = $this->moveToAwaitingSupport($request);
+
+        return $request;
+    }
+
+    /**
+     * @param Request $request
+     * @return Request
+     * @throws UnauthorizedStatusChangeException
+     */
     public function moveToAwaitingSupport(Request $request): Request
     {
         if (
-            !($request->getStatus()->getId() == Status::inAttendance) ||
+            !($request->getStatus()->getId() == Status::inAttendance) &&
             !($request->getStatus()->getId() == Status::approved)
         ) {
             throw new UnauthorizedStatusChangeException();
@@ -153,7 +213,7 @@ class RequestService
     public function moveToInAttendance(Request $request): Request
     {
         if (
-            !($request->getStatus()->getId() == Status::awaitingSupport) ||
+            !($request->getStatus()->getId() == Status::awaitingSupport) &&
             !($request->getStatus()->getId() == Status::awaitingResponse)
         ) {
             throw new UnauthorizedStatusChangeException();
@@ -219,8 +279,8 @@ class RequestService
     public function moveToCanceled(Request $request): Request
     {
         if (
-            !($request->getStatus()->getId() == Status::awaitingSupport) ||
-            !($request->getStatus()->getId() == Status::inAttendance) ||
+            !($request->getStatus()->getId() == Status::awaitingSupport) &&
+            !($request->getStatus()->getId() == Status::inAttendance) &&
             !($request->getStatus()->getId() == Status::awaitingResponse)
         ) {
             throw new UnauthorizedStatusChangeException();
@@ -228,30 +288,6 @@ class RequestService
 
         $log = new Log(null, 'Chamado cancelado.', Carbon::now(), 'cancel');
         $status = $this->statusRepository->fromId(Status::canceled);
-
-        $request->getLogs()->add($log);
-        $request->setStatus($status);
-        $request->setUpdatedAt(Carbon::now());
-
-        return $this->requestRepository->update($request);
-    }
-
-    /**
-     * @param Request $request
-     * @return Request
-     * @throws UnauthorizedStatusChangeException
-     */
-    public function moveToApproved(Request $request): Request
-    {
-        if (
-            !($request->getStatus()->getId() == Status::inAttendance) ||
-            !($request->getStatus()->getId() == Status::awaitingResponse)
-        ) {
-            throw new UnauthorizedStatusChangeException();
-        }
-
-        $log = new Log(null, 'Chamado aprovado.', Carbon::now(), 'approve');
-        $status = $this->statusRepository->fromId(Status::approved);
 
         $request->getLogs()->add($log);
         $request->setStatus($status);
