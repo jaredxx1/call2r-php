@@ -49,6 +49,11 @@ class Request implements JsonSerializable
     /**
      * @var string
      */
+    private $sla;
+
+    /**
+     * @var string
+     */
     private $section;
 
     /**
@@ -208,6 +213,22 @@ class Request implements JsonSerializable
     public function setPriority(int $priority): void
     {
         $this->priority = $priority;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSla(): string
+    {
+        return $this->sla;
+    }
+
+    /**
+     * @param string $sla
+     */
+    public function setSla(string $sla): void
+    {
+        $this->sla = $sla;
     }
 
     /**

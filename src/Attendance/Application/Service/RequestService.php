@@ -6,13 +6,13 @@ namespace App\Attendance\Application\Service;
 
 use App\Attendance\Application\Command\ApproveRequestCommand;
 use App\Attendance\Application\Command\CreateRequestCommand;
-use App\Attendance\Application\Command\UpdateRequestCommand;
 use App\Attendance\Application\Command\DisapproveRequestCommand;
 use App\Attendance\Application\Command\TransferCompanyCommand;
+use App\Attendance\Application\Command\UpdateRequestCommand;
 use App\Attendance\Application\Exception\RequestNotFoundException;
 use App\Attendance\Application\Exception\UnauthorizedStatusChangeException;
-use App\Attendance\Application\Exception\UnauthorizedTransferCompanyException;
 use App\Attendance\Application\Exception\UnauthorizedStatusUpdateException;
+use App\Attendance\Application\Exception\UnauthorizedTransferCompanyException;
 use App\Attendance\Domain\Entity\Log;
 use App\Attendance\Domain\Entity\Request;
 use App\Attendance\Domain\Entity\Status;
@@ -74,6 +74,78 @@ class RequestService
         $this->companyRepository = $companyRepository;
         $this->userRepository = $userRepository;
         $this->sectionRepository = $sectionRepository;
+    }
+
+    /**
+     * @param Request $request
+     * @return string
+     */
+    public static function calculateSla(Request $request): string
+    {
+        // init
+        // message
+        // awaitingSupport
+        // inAttendance
+        // awaitingResponse
+        // finish
+        // cancel
+        // transfer
+        // approve
+
+        /**
+         * @var Log $log
+         */
+        foreach ($request->getLogs() as $log) {
+            switch ($log->getCommand()) {
+                case 'init':
+                    dump([
+                        'command' => 'start counting',
+                        'datetime' => $log->getCreatedAt()
+                    ]);
+                    break;
+                case 'message':
+                    break;
+                case 'awaitingSupport':
+                    dump([
+                        'command' => 'start counting',
+                        'datetime' => $log->getCreatedAt()
+                    ]);
+                    break;
+                case 'inAttendance':
+                    break;
+                case 'awaitingResponse':
+                    dump([
+                        'command' => 'stop counting',
+                        'datetime' => $log->getCreatedAt()
+                    ]);
+                    break;
+                case 'finish':
+                    dump([
+                        'command' => 'stop counting',
+                        'datetime' => $log->getCreatedAt()
+                    ]);
+                    break;
+                case 'cancel':
+                    dump([
+                        'command' => 'stop counting',
+                        'datetime' => $log->getCreatedAt()
+                    ]);
+                    break;
+                case 'transfer':
+                    break;
+                case 'approve':
+                    dump([
+                        'command' => 'stop counting',
+                        'datetime' => $log->getCreatedAt()
+                    ]);
+                    break;
+
+                default:
+                    break;
+            }
+        }
+
+        dd('ok');
     }
 
     /**
@@ -146,30 +218,6 @@ class RequestService
         return $request;
     }
 
-
-    /**
-     * @param User $user
-     * @return array
-     */
-    public function findAll(User $user)
-    {
-        switch ($user->getRole()) {
-            case 'ROLE_USER':
-                $requests = $this->requestRepository->findRequestsToSupport($user);
-                break;
-            case 'ROLE_MANAGER':
-                $requests = $this->requestRepository->findRequestsToManager($user);
-                break;
-            case 'ROLE_CLIENT':
-                $requests = $this->requestRepository->findRequestsToClient($user);
-                break;
-            default:
-                $requests = [];
-        }
-
-        return $requests;
-    }
-
     /**
      * @param Request $request
      * @return Request
@@ -192,6 +240,29 @@ class RequestService
         $request->setUpdatedAt(Carbon::now());
 
         return $this->requestRepository->update($request);
+    }
+
+    /**
+     * @param User $user
+     * @return array
+     */
+    public function findAll(User $user)
+    {
+        switch ($user->getRole()) {
+            case 'ROLE_USER':
+                $requests = $this->requestRepository->findRequestsToSupport($user);
+                break;
+            case 'ROLE_MANAGER':
+                $requests = $this->requestRepository->findRequestsToManager($user);
+                break;
+            case 'ROLE_CLIENT':
+                $requests = $this->requestRepository->findRequestsToClient($user);
+                break;
+            default:
+                $requests = [];
+        }
+
+        return $requests;
     }
 
     /**
@@ -327,7 +398,7 @@ class RequestService
         return $this->requestRepository->update($request);
     }
 
-     /**
+    /**
      * @param UpdateRequestCommand $command
      * @return Request|null
      * @throws RequestNotFoundException
@@ -375,7 +446,8 @@ class RequestService
      * @throws UnauthorizedStatusChangeException
      * @throws UnauthorizedTransferCompanyException
      */
-    public function transferCompany(TransferCompanyCommand $command){
+    public function transferCompany(TransferCompanyCommand $command)
+    {
 
         $request = $this->findById($command->getRequestId());
         if (
@@ -388,35 +460,30 @@ class RequestService
 
         $company = $this->companyRepository->fromId($command->getCompanyId());
 
-        if(is_null($company)){
+        if (is_null($company)) {
             throw new CompanyNotFoundException();
         }
 
         $section = $this->sectionRepository->fromName($command->getSection());
 
-        if(is_null($section)){
+        if (is_null($section)) {
             throw new SectionNotFoundException();
         }
 
-        if(!($company->sections()->contains($section))){
+        if (!($company->sections()->contains($section))) {
             throw new UnauthorizedTransferCompanyException();
         }
 
-        $request->setSection($section->name());
-
-        $request->setCompanyId($company->id());
-
-        $request->setAssignedTo(null);
-
-
         $log = new Log(null, 'Chamado transferido', Carbon::now(), 'transfer');
- 
+
+        $request->setSection($section->name());
+        $request->setCompanyId($company->id());
+        $request->setAssignedTo(null);
         $request->getLogs()->add($log);
         $request->setUpdatedAt(Carbon::now());
 
-        $this->requestRepository->update($request);
-
-        $this->moveToAwaitingSupport($request);
+        $request = $this->requestRepository->update($request);
+        $request = $this->moveToAwaitingSupport($request);
 
         return $request;
     }
