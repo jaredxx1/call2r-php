@@ -56,10 +56,12 @@ interface RequestRepository
      * @param string|null $title
      * @param string|null $initialDate
      * @param string|null $finalDate
-     * @param string|null $statusId
-     * @param string|null $assignedTo
-     * @param string|null $requestedBy
+     * @param Status|null $status
+     * @param int|null $assignedTo
+     * @param int|null $requestedBy
      * @return array
      */
-    public function chutulu(?string $title, ?string $initialDate, ?string $finalDate, ?string $statusId, ?string $assignedTo, ?string $requestedBy): array;
+    public function getSearchRequests(?string $title, ?string $initialDate, ?string $finalDate, ?Status $status,?int $assignedTo, ?int $requestedBy): array;
+
+
 }

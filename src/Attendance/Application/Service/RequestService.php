@@ -8,6 +8,7 @@ use App\Attendance\Application\Command\CreateRequestCommand;
 use App\Attendance\Application\Command\DisapproveRequestCommand;
 use App\Attendance\Application\Command\UpdateRequestCommand;
 use App\Attendance\Application\Exception\RequestNotFoundException;
+use App\Attendance\Application\Exception\StatusNotFoundException;
 use App\Attendance\Application\Exception\UnauthorizedStatusChangeException;
 use App\Attendance\Application\Exception\UnauthorizedStatusUpdateException;
 use App\Attendance\Application\Query\CreatePdfQuery;
@@ -375,38 +376,52 @@ class RequestService
 
     /**
      * @param CreatePdfQuery $query
-     * @return string
+     * @return array
+     * @throws StatusNotFoundException
      * @throws \Mpdf\MpdfException
+     * @throws Exception
      */
     public function createPdf(CreatePdfQuery $query)
     {
-        $title = $query->getTitle();
-        $initialDate = $query->getInitialDate();
-        $finalDate = $query->getFinalDate();
-        $assignedTo = $query->getAssignedTo();
-        $requestedBy = $query->getRequestedBy();
-        $statusId = null;
+        $status = null;
 
-        if(!is_null($query->getStatus())){
-            $status = $this->statusRepository->fromName($query->getStatus());
-            $statusId = $status->getId();
+        if (!is_null($query->getStatusId())) {
+            $status = $this->statusRepository->fromId($query->getStatusId());
+            if (is_null($status)) {
+                throw new StatusNotFoundException();
+            }
         }
 
-        $result = $this->requestRepository->chutulu($title, $initialDate, $finalDate, $statusId, $assignedTo, $requestedBy);
+        $result = $this->requestRepository->getSearchRequests(
+            $query->getTitle(),
+            $query->getInitialDate(),
+            $query->getFinalDate(),
+            $status,
+            $query->getAssignedTo(),
+            $query->getRequestedBy()
+        );
+
+        if($result == []){
+            return [];
+        }
 
         $mpdf = new Mpdf();
         $uuid = Uuid::uuid4();
-        $mpdf->WriteHTML('<h1>CALLR2 PDF</h1>');
-        $mpdf->WriteHTML('<table style="width:100%">');
+        $mpdf->WriteHTML('<h1 style="text-align: center">CALLR2 PDF</h1>');
+        $mpdf->WriteHTML('<table style="width:100%;" >');
         $mpdf->WriteHTML('<tr>');
-        $mpdf->WriteHTML('<th>Title</th>');
-        $mpdf->WriteHTML('<th>Priority</th>');
-        $mpdf->WriteHTML('<th>section</th>');
+        $mpdf->WriteHTML('<th style="text-align: left">Title</th>');
+        $mpdf->WriteHTML('<th style="text-align: left">Priority</th>');
+        $mpdf->WriteHTML('<th style="text-align: left">section</th>');
+        $mpdf->WriteHTML('<th style="text-align: left">Last update</th>');
         $mpdf->WriteHTML('</tr>');
         foreach ($result as $r){
-            $mpdf->WriteHTML('<tr><td>'.$r['title'].'</td><td>'.$r['priority'].'</td><td>'.$r['section'].'</td>');
+            $mpdf->WriteHTML('<tr><td>'.$r->getTitle().'</td><td>'.$r->getPriority().'</td><td>'.$r->getSection().'</td><td>'.new Carbon($r->getUpdatedAt()).'</td></tr>');
         }
         $mpdf->WriteHTML('</table>');
-        return $mpdf->Output();
+        $uuid = $uuid->serialize();
+        $mpdf->Output($uuid.'.pdf', \Mpdf\Output\Destination::FILE);
+        $url = $this->s3->sendFile('request',$uuid,$uuid.'.pdf','requestsFile.pdf','application/pdf');
+        return ["url" => $url];
     }
 }

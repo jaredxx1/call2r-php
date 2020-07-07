@@ -5,6 +5,7 @@ namespace App\Attendance\Infrastructure\Persistence\Doctrine\Repository;
 
 
 use App\Attendance\Domain\Entity\Request;
+use App\Attendance\Domain\Entity\Status;
 use App\Attendance\Domain\Repository\RequestRepository;
 use App\Security\Domain\Entity\User;
 use Doctrine\Common\Persistence\ObjectRepository;
@@ -125,51 +126,50 @@ class DoctrineRequestRepository implements RequestRepository
             ->getResult();
     }
 
+
     /**
      * @param string|null $title
      * @param string|null $initialDate
      * @param string|null $finalDate
-     * @param string|null $statusId
-     * @param string|null $assignedTo
-     * @param string|null $requestedBy
+     * @param Status|null $status
+     * @param int|null $assignedTo
+     * @param int|null $requestedBy
      * @return array
      */
-    public function chutulu(?string $title, ?string $initialDate, ?string $finalDate, ?string $statusId, ?string $assignedTo, ?string $requestedBy): array
+    public function getSearchRequests(?string $title, ?string $initialDate, ?string $finalDate, ?Status $status, ?int $assignedTo, ?int $requestedBy): array
     {
-        $sqlTitle = '';
-        $sqlData = '';
-        $sqlStatus = '';
-        $sqlAssignedTo = '';
-        $sqlRequestedBy = '';
 
-        if (!is_null($title)) {
-            $sqlTitle = ' and title = \'' . $title.' \'';
+        $query = $this->entityManager->createQueryBuilder()
+            ->select('r')
+            ->from('Attendance:Request', 'r');
+
+        if (isset($title)) {
+            $query->andWhere('r.title = :title')
+                ->setParameter(':title', $title);
         }
 
-        if (!is_null($initialDate) && !is_null($finalDate)) {
-            $sqlData = ' and tr.created_at between \'' . $initialDate . '\' and \'' . $finalDate.'\'';
+        if ((isset($finalDate)) && (isset($initialDate))) {
+            $query->andWhere('r.createdAt BETWEEN :initialDate and :finalDate')
+                ->setParameter(':initialDate', $initialDate)
+                ->setParameter(':finalDate', $finalDate);
         }
 
-        if (!is_null($statusId)) {
-            $sqlStatus = ' and id_status =' . $statusId;
+        if (isset($status)) {
+            $query->andWhere('r.status = :status')
+                ->setParameter(':status', $status);
         }
 
-        if (!is_null($assignedTo)) {
-            $sqlAssignedTo = ' and assigned_to =' . $assignedTo;
+        if (isset($assignedTo)) {
+            $query->andWhere('r.assignedTo = :assignedTo')
+                ->setParameter(':assignedTo', $assignedTo);
         }
 
-        if (!is_null($requestedBy)) {
-            $sqlRequestedBy = ' and requested_by =' . $requestedBy;
+        if (isset($requestedBy)) {
+            $query->andWhere('r.requestedBy = :requestedBy')
+                ->setParameter(':requestedBy', $requestedBy);
         }
 
-        $sql = 'select * from tb_request tr '
-            . 'where 1 = 1'
-            . $sqlTitle
-            . $sqlStatus
-            . $sqlAssignedTo
-            . $sqlRequestedBy
-            . $sqlData;
+        return $query->getQuery()->getResult();
 
-        return $this->entityManager->getConnection()->executeQuery($sql)->fetchAll();
     }
 }

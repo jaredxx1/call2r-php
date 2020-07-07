@@ -16,11 +16,5 @@ interface StatusRepository
      * @param int $id
      * @return Status|null
      */
-    public function fromId(int $id): ?Status;
-
-    /**
-     * @param string $name
-     * @return Status|null
-     */
-    public function fromName(string $name): ?Status;
+    public function fromId(?int $id): ?Status;
 }
