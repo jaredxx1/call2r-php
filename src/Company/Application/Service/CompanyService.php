@@ -16,6 +16,7 @@ use App\Company\Domain\Entity\SLA;
 use App\Company\Domain\Repository\CompanyRepository;
 use App\Company\Domain\Repository\SectionRepository;
 use App\Company\Domain\Repository\SlaRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * Class CompanyService
@@ -73,6 +74,7 @@ class CompanyService
      */
     public function create(CreateCompanyCommand $command): ?Company
     {
+
         $sla = new SLA(
             null,
             $command->sla()['p1'],
@@ -82,23 +84,24 @@ class CompanyService
             $command->sla()['p5']
         );
 
+        $sections = new ArrayCollection();
         foreach ($command->sections() as $section) {
             $foundSection = $this->sectionRepository->fromName($section['name']);
             if (is_null($foundSection)) {
-                $sections[] = new Section(
+                $sections->add(new Section(
                     null,
                     $section['name'],
                     $section['priority']
-                );
+                ));
             } else {
-                $sections[] = $foundSection;
+                $sections->add($foundSection);
             }
         }
 
         $company = new Company(
             $command->name(),
-            $command->cnpj(),
             $command->description(),
+            $command->cnpj(),
             $command->isMother(),
             $command->isActive(),
             $sla,
@@ -165,16 +168,17 @@ class CompanyService
             throw new SlaNotFoundException();
         }
 
+        $sections = new ArrayCollection();
         foreach ($command->sections() as $section) {
             $foundSection = $this->sectionRepository->fromName($section['name']);
             if (is_null($foundSection)) {
-                $sections[] = new Section(
+                $sections->add(new Section(
                     null,
                     $section['name'],
                     $section['priority']
-                );
+                ));
             } else {
-                $sections[] = $foundSection;
+                $sections->add($foundSection);
             }
         }
 
