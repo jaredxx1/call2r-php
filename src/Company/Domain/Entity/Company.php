@@ -17,7 +17,7 @@ class Company implements JsonSerializable
 {
 
     /**
-     * @var int
+     * @var int|null
      */
     private $id;
 
@@ -58,6 +58,7 @@ class Company implements JsonSerializable
 
     /**
      * Company constructor.
+     * @param int|null $id
      * @param string $name
      * @param string $description
      * @param string $cnpj
@@ -66,8 +67,9 @@ class Company implements JsonSerializable
      * @param SLA $sla
      * @param ArrayCollection $sections
      */
-    public function __construct(string $name, string $description, string $cnpj, bool $mother, bool $active, SLA $sla, ArrayCollection $sections)
+    public function __construct(?int $id, string $name, string $description, string $cnpj, bool $mother, bool $active, SLA $sla, ArrayCollection $sections)
     {
+        $this->id = $id;
         $this->name = $name;
         $this->description = $description;
         $this->cnpj = $cnpj;
@@ -76,7 +78,6 @@ class Company implements JsonSerializable
         $this->sla = $sla;
         $this->sections = $sections;
     }
-
 
     /**
      * @return array|mixed
@@ -94,79 +95,23 @@ class Company implements JsonSerializable
     public function toArray(): array
     {
         return [
-            'id' => $this->id(),
-            'name' => $this->name(),
-            'description' => $this->description(),
-            'cnpj' => $this->cnpj(),
-            'isMother' => $this->isMother(),
+            'id' => $this->getId(),
+            'name' => $this->getName(),
+            'description' => $this->getDescription(),
+            'cnpj' => $this->getCnpj(),
+            'isMother' =>   $this->isMother(),
             'isActive' => $this->isActive(),
-            'sla' => $this->sla(),
-            'sections' => $this->sections()->getValues()
+            'sla' => $this->getSla(),
+            'sections' => $this->getSections()->getValues()
         ];
     }
 
     /**
      * @return int
      */
-    public function id(): int
+    public function getId(): int
     {
         return $this->id;
-    }
-
-    /**
-     * @return string
-     */
-    public function name(): string
-    {
-        return $this->name;
-    }
-
-    /**
-     * @return string
-     */
-    public function description(): string
-    {
-        return $this->description;
-    }
-
-    /**
-     * @return string
-     */
-    public function cnpj(): string
-    {
-        return $this->cnpj;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isMother(): bool
-    {
-        return $this->mother;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isActive(): bool
-    {
-        return $this->active;
-    }
-
-    /**
-     * @return SLA
-     */
-    public function sla(): SLA
-    {
-        return $this->sla;
-    }
-
-    /**
-     * @return ArrayCollection
-     */
-    public function sections()
-    {
-        return $this->sections;
     }
 
     /**
@@ -178,11 +123,11 @@ class Company implements JsonSerializable
     }
 
     /**
-     * @param string $cnpj
+     * @return string
      */
-    public function setCnpj(string $cnpj): void
+    public function getName(): string
     {
-        $this->cnpj = $cnpj;
+        return $this->name;
     }
 
     /**
@@ -194,11 +139,43 @@ class Company implements JsonSerializable
     }
 
     /**
+     * @return string
+     */
+    public function getDescription(): string
+    {
+        return $this->description;
+    }
+
+    /**
      * @param string $description
      */
     public function setDescription(string $description): void
     {
         $this->description = $description;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCnpj(): string
+    {
+        return $this->cnpj;
+    }
+
+    /**
+     * @param string $cnpj
+     */
+    public function setCnpj(string $cnpj): void
+    {
+        $this->cnpj = $cnpj;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isMother(): bool
+    {
+        return $this->mother;
     }
 
     /**
@@ -210,6 +187,14 @@ class Company implements JsonSerializable
     }
 
     /**
+     * @return bool
+     */
+    public function isActive(): bool
+    {
+        return $this->active;
+    }
+
+    /**
      * @param bool $active
      */
     public function setActive(bool $active): void
@@ -218,11 +203,27 @@ class Company implements JsonSerializable
     }
 
     /**
+     * @return SLA
+     */
+    public function getSla(): SLA
+    {
+        return $this->sla;
+    }
+
+    /**
      * @param SLA $sla
      */
     public function setSla(SLA $sla): void
     {
         $this->sla = $sla;
+    }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getSections()
+    {
+        return $this->sections;
     }
 
     /**

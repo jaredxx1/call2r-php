@@ -13,7 +13,7 @@ use JsonSerializable;
 class SLA implements JsonSerializable
 {
     /**
-     * @var int
+     * @var int|null
      */
     private $id;
 
@@ -75,69 +75,37 @@ class SLA implements JsonSerializable
     public function toArray(): array
     {
         return [
-            'id' => $this->id(),
-            'p1' => $this->p1(),
-            'p2' => $this->p2(),
-            'p3' => $this->p3(),
-            'p4' => $this->p4(),
-            'p5' => $this->p5()
+            'id' => $this->getId(),
+            'p1' => $this->getP1(),
+            'p2' => $this->getP2(),
+            'p3' => $this->getP3(),
+            'p4' => $this->getP4(),
+            'p5' => $this->getP5()
         ];
     }
 
     /**
-     * @return int
+     * @return int|null
      */
-    public function id(): int
+    public function getId(): ?int
     {
         return $this->id;
     }
 
     /**
-     * @return int
+     * @param int|null $id
      */
-    public function p1(): int
-    {
-        return $this->p1;
-    }
-
-    /**
-     * @return int
-     */
-    public function p2(): int
-    {
-        return $this->p2;
-    }
-
-    /**
-     * @return int
-     */
-    public function p3(): int
-    {
-        return $this->p3;
-    }
-
-    /**
-     * @return int
-     */
-    public function p4(): int
-    {
-        return $this->p4;
-    }
-
-    /**
-     * @return int
-     */
-    public function p5(): int
-    {
-        return $this->p5;
-    }
-
-    /**
-     * @param int $id
-     */
-    public function setId(int $id): void
+    public function setId(?int $id): void
     {
         $this->id = $id;
+    }
+
+    /**
+     * @return int
+     */
+    public function getP1(): int
+    {
+        return $this->p1;
     }
 
     /**
@@ -149,11 +117,27 @@ class SLA implements JsonSerializable
     }
 
     /**
+     * @return int
+     */
+    public function getP2(): int
+    {
+        return $this->p2;
+    }
+
+    /**
      * @param int $p2
      */
     public function setP2(int $p2): void
     {
         $this->p2 = $p2;
+    }
+
+    /**
+     * @return int
+     */
+    public function getP3(): int
+    {
+        return $this->p3;
     }
 
     /**
@@ -165,11 +149,27 @@ class SLA implements JsonSerializable
     }
 
     /**
+     * @return int
+     */
+    public function getP4(): int
+    {
+        return $this->p4;
+    }
+
+    /**
      * @param int $p4
      */
     public function setP4(int $p4): void
     {
         $this->p4 = $p4;
+    }
+
+    /**
+     * @return int
+     */
+    public function getP5(): int
+    {
+        return $this->p5;
     }
 
     /**
@@ -179,4 +179,6 @@ class SLA implements JsonSerializable
     {
         $this->p5 = $p5;
     }
+
+
 }
