@@ -94,8 +94,8 @@ class CompanyService
                 );
                 if(!$sectionsName->contains($localSection->getName())){
                     $sections->add($localSection);
+                    $sectionsName->add($localSection->getName());
                 }
-                $sectionsName->add($localSection->getName());
             } else {
                 $sections->add($foundSection);
             }
@@ -184,8 +184,8 @@ class CompanyService
                 );
                 if(!$sectionsName->contains($localSection->getName())){
                     $sections->add($localSection);
+                    $sectionsName->add($localSection->getName());
                 }
-                $sectionsName->add($localSection->getName());
             } else {
                 $sections->add($foundSection);
             }

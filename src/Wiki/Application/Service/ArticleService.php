@@ -87,8 +87,8 @@ class ArticleService
                 );
                 if(!$categoriesName->contains($localCategory->getTitle())){
                     $categories->add($localCategory);
+                    $categoriesName->add($localCategory->getTitle());
                 }
-                $categoriesName->add($localCategory->getTitle());
             } else {
                 $categories->add($foundCategory);
             }
@@ -136,8 +136,8 @@ class ArticleService
                 );
                 if(!$categoriesName->contains($localCategory->getTitle())){
                     $categories->add($localCategory);
+                    $categoriesName->add($localCategory->getTitle());
                 }
-                $categoriesName->add($localCategory->getTitle());
             } else {
                 $categories->add($foundCategory);
             }
