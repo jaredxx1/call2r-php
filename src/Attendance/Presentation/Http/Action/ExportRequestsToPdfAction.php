@@ -5,7 +5,7 @@ namespace App\Attendance\Presentation\Http\Action;
 
 
 use App\Attendance\Application\Command\UpdateRequestCommand;
-use App\Attendance\Application\Query\CreatePdfQuery;
+use App\Attendance\Application\Query\ExportRequestsToPdfQuery;
 use App\Attendance\Application\Service\RequestService;
 use App\Core\Presentation\Http\AbstractAction;
 use Exception;
@@ -14,7 +14,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
-class CreatePdfAction extends AbstractAction
+class ExportRequestsToPdfAction extends AbstractAction
 {
     /**
      * @var RequestService
@@ -22,7 +22,7 @@ class CreatePdfAction extends AbstractAction
     private $service;
 
     /**
-     * CreatePdfAction constructor.
+     * ExportRequestsToPdfAction constructor.
      * @param RequestService $service
      */
     public function __construct(RequestService $service)
@@ -34,9 +34,9 @@ class CreatePdfAction extends AbstractAction
     public function __invoke(Request $request)
     {
         try {
-            $data = $request->query->all();
-            $query = CreatePdfQuery::fromArray($data);
-            $url = $this->service->createPdf($query);
+            $params = $request->query->all();
+            $query = ExportRequestsToPdfQuery::fromArray($params);
+            $url = $this->service->ExportsRequestsToPdf($query);
         } catch (Exception $exception) {
             return $this->errorResponse($exception->getMessage(), $exception->getCode() ? $exception->getCode() : Response::HTTP_BAD_REQUEST);
         } catch (Throwable $exception) {

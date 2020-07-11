@@ -216,7 +216,7 @@ disapprove_request:
 
 create_pdf:
   path: /api/v1/requests/export-requests-to-pdf
-  controller: App\Attendance\Presentation\Http\Action\CreatePdfAction
+  controller: App\Attendance\Presentation\Http\Action\ExportRequestsToPdfAction
   methods:    GET
   requirements:
     requestId: '\d+'

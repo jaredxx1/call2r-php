@@ -7,13 +7,13 @@ use App\Attendance\Application\Command\ApproveRequestCommand;
 use App\Attendance\Application\Command\CreateRequestCommand;
 use App\Attendance\Application\Command\DisapproveRequestCommand;
 use App\Attendance\Application\Command\UpdateRequestCommand;
-use App\Attendance\Application\Command\TransferCompanyCommand
+use App\Attendance\Application\Command\TransferCompanyCommand;
 use App\Attendance\Application\Exception\RequestNotFoundException;
 use App\Attendance\Application\Exception\StatusNotFoundException;
 use App\Attendance\Application\Exception\UnauthorizedStatusChangeException;
 use App\Attendance\Application\Exception\UnauthorizedTransferCompanyException;
 use App\Attendance\Application\Exception\UnauthorizedStatusUpdateException;
-use App\Attendance\Application\Query\CreatePdfQuery;
+use App\Attendance\Application\Query\ExportRequestsToPdfQuery;
 use App\Attendance\Domain\Entity\Log;
 use App\Attendance\Domain\Entity\Request;
 use App\Attendance\Domain\Entity\Status;
@@ -432,30 +432,19 @@ class RequestService
 
         return $request;
     }
-    
+
     /**
-     * @param CreatePdfQuery $query
+     * @param ExportRequestsToPdfQuery $query
      * @return array
-     * @throws StatusNotFoundException
      * @throws \Mpdf\MpdfException
-     * @throws Exception
      */
-    public function createPdf(CreatePdfQuery $query)
+    public function ExportsRequestsToPdf(ExportRequestsToPdfQuery $query)
     {
-        $status = null;
-
-        if (!is_null($query->getStatusId())) {
-            $status = $this->statusRepository->fromId($query->getStatusId());
-            if (is_null($status)) {
-                throw new StatusNotFoundException();
-            }
-        }
-
-        $result = $this->requestRepository->getSearchRequests(
+        $result = $this->requestRepository->searchRequests(
             $query->getTitle(),
             $query->getInitialDate(),
             $query->getFinalDate(),
-            $status,
+            $query->getStatusId(),
             $query->getAssignedTo(),
             $query->getRequestedBy()
         );

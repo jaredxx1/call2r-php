@@ -56,12 +56,12 @@ interface RequestRepository
      * @param string|null $title
      * @param string|null $initialDate
      * @param string|null $finalDate
-     * @param Status|null $status
+     * @param int|null $statusId
      * @param int|null $assignedTo
      * @param int|null $requestedBy
      * @return array
      */
-    public function getSearchRequests(?string $title, ?string $initialDate, ?string $finalDate, ?Status $status,?int $assignedTo, ?int $requestedBy): array;
+    public function searchRequests(?string $title, ?string $initialDate, ?string $finalDate, ?int $statusId,?int $assignedTo, ?int $requestedBy): array;
 
 
 }

@@ -4,18 +4,18 @@
 namespace App\Attendance\Application\Query;
 
 
-use App\Attendance\Application\Exception\InitialDateIsGraterThenFinalException;
-use App\Attendance\Application\Exception\InvalidDateFormatException;
+use App\Attendance\Application\Exception\InitialDateIsGreaterThenFinalException;
+use App\Core\Infrastructure\Container\Application\Exception\InvalidDateFormatException;
 use App\Core\Infrastructure\Container\Application\Utils\Command\CommandInterface;
 use Carbon\Carbon;
 use Exception;
 use Webmozart\Assert\Assert;
 
 /**
- * Class CreatePdfQuery
+ * Class ExportRequestsToPdfQuery
  * @package App\Attendance\Application\Query
  */
-class CreatePdfQuery implements CommandInterface
+class ExportRequestsToPdfQuery implements CommandInterface
 {
     /**
      * @var string|null
@@ -48,7 +48,7 @@ class CreatePdfQuery implements CommandInterface
     private $requestedBy;
 
     /**
-     * CreatePdfQuery constructor.
+     * ExportRequestsToPdfQuery constructor.
      * @param string|null $title
      * @param string|null $initialDate
      * @param string|null $finalDate
@@ -69,8 +69,8 @@ class CreatePdfQuery implements CommandInterface
 
     /**
      * @param array $data
-     * @return CreatePdfQuery
-     * @throws InitialDateIsGraterThenFinalException
+     * @return ExportRequestsToPdfQuery
+     * @throws InitialDateIsGreaterThenFinalException
      * @throws InvalidDateFormatException
      */
     public static function fromArray($data)
@@ -88,7 +88,7 @@ class CreatePdfQuery implements CommandInterface
             }
 
             if ($initialDate->gte($finalDate)) {
-                throw new InitialDateIsGraterThenFinalException();
+                throw new InitialDateIsGreaterThenFinalException();
             }
 
             $data['initialDate'] = $initialDate;
@@ -104,7 +104,7 @@ class CreatePdfQuery implements CommandInterface
             }
 
             if ($initialDate->gte($finalDate)) {
-                throw new InitialDateIsGraterThenFinalException();
+                throw new InitialDateIsGreaterThenFinalException();
             }
 
             $data['initialDate'] = $initialDate;
