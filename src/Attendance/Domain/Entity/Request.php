@@ -139,6 +139,7 @@ class Request implements JsonSerializable
             'title' => $this->getTitle(),
             'description' => $this->getDescription(),
             'priority' => $this->getPriority(),
+            'sla' => $this->getSla(),
             'section' => $this->getSection(),
             'assignedTo' => $this->getAssignedTo(),
             'requestedBy' => $this->getRequestedBy(),
@@ -218,7 +219,7 @@ class Request implements JsonSerializable
     /**
      * @return string
      */
-    public function getSla(): string
+    public function getSla(): ?string
     {
         return $this->sla;
     }

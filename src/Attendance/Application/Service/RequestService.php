@@ -25,6 +25,7 @@ use App\Company\Domain\Repository\SectionRepository;
 use App\Security\Domain\Entity\User;
 use App\Security\Domain\Repository\UserRepository;
 use Carbon\Carbon;
+use Carbon\CarbonInterval;
 use Doctrine\Common\Collections\ArrayCollection;
 use Exception;
 
@@ -124,10 +125,10 @@ class RequestService
 
         if ($lastLog['command'] == 'start') {
             $now = Carbon::now()->toDateTime();
-            $pairs->add(['command' => 'stop', 'datetime' => $now ]);
+            $pairs->add(['command' => 'stop', 'datetime' => $now]);
         }
 
-        // Loop the intervals
+        // Create datetime intervals
         $intervals = new ArrayCollection();
         $totalOfIntervals = $pairs->count() / 2;
         $pairs = $pairs->toArray();
@@ -139,9 +140,15 @@ class RequestService
             $intervals->add($start->diff($stop));
         }
 
-        dd($intervals->getValues());
+        // Loop the intervals
+        $sla = CarbonInterval::hours(0);
 
-        dd('ok');
+        foreach ($intervals as $interval) {
+            $interval = new CarbonInterval($interval);
+            $sla->add($interval);
+        }
+
+        return $sla->forHumans();
     }
 
     /**
@@ -241,6 +248,7 @@ class RequestService
     /**
      * @param User $user
      * @return array
+     * @throws Exception
      */
     public function findAll(User $user)
     {
@@ -256,6 +264,13 @@ class RequestService
                 break;
             default:
                 $requests = [];
+        }
+
+        /**
+         * @var $request Request
+         */
+        foreach ($requests as $request) {
+            $request->setSla(self::calculateSla($request));
         }
 
         return $requests;
