@@ -83,7 +83,7 @@ class CompanyService
         );
 
         $sections = new ArrayCollection();
-        $sectionsName = new ArrayCollection();
+        $nameOfSections = new ArrayCollection();
         foreach ($command->sections() as $section) {
             $foundSection = $this->sectionRepository->fromName($section['name']);
             if (is_null($foundSection)) {
@@ -92,9 +92,9 @@ class CompanyService
                     $section['name'],
                     $section['priority']
                 );
-                if(!$sectionsName->contains($localSection->getName())){
+                if (!$nameOfSections->contains($localSection->getName())) {
                     $sections->add($localSection);
-                    $sectionsName->add($localSection->getName());
+                    $nameOfSections->add($localSection->getName());
                 }
             } else {
                 $sections->add($foundSection);
@@ -173,7 +173,7 @@ class CompanyService
         }
 
         $sections = new ArrayCollection();
-        $sectionsName = new ArrayCollection();
+        $nameOfSections = new ArrayCollection();
         foreach ($command->sections() as $section) {
             $foundSection = $this->sectionRepository->fromName($section['name']);
             if (is_null($foundSection)) {
@@ -182,9 +182,9 @@ class CompanyService
                     $section['name'],
                     $section['priority']
                 );
-                if(!$sectionsName->contains($localSection->getName())){
+                if (!$nameOfSections->contains($localSection->getName())) {
                     $sections->add($localSection);
-                    $sectionsName->add($localSection->getName());
+                    $nameOfSections->add($localSection->getName());
                 }
             } else {
                 $sections->add($foundSection);
