@@ -79,12 +79,13 @@ class RequestService
     /**
      * @param Request $request
      * @return string
+     * @throws Exception
      */
     public static function calculateSla(Request $request): string
     {
+        // Separate important logs for sla count
         $importantLogs = new ArrayCollection();
 
-        // Separate important logs for sla count
         foreach ($request->getLogs()->getValues() as $log) {
             switch ($log->getCommand()) {
                 case 'awaitingSupport':
@@ -105,7 +106,7 @@ class RequestService
         }
 
         // Separate logs into intervals
-        $intervals = new ArrayCollection();
+        $pairs = new ArrayCollection();
         $lastCommand = null;
 
         foreach ($importantLogs as $log) {
@@ -113,20 +114,32 @@ class RequestService
                 break;
             }
 
-            $intervals->add($log);
+            $pairs->add($log);
             $lastCommand = $log['command'];
         }
 
 
         // Creates a stop if it is still counting
-        $lastLog = $intervals->last();
+        $lastLog = $pairs->last();
 
         if ($lastLog['command'] == 'start') {
             $now = Carbon::now()->toDateTime();
-            $intervals->add(['command' => 'stop', 'datetime' => $now ]);
+            $pairs->add(['command' => 'stop', 'datetime' => $now ]);
         }
 
-        dd($intervals);
+        // Loop the intervals
+        $intervals = new ArrayCollection();
+        $totalOfIntervals = $pairs->count() / 2;
+        $pairs = $pairs->toArray();
+
+        for ($i = 0; $i <= $totalOfIntervals; $i += 2) {
+            $start = new Carbon($pairs[$i]['datetime']);
+            $stop = new Carbon($pairs[$i + 1]['datetime']);
+
+            $intervals->add($start->diff($stop));
+        }
+
+        dd($intervals->getValues());
 
         dd('ok');
     }
