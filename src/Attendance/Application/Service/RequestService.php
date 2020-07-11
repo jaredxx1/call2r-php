@@ -147,8 +147,8 @@ class RequestService
             $interval = new CarbonInterval($interval);
             $sla->add($interval);
         }
-
-        return $sla->forHumans();
+        
+        return $sla->format('%hh %im');
     }
 
     /**
