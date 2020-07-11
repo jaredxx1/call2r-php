@@ -6,13 +6,13 @@ namespace App\Attendance\Application\Service;
 
 use App\Attendance\Application\Command\ApproveRequestCommand;
 use App\Attendance\Application\Command\CreateRequestCommand;
-use App\Attendance\Application\Command\UpdateRequestCommand;
 use App\Attendance\Application\Command\DisapproveRequestCommand;
 use App\Attendance\Application\Command\TransferCompanyCommand;
+use App\Attendance\Application\Command\UpdateRequestCommand;
 use App\Attendance\Application\Exception\RequestNotFoundException;
 use App\Attendance\Application\Exception\UnauthorizedStatusChangeException;
-use App\Attendance\Application\Exception\UnauthorizedTransferCompanyException;
 use App\Attendance\Application\Exception\UnauthorizedStatusUpdateException;
+use App\Attendance\Application\Exception\UnauthorizedTransferCompanyException;
 use App\Attendance\Domain\Entity\Log;
 use App\Attendance\Domain\Entity\Request;
 use App\Attendance\Domain\Entity\Status;
@@ -25,6 +25,7 @@ use App\Company\Domain\Repository\SectionRepository;
 use App\Security\Domain\Entity\User;
 use App\Security\Domain\Repository\UserRepository;
 use Carbon\Carbon;
+use Carbon\CarbonInterval;
 use Doctrine\Common\Collections\ArrayCollection;
 use Exception;
 
@@ -74,6 +75,80 @@ class RequestService
         $this->companyRepository = $companyRepository;
         $this->userRepository = $userRepository;
         $this->sectionRepository = $sectionRepository;
+    }
+
+    /**
+     * @param Request $request
+     * @return string
+     * @throws Exception
+     */
+    public static function calculateSla(Request $request): string
+    {
+        // Separate important logs for sla count
+        $importantLogs = new ArrayCollection();
+
+        foreach ($request->getLogs()->getValues() as $log) {
+            switch ($log->getCommand()) {
+                case 'awaitingSupport':
+                case 'init':
+                    $importantLogs->add(['command' => 'start', 'datetime' => $log->getCreatedAt()]);
+                    break;
+
+                case 'cancel':
+                case 'finish':
+                case 'approve':
+                case 'awaitingResponse':
+                    $importantLogs->add(['command' => 'stop', 'datetime' => $log->getCreatedAt()]);
+                    break;
+
+                default:
+                    break;
+            }
+        }
+
+        // Separate logs into intervals
+        $pairs = new ArrayCollection();
+        $lastCommand = null;
+
+        foreach ($importantLogs as $log) {
+            if ($log['command'] == $lastCommand) {
+                break;
+            }
+
+            $pairs->add($log);
+            $lastCommand = $log['command'];
+        }
+
+
+        // Creates a stop if it is still counting
+        $lastLog = $pairs->last();
+
+        if ($lastLog['command'] == 'start') {
+            $now = Carbon::now()->toDateTime();
+            $pairs->add(['command' => 'stop', 'datetime' => $now]);
+        }
+
+        // Create datetime intervals
+        $intervals = new ArrayCollection();
+        $totalOfIntervals = $pairs->count() / 2;
+        $pairs = $pairs->toArray();
+
+        for ($i = 0; $i <= $totalOfIntervals; $i += 2) {
+            $start = new Carbon($pairs[$i]['datetime']);
+            $stop = new Carbon($pairs[$i + 1]['datetime']);
+
+            $intervals->add($start->diff($stop));
+        }
+
+        // Loop the intervals
+        $sla = CarbonInterval::hours(0);
+
+        foreach ($intervals as $interval) {
+            $interval = new CarbonInterval($interval);
+            $sla->add($interval);
+        }
+        
+        return $sla->format('%hh %im');
     }
 
     /**
@@ -146,30 +221,6 @@ class RequestService
         return $request;
     }
 
-
-    /**
-     * @param User $user
-     * @return array
-     */
-    public function findAll(User $user)
-    {
-        switch ($user->getRole()) {
-            case 'ROLE_USER':
-                $requests = $this->requestRepository->findRequestsToSupport($user);
-                break;
-            case 'ROLE_MANAGER':
-                $requests = $this->requestRepository->findRequestsToManager($user);
-                break;
-            case 'ROLE_CLIENT':
-                $requests = $this->requestRepository->findRequestsToClient($user);
-                break;
-            default:
-                $requests = [];
-        }
-
-        return $requests;
-    }
-
     /**
      * @param Request $request
      * @return Request
@@ -192,6 +243,37 @@ class RequestService
         $request->setUpdatedAt(Carbon::now());
 
         return $this->requestRepository->update($request);
+    }
+
+    /**
+     * @param User $user
+     * @return array
+     * @throws Exception
+     */
+    public function findAll(User $user)
+    {
+        switch ($user->getRole()) {
+            case 'ROLE_USER':
+                $requests = $this->requestRepository->findRequestsToSupport($user);
+                break;
+            case 'ROLE_MANAGER':
+                $requests = $this->requestRepository->findRequestsToManager($user);
+                break;
+            case 'ROLE_CLIENT':
+                $requests = $this->requestRepository->findRequestsToClient($user);
+                break;
+            default:
+                $requests = [];
+        }
+
+        /**
+         * @var $request Request
+         */
+        foreach ($requests as $request) {
+            $request->setSla(self::calculateSla($request));
+        }
+
+        return $requests;
     }
 
     /**
@@ -327,7 +409,7 @@ class RequestService
         return $this->requestRepository->update($request);
     }
 
-     /**
+    /**
      * @param UpdateRequestCommand $command
      * @return Request|null
      * @throws RequestNotFoundException
@@ -375,7 +457,8 @@ class RequestService
      * @throws UnauthorizedStatusChangeException
      * @throws UnauthorizedTransferCompanyException
      */
-    public function transferCompany(TransferCompanyCommand $command){
+    public function transferCompany(TransferCompanyCommand $command)
+    {
 
         $request = $this->findById($command->getRequestId());
         if (
@@ -388,35 +471,30 @@ class RequestService
 
         $company = $this->companyRepository->fromId($command->getCompanyId());
 
-        if(is_null($company)){
+        if (is_null($company)) {
             throw new CompanyNotFoundException();
         }
 
         $section = $this->sectionRepository->fromName($command->getSection());
 
-        if(is_null($section)){
+        if (is_null($section)) {
             throw new SectionNotFoundException();
         }
 
-        if(!($company->sections()->contains($section))){
+        if (!($company->sections()->contains($section))) {
             throw new UnauthorizedTransferCompanyException();
         }
 
-        $request->setSection($section->name());
-
-        $request->setCompanyId($company->id());
-
-        $request->setAssignedTo(null);
-
-
         $log = new Log(null, 'Chamado transferido', Carbon::now(), 'transfer');
- 
+
+        $request->setSection($section->name());
+        $request->setCompanyId($company->id());
+        $request->setAssignedTo(null);
         $request->getLogs()->add($log);
         $request->setUpdatedAt(Carbon::now());
 
-        $this->requestRepository->update($request);
-
-        $this->moveToAwaitingSupport($request);
+        $request = $this->requestRepository->update($request);
+        $request = $this->moveToAwaitingSupport($request);
 
         return $request;
     }
