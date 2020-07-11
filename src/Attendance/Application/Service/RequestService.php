@@ -82,68 +82,51 @@ class RequestService
      */
     public static function calculateSla(Request $request): string
     {
-        // init
-        // message
-        // awaitingSupport
-        // inAttendance
-        // awaitingResponse
-        // finish
-        // cancel
-        // transfer
-        // approve
+        $importantLogs = new ArrayCollection();
 
-        /**
-         * @var Log $log
-         */
-        foreach ($request->getLogs() as $log) {
+        // Separate important logs for sla count
+        foreach ($request->getLogs()->getValues() as $log) {
             switch ($log->getCommand()) {
-                case 'init':
-                    dump([
-                        'command' => 'start counting',
-                        'datetime' => $log->getCreatedAt()
-                    ]);
-                    break;
-                case 'message':
-                    break;
                 case 'awaitingSupport':
-                    dump([
-                        'command' => 'start counting',
-                        'datetime' => $log->getCreatedAt()
-                    ]);
+                case 'init':
+                    $importantLogs->add(['command' => 'start', 'datetime' => $log->getCreatedAt()]);
                     break;
-                case 'inAttendance':
-                    break;
-                case 'awaitingResponse':
-                    dump([
-                        'command' => 'stop counting',
-                        'datetime' => $log->getCreatedAt()
-                    ]);
-                    break;
-                case 'finish':
-                    dump([
-                        'command' => 'stop counting',
-                        'datetime' => $log->getCreatedAt()
-                    ]);
-                    break;
+
                 case 'cancel':
-                    dump([
-                        'command' => 'stop counting',
-                        'datetime' => $log->getCreatedAt()
-                    ]);
-                    break;
-                case 'transfer':
-                    break;
+                case 'finish':
                 case 'approve':
-                    dump([
-                        'command' => 'stop counting',
-                        'datetime' => $log->getCreatedAt()
-                    ]);
+                case 'awaitingResponse':
+                    $importantLogs->add(['command' => 'stop', 'datetime' => $log->getCreatedAt()]);
                     break;
 
                 default:
                     break;
             }
         }
+
+        // Separate logs into intervals
+        $intervals = new ArrayCollection();
+        $lastCommand = null;
+
+        foreach ($importantLogs as $log) {
+            if ($log['command'] == $lastCommand) {
+                break;
+            }
+
+            $intervals->add($log);
+            $lastCommand = $log['command'];
+        }
+
+
+        // Creates a stop if it is still counting
+        $lastLog = $intervals->last();
+
+        if ($lastLog['command'] == 'start') {
+            $now = Carbon::now()->toDateTime();
+            $intervals->add(['command' => 'stop', 'datetime' => $now ]);
+        }
+
+        dd($intervals);
 
         dd('ok');
     }
