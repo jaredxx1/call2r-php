@@ -9,6 +9,7 @@
     "ext-pdo": "*",
     "aws/aws-sdk-php": "^3.145",
     "firebase/php-jwt": "^5.2",
+    "mpdf/mpdf": "^8.0",
     "nesbot/carbon": "^2.36",
     "phpmailer/phpmailer": "^6.1",
     "ramsey/uuid": "^4.0",

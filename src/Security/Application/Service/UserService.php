@@ -201,7 +201,13 @@ final class UserService
 
         $user = $command->getUser();
 
-        $url = $this->s3->sendFile('user',$uuid->serialize(),$command->getUploadFile());
+        $uploadedFile = $command->getUploadFile();
+
+        $path = $uploadedFile->getPathname();
+        $name = $uploadedFile->getClientOriginalName();
+        $contentType = $uploadedFile->getMimeType();
+
+        $url = $this->s3->sendFile('user',$uuid->serialize(), $path, $name ,$contentType);
 
         $user->setImage($url);
 

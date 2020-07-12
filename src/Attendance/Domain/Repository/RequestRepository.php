@@ -5,6 +5,7 @@ namespace App\Attendance\Domain\Repository;
 
 
 use App\Attendance\Domain\Entity\Request;
+use App\Attendance\Domain\Entity\Status;
 use App\Security\Domain\Entity\User;
 use Doctrine\Common\Collections\ArrayCollection;
 
@@ -50,4 +51,17 @@ interface RequestRepository
      * @return array
      */
     public function findRequestsToSupport(User $user): array;
+
+    /**
+     * @param string|null $title
+     * @param string|null $initialDate
+     * @param string|null $finalDate
+     * @param int|null $statusId
+     * @param int|null $assignedTo
+     * @param int|null $requestedBy
+     * @return array
+     */
+    public function searchRequests(?string $title, ?string $initialDate, ?string $finalDate, ?int $statusId,?int $assignedTo, ?int $requestedBy): array;
+
+
 }

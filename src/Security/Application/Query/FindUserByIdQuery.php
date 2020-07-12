@@ -41,7 +41,7 @@ class FindUserByIdQuery implements QueryInterface
      */
     public function toArray(): array
     {
-        // TODO: Implement toArray() method.
+        return [];
     }
 
     /**

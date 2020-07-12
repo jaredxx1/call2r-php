@@ -3,16 +3,17 @@
 
 namespace App\Attendance\Application\Service;
 
-
 use App\Attendance\Application\Command\ApproveRequestCommand;
 use App\Attendance\Application\Command\CreateRequestCommand;
 use App\Attendance\Application\Command\DisapproveRequestCommand;
-use App\Attendance\Application\Command\TransferCompanyCommand;
 use App\Attendance\Application\Command\UpdateRequestCommand;
+use App\Attendance\Application\Command\TransferCompanyCommand;
 use App\Attendance\Application\Exception\RequestNotFoundException;
+use App\Attendance\Application\Exception\StatusNotFoundException;
 use App\Attendance\Application\Exception\UnauthorizedStatusChangeException;
 use App\Attendance\Application\Exception\UnauthorizedStatusUpdateException;
 use App\Attendance\Application\Exception\UnauthorizedTransferCompanyException;
+use App\Attendance\Application\Query\ExportRequestsToPdfQuery;
 use App\Attendance\Domain\Entity\Log;
 use App\Attendance\Domain\Entity\Request;
 use App\Attendance\Domain\Entity\Status;
@@ -22,12 +23,15 @@ use App\Company\Application\Exception\CompanyNotFoundException;
 use App\Company\Application\Exception\SectionNotFoundException;
 use App\Company\Domain\Repository\CompanyRepository;
 use App\Company\Domain\Repository\SectionRepository;
+use App\Core\Infrastructure\Storaged\AWS\S3;
 use App\Security\Domain\Entity\User;
 use App\Security\Domain\Repository\UserRepository;
 use Carbon\Carbon;
 use Carbon\CarbonInterval;
 use Doctrine\Common\Collections\ArrayCollection;
 use Exception;
+use Mpdf\Mpdf;
+use Ramsey\Uuid\Uuid;
 
 /**
  * Class RequestService
@@ -61,21 +65,29 @@ class RequestService
     private $sectionRepository;
 
     /**
+     * @var S3
+     */
+    private $s3;
+
+    /**
      * RequestService constructor.
      * @param RequestRepository $requestRepository
      * @param StatusRepository $statusRepository
      * @param CompanyRepository $companyRepository
      * @param UserRepository $userRepository
      * @param SectionRepository $sectionRepository
+     * @param S3 $s3
      */
-    public function __construct(RequestRepository $requestRepository, StatusRepository $statusRepository, CompanyRepository $companyRepository, UserRepository $userRepository, SectionRepository $sectionRepository)
+    public function __construct(RequestRepository $requestRepository, StatusRepository $statusRepository, CompanyRepository $companyRepository, UserRepository $userRepository, SectionRepository $sectionRepository, S3 $s3)
     {
         $this->requestRepository = $requestRepository;
         $this->statusRepository = $statusRepository;
         $this->companyRepository = $companyRepository;
         $this->userRepository = $userRepository;
         $this->sectionRepository = $sectionRepository;
+        $this->s3 = $s3;
     }
+
 
     /**
      * @param Request $request
@@ -147,7 +159,7 @@ class RequestService
             $interval = new CarbonInterval($interval);
             $sla->add($interval);
         }
-        
+
         return $sla->format('%hh %im');
     }
 
@@ -490,6 +502,9 @@ class RequestService
         $request->setSection($section->name());
         $request->setCompanyId($company->id());
         $request->setAssignedTo(null);
+
+        $log = new Log(null, 'Chamado transferido', Carbon::now(), 'transfer');
+
         $request->getLogs()->add($log);
         $request->setUpdatedAt(Carbon::now());
 
@@ -497,5 +512,45 @@ class RequestService
         $request = $this->moveToAwaitingSupport($request);
 
         return $request;
+    }
+
+    /**
+     * @param ExportRequestsToPdfQuery $query
+     * @return array
+     * @throws \Mpdf\MpdfException
+     */
+    public function ExportsRequestsToPdf(ExportRequestsToPdfQuery $query)
+    {
+        $result = $this->requestRepository->searchRequests(
+            $query->getTitle(),
+            $query->getInitialDate(),
+            $query->getFinalDate(),
+            $query->getStatusId(),
+            $query->getAssignedTo(),
+            $query->getRequestedBy()
+        );
+
+        if($result == []){
+            return [];
+        }
+
+        $mpdf = new Mpdf();
+        $uuid = Uuid::uuid4();
+        $mpdf->WriteHTML('<h1 style="text-align: center">CALLR2 PDF</h1>');
+        $mpdf->WriteHTML('<table style="width:100%;" >');
+        $mpdf->WriteHTML('<tr>');
+        $mpdf->WriteHTML('<th style="text-align: left">Title</th>');
+        $mpdf->WriteHTML('<th style="text-align: left">Priority</th>');
+        $mpdf->WriteHTML('<th style="text-align: left">section</th>');
+        $mpdf->WriteHTML('<th style="text-align: left">Last update</th>');
+        $mpdf->WriteHTML('</tr>');
+        foreach ($result as $r){
+            $mpdf->WriteHTML('<tr><td>'.$r->getTitle().'</td><td>'.$r->getPriority().'</td><td>'.$r->getSection().'</td><td>'.new Carbon($r->getUpdatedAt()).'</td></tr>');
+        }
+        $mpdf->WriteHTML('</table>');
+        $uuid = $uuid->serialize();
+        $mpdf->Output($uuid.'.pdf', \Mpdf\Output\Destination::FILE);
+        $url = $this->s3->sendFile('request',$uuid,$uuid.'.pdf','requestsFile.pdf','application/pdf');
+        return ["url" => $url];
     }
 }

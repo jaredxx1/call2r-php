@@ -213,6 +213,14 @@ disapprove_request:
   requirements:
     requestId: '\d+'
 
+
+create_pdf:
+  path: /api/v1/requests/export-requests-to-pdf
+  controller: App\Attendance\Presentation\Http\Action\ExportRequestsToPdfAction
+  methods:    GET
+  requirements:
+    requestId: '\d+'
+    
 transfer_company:
   path: /api/v1/requests/{requestId}/transfer-company
   controller: App\Attendance\Presentation\Http\Action\TransferCompanyAction

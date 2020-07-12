@@ -5,6 +5,7 @@ namespace App\Attendance\Infrastructure\Persistence\Doctrine\Repository;
 
 
 use App\Attendance\Domain\Entity\Request;
+use App\Attendance\Domain\Entity\Status;
 use App\Attendance\Domain\Repository\RequestRepository;
 use App\Security\Domain\Entity\User;
 use Doctrine\Common\Persistence\ObjectRepository;
@@ -123,5 +124,52 @@ class DoctrineRequestRepository implements RequestRepository
             ->setParameter('userId', $user->getId())
             ->getQuery()
             ->getResult();
+    }
+
+
+    /**
+     * @param string|null $title
+     * @param string|null $initialDate
+     * @param string|null $finalDate
+     * @param int|null $statusId
+     * @param int|null $assignedTo
+     * @param int|null $requestedBy
+     * @return array
+     */
+    public function searchRequests(?string $title, ?string $initialDate, ?string $finalDate, ?int $statusId, ?int $assignedTo, ?int $requestedBy): array
+    {
+
+        $query = $this->entityManager->createQueryBuilder()
+            ->select('r')
+            ->from('Attendance:Request', 'r');
+
+        if (isset($title)) {
+            $query->andWhere('r.title = :title')
+                ->setParameter(':title', $title);
+        }
+
+        if ((isset($finalDate)) && (isset($initialDate))) {
+            $query->andWhere('r.createdAt BETWEEN :initialDate and :finalDate')
+                ->setParameter(':initialDate', $initialDate)
+                ->setParameter(':finalDate', $finalDate);
+        }
+
+        if (isset($statusId)) {
+            $query->andWhere('r.status = :status')
+                ->setParameter(':status', $statusId);
+        }
+
+        if (isset($assignedTo)) {
+            $query->andWhere('r.assignedTo = :assignedTo')
+                ->setParameter(':assignedTo', $assignedTo);
+        }
+
+        if (isset($requestedBy)) {
+            $query->andWhere('r.requestedBy = :requestedBy')
+                ->setParameter(':requestedBy', $requestedBy);
+        }
+
+        return $query->getQuery()->getResult();
+
     }
 }
