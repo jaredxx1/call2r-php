@@ -315,6 +315,7 @@ class RequestService
         if (
             !($request->getStatus()->getId() == Status::inAttendance) &&
             !($request->getStatus()->getId() == Status::awaitingSupport) &&
+            !($request->getStatus()->getId() == Status::awaitingResponse) &&
             !($request->getStatus()->getId() == Status::approved)
         ) {
             throw new UnauthorizedStatusChangeException();
@@ -382,6 +383,7 @@ class RequestService
      */
     public function moveToFinished(Request $request): Request
     {
+
         if (!($request->getStatus()->getId() == Status::approved)) {
             throw new UnauthorizedStatusChangeException();
         }
@@ -471,8 +473,8 @@ class RequestService
      */
     public function transferCompany(TransferCompanyCommand $command)
     {
-
         $request = $this->findById($command->getRequestId());
+
         if (
             !($request->getStatus()->getId() == Status::awaitingSupport) &&
             !($request->getStatus()->getId() == Status::inAttendance) &&
@@ -493,14 +495,12 @@ class RequestService
             throw new SectionNotFoundException();
         }
 
-        if (!($company->sections()->contains($section))) {
+        if(!($company->getSections()->contains($section))){
             throw new UnauthorizedTransferCompanyException();
         }
 
-        $log = new Log(null, 'Chamado transferido', Carbon::now(), 'transfer');
-
-        $request->setSection($section->name());
-        $request->setCompanyId($company->id());
+        $request->setSection($section->getName());
+        $request->setCompanyId($company->getId());
         $request->setAssignedTo(null);
 
         $log = new Log(null, 'Chamado transferido', Carbon::now(), 'transfer');
@@ -513,7 +513,6 @@ class RequestService
 
         return $request;
     }
-
     /**
      * @param ExportRequestsToPdfQuery $query
      * @return array

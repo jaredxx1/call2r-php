@@ -14,7 +14,7 @@ class Section implements JsonSerializable
 {
 
     /**
-     * @var int
+     * @var int|null
      */
     private $id;
 
@@ -42,6 +42,7 @@ class Section implements JsonSerializable
         $this->priority = $priority;
     }
 
+
     /**
      * @return array|mixed
      */
@@ -56,25 +57,24 @@ class Section implements JsonSerializable
     public function toArray()
     {
         return [
-            'id' => $this->id(),
-            'name' => $this->name(),
-            'priority' => $this->priority()
+            'id' => $this->getId(),
+            'name' => $this->getName(),
+            'priority' => $this->getPriority()
         ];
     }
 
-
     /**
-     * @return int
+     * @return int|null
      */
-    public function id(): int
+    public function getId(): ?int
     {
         return $this->id;
     }
 
     /**
-     * @param int $id
+     * @param int|null $id
      */
-    public function setId(int $id): void
+    public function setId(?int $id): void
     {
         $this->id = $id;
     }
@@ -82,7 +82,7 @@ class Section implements JsonSerializable
     /**
      * @return string
      */
-    public function name(): string
+    public function getName(): string
     {
         return $this->name;
     }
@@ -98,7 +98,7 @@ class Section implements JsonSerializable
     /**
      * @return int
      */
-    public function priority(): int
+    public function getPriority(): int
     {
         return $this->priority;
     }
@@ -110,6 +110,5 @@ class Section implements JsonSerializable
     {
         $this->priority = $priority;
     }
-
 
 }

@@ -76,15 +76,19 @@ class ArticleService
         }
 
         $categories = new ArrayCollection();
-
+        $titleOfCategories = new ArrayCollection();
         foreach ($command->categories() as $category) {
             $foundCategory = $this->categoryRepository->fromArticleTitle($category['title'], $category['idCompany']);
             if (is_null($foundCategory)) {
-                $categories->add(new Category(
+                $localCategory = new Category(
                     null,
                     $category['idCompany'],
                     $category['title']
-                ));
+                );
+                if(!$titleOfCategories->contains($localCategory->getTitle())){
+                    $categories->add($localCategory);
+                    $titleOfCategories->add($localCategory->getTitle());
+                }
             } else {
                 $categories->add($foundCategory);
             }
@@ -121,15 +125,19 @@ class ArticleService
         }
 
         $categories = new ArrayCollection();
-
+        $titleOfCategories = new ArrayCollection();
         foreach ($command->categories() as $category) {
             $foundCategory = $this->categoryRepository->fromArticleTitle($category['title'], $category['idCompany']);
             if (is_null($foundCategory)) {
-                $categories->add(new Category(
+                $localCategory = new Category(
                     null,
                     $category['idCompany'],
                     $category['title']
-                ));
+                );
+                if(!$titleOfCategories->contains($localCategory->getTitle())){
+                    $categories->add($localCategory);
+                    $titleOfCategories->add($localCategory->getTitle());
+                }
             } else {
                 $categories->add($foundCategory);
             }

@@ -62,9 +62,7 @@ class CompanyService
      */
     public function getAll()
     {
-        $companies = $this->companyRepository->getAll();
-
-        return $companies;
+        return $this->companyRepository->getAll();
     }
 
     /**
@@ -85,20 +83,26 @@ class CompanyService
         );
 
         $sections = new ArrayCollection();
+        $nameOfSections = new ArrayCollection();
         foreach ($command->sections() as $section) {
             $foundSection = $this->sectionRepository->fromName($section['name']);
             if (is_null($foundSection)) {
-                $sections->add(new Section(
+                $localSection = new Section(
                     null,
                     $section['name'],
                     $section['priority']
-                ));
+                );
+                if (!$nameOfSections->contains($localSection->getName())) {
+                    $sections->add($localSection);
+                    $nameOfSections->add($localSection->getName());
+                }
             } else {
                 $sections->add($foundSection);
             }
         }
 
         $company = new Company(
+            null,
             $command->name(),
             $command->description(),
             $command->cnpj(),
@@ -158,7 +162,7 @@ class CompanyService
 
         $id = $command->id();
         $company = $this->companyRepository->fromId($id);
-        $sla = $this->slaRepository->fromId($company->sla()->id());
+        $sla = $this->slaRepository->fromId($company->getSla()->getId());
 
         if (empty($company)) {
             throw new CompanyNotFoundException();
@@ -169,14 +173,19 @@ class CompanyService
         }
 
         $sections = new ArrayCollection();
+        $nameOfSections = new ArrayCollection();
         foreach ($command->sections() as $section) {
             $foundSection = $this->sectionRepository->fromName($section['name']);
             if (is_null($foundSection)) {
-                $sections->add(new Section(
+                $localSection = new Section(
                     null,
                     $section['name'],
                     $section['priority']
-                ));
+                );
+                if (!$nameOfSections->contains($localSection->getName())) {
+                    $sections->add($localSection);
+                    $nameOfSections->add($localSection->getName());
+                }
             } else {
                 $sections->add($foundSection);
             }
