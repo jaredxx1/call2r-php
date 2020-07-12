@@ -10,6 +10,8 @@ use App\Security\Application\Service\UserService;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Throwable;
 
 /**
  * Class FindUsersByRoleAction
@@ -43,11 +45,11 @@ class FindUsersByRoleAction extends AbstractAction
             $query = FindUsersByRoleQuery::fromArray($data);
             $users = $this->userService->findUsersByRole($query);
         } catch (Exception $exception) {
-            return $this->errorResponse($exception->getMessage(), $exception->getCode() ? $exception->getCode() : 400);
+            return $this->errorResponse($exception->getMessage(), $exception->getCode() ? $exception->getCode() : Response::HTTP_BAD_REQUEST);
         } catch (Throwable $exception) {
-            return $this->errorResponse($exception->getMessage(), $exception->getCode() ? $exception->getCode() : 400);
+            return $this->errorResponse($exception->getMessage(), $exception->getCode() ? $exception->getCode() : Response::HTTP_BAD_REQUEST);
         }
 
-        return new JsonResponse($users, 200);
+        return new JsonResponse($users, Response::HTTP_OK);
     }
 }

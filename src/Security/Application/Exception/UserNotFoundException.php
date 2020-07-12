@@ -5,6 +5,7 @@ namespace App\Security\Application\Exception;
 
 
 use Exception;
+use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
 /**
@@ -19,7 +20,7 @@ class UserNotFoundException extends Exception
      * @param int $code
      * @param Throwable|null $previous
      */
-    public function __construct($message = "User not found", $code = 404, Throwable $previous = null)
+    public function __construct($message = "User not found", $code = Response::HTTP_NOT_FOUND, Throwable $previous = null)
     {
         parent::__construct($message, $code, $previous);
     }

@@ -5,6 +5,7 @@ namespace App\Wiki\Application\Exception;
 
 
 use Exception;
+use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
 class CategoryNotAuthorized extends Exception
@@ -15,7 +16,7 @@ class CategoryNotAuthorized extends Exception
      * @param int $code
      * @param Throwable|null $previous
      */
-    public function __construct($message = "This Category is not accessible for this user", $code = 403, Throwable $previous = null)
+    public function __construct($message = "This Category is not accessible for this user", $code = Response::HTTP_FORBIDDEN, Throwable $previous = null)
     {
         parent::__construct($message, $code, $previous);
     }

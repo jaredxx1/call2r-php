@@ -9,6 +9,7 @@ use App\Wiki\Application\Query\FindAllCategoriesFromCompanyQuery;
 use App\Wiki\Application\Service\CategoryService;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
 /**
@@ -42,11 +43,11 @@ class FindAllCategoriesFromCompanyAction extends AbstractAction
             $query = FindAllCategoriesFromCompanyQuery::fromArray($data);
             $categories = $this->service->fromCompany($query);
         } catch (Exception $exception) {
-            return $this->errorResponse($exception->getMessage(), $exception->getCode() ? $exception->getCode() : 400);
+            return $this->errorResponse($exception->getMessage(), $exception->getCode() ? $exception->getCode() : Response::HTTP_BAD_REQUEST);
         } catch (Throwable $exception) {
-            return $this->errorResponse($exception->getMessage(), $exception->getCode() ? $exception->getCode() : 400);
+            return $this->errorResponse($exception->getMessage(), $exception->getCode() ? $exception->getCode() : Response::HTTP_BAD_REQUEST);
         }
 
-        return new JsonResponse($categories, 200);
+        return new JsonResponse($categories, Response::HTTP_OK);
     }
 }
