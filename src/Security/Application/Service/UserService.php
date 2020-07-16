@@ -4,6 +4,7 @@
 namespace App\Security\Application\Service;
 
 
+use App\Core\Infrastructure\Container\Application\Exception\EmailSendException;
 use App\Core\Infrastructure\Storaged\AWS\S3;
 use App\Core\Infrastructure\Email\EmailService;
 use App\Security\Application\Command\CreateUserCommand;
@@ -72,12 +73,17 @@ final class UserService
      */
     public function fromLoginCredentials(LoginCommand $command): ?User
     {
-        $user = $this->userRepository->fromLoginCredentials(
-            $command->getCpf(),
-            $command->getPassword()
+        $user = $this->userRepository->fromCpf(
+            $command->getCpf()
         );
 
         if (is_null($user)) {
+            throw new InvalidCredentialsException();
+        }
+
+        $isPasswordValid = password_verify($command->getPassword(), $user->getPassword());
+
+        if (!$isPasswordValid) {
             throw new InvalidCredentialsException();
         }
 
@@ -131,10 +137,12 @@ final class UserService
      */
     public function createUser(CreateUserCommand $command)
     {
+        $hashedPassword = password_hash($command->getPassword(), PASSWORD_BCRYPT);
+
         $user = new User(
             null,
             $command->getCpf(),
-            $command->getPassword(),
+            $hashedPassword,
             $command->getRole(),
             $command->getEmail(),
             null,
@@ -217,7 +225,7 @@ final class UserService
     /**
      * @param ResetPasswordCommand $command
      * @throws UserNotFoundException
-     * @throws \App\Core\Infrastructure\Container\Application\Exception\EmailSendException
+     * @throws EmailSendException
      * @throws \PHPMailer\PHPMailer\Exception
      */
     public function resetPassword(ResetPasswordCommand $command){
