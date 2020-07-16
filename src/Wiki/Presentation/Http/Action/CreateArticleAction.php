@@ -10,6 +10,7 @@ use App\Wiki\Application\Service\ArticleService;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
 /**
@@ -45,11 +46,11 @@ class CreateArticleAction extends AbstractAction
             $command = CreateArticleCommand::fromArray($data);
             $article = $this->service->create($command);
         } catch (Exception $exception) {
-            return $this->errorResponse($exception->getMessage(), $exception->getCode() ? $exception->getCode() : 400);
+            return $this->errorResponse($exception->getMessage(), $exception->getCode() ? $exception->getCode() : Response::HTTP_BAD_REQUEST);
         } catch (Throwable $exception) {
-            return $this->errorResponse($exception->getMessage(), $exception->getCode() ? $exception->getCode() : 400);
+            return $this->errorResponse($exception->getMessage(), $exception->getCode() ? $exception->getCode() : Response::HTTP_BAD_REQUEST);
         }
 
-        return new JsonResponse($article, 201);
+        return new JsonResponse($article, Response::HTTP_CREATED);
     }
 }

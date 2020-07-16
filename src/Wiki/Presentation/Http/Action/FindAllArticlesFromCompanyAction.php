@@ -10,6 +10,7 @@ use App\Wiki\Application\Service\ArticleService;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
 /**
@@ -44,11 +45,11 @@ class FindAllArticlesFromCompanyAction extends AbstractAction
             $query = FindAllArticlesFromCompanyQuery::fromArray($data);
             $articles = $this->service->fromCompany($query);
         } catch (Exception $exception) {
-            return $this->errorResponse($exception->getMessage(), $exception->getCode() ? $exception->getCode() : 400);
+            return $this->errorResponse($exception->getMessage(), $exception->getCode() ? $exception->getCode() : Response::HTTP_BAD_REQUEST);
         } catch (Throwable $exception) {
-            return $this->errorResponse($exception->getMessage(), $exception->getCode() ? $exception->getCode() : 400);
+            return $this->errorResponse($exception->getMessage(), $exception->getCode() ? $exception->getCode() : Response::HTTP_BAD_REQUEST);
         }
 
-        return new JsonResponse($articles, 200);
+        return new JsonResponse($articles, Response::HTTP_OK);
     }
 }

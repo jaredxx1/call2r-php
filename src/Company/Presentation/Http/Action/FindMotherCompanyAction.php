@@ -8,6 +8,7 @@ use App\Company\Application\Service\CompanyService;
 use App\Core\Presentation\Http\AbstractAction;
 use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
 /**
@@ -40,11 +41,11 @@ class FindMotherCompanyAction extends AbstractAction
         try {
             $company = $this->service->getMother();
         } catch (Exception $exception) {
-            return $this->errorResponse($exception->getMessage(), $exception->getCode() ? $exception->getCode() : 400);
+            return $this->errorResponse($exception->getMessage(), $exception->getCode() ? $exception->getCode() : Response::HTTP_BAD_REQUEST);
         } catch (Throwable $exception) {
-            return $this->errorResponse($exception->getMessage(), $exception->getCode() ? $exception->getCode() : 400);
+            return $this->errorResponse($exception->getMessage(), $exception->getCode() ? $exception->getCode() : Response::HTTP_BAD_REQUEST);
         }
 
-        return new JsonResponse($company, 200);
+        return new JsonResponse($company, Response::HTTP_OK);
     }
 }

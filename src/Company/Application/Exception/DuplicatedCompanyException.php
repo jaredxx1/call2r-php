@@ -5,6 +5,7 @@ namespace App\Company\Application\Exception;
 
 
 use Exception;
+use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
 /**
@@ -20,7 +21,7 @@ class DuplicatedCompanyException extends Exception
      * @param int $code
      * @param Throwable|null $previous
      */
-    public function __construct($message = "The company already exists.", $code = 422, Throwable $previous = null)
+    public function __construct($message = "The company already exists.", $code = Response::HTTP_UNPROCESSABLE_ENTITY, Throwable $previous = null)
     {
         parent::__construct($message, $code, $previous);
     }
