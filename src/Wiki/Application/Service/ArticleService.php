@@ -183,7 +183,7 @@ class ArticleService
             throw new ArticleNotFoundException();
         }
 
-        $company = $this->categoryRepository->fromId($query->idCompany());
+        $company = $this->companyRepository->fromId($query->idCompany());
         if(is_null($company)){
             throw new CompanyNotFoundException();
         }
