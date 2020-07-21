@@ -33,4 +33,17 @@ security:
     - { path: '/api/v1/companies', roles: [ROLE_ADMIN], methods: [GET, POST] }
     - { path: '/api/v1/sections/\d+', roles: [ROLE_ADMIN, ROLE_MANAGER], methods: [PUT] }
     - { path: '/api/v1/sections', roles: [ROLE_ADMIN, ROLE_MANAGER], methods: [GET] }
-    # - { path: ^/profile, roles: ROLE_USER }
+
+    # Attendance
+    - { path: '/api/v1/requests/move/\d+/awaiting-support', roles: [ROLE_USER, ROLE_MANAGER], methods: [POST] }
+    - { path: '/api/v1/requests/move/\d+/awaiting-response', roles: [ROLE_USER, ROLE_MANAGER], methods: [POST] }
+    - { path: '/api/v1/requests/move/\d+/in-attendance', roles: [ROLE_USER, ROLE_MANAGER], methods: [POST] }
+    - { path: '/api/v1/requests/move/\d+/finished', roles: [ROLE_USER, ROLE_MANAGER], methods: [POST] }
+    - { path: '/api/v1/requests/move/\d+/canceled', roles: [ROLE_USER, ROLE_MANAGER], methods: [POST] }
+    - { path: '/api/v1/requests/move/\d+/approved', roles: [ROLE_USER, ROLE_MANAGER], methods: [POST] }
+    - { path: '/api/v1/requests/\d+/approve', roles: [ROLE_USER, ROLE_MANAGER], methods: [POST] }
+    - { path: '/api/v1/requests/\d+/disapprove', roles: [ROLE_USER, ROLE_MANAGER], methods: [POST] }
+    - { path: '/api/v1/requests/export-requests-to-pdf', roles: [ROLE_MANAGER], methods: [GET] }
+    - { path: '/api/v1/requests/\d+/transfer-company', roles: [ROLE_USER, ROLE_MANAGER], methods: [POST] }
+    - { path: '/api/v1/requests/\d+', roles: [ROLE_USER, ROLE_MANAGER], methods: [PUT] }
+    - { path: '/api/v1/requests', roles: [ROLE_USER, ROLE_MANAGER], methods: [GET, POST] }
