@@ -47,3 +47,11 @@ security:
     - { path: '/api/v1/requests/\d+/transfer-company', roles: [ROLE_USER, ROLE_MANAGER], methods: [POST] }
     - { path: '/api/v1/requests/\d+', roles: [ROLE_USER, ROLE_MANAGER], methods: [PUT] }
     - { path: '/api/v1/requests', roles: [ROLE_USER, ROLE_MANAGER], methods: [GET, POST] }
+
+    # User
+    - { path: '/api/v1/users/manager', roles: [ROLE_MANAGER], methods: [GET] }
+    - { path: '/api/v1/users/support', roles: [ROLE_MANAGER], methods: [GET] }
+    - { path: '/api/v1/users/reset-password', roles: [ROLE_ADMIN, ROLE_MANAGER, ROLE_USER, ROLE_CLIENT], methods: [POST] }
+    - { path: '/api/v1/users/\d+/image', roles: [ROLE_USER, ROLE_MANAGER], methods: [POST] }
+    - { path: '/api/v1/users/\d+', roles: [ROLE_USER, ROLE_MANAGER], methods: [GET, PUT] }
+    - { path: '/api/v1/users', roles: [ROLE_ADMIN, ROLE_MANAGER], methods: [POST] }
