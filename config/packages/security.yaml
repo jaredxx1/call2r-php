@@ -29,7 +29,7 @@ security:
   access_control:
     # Wiki
     - { path: '/api/v1/companies/\d+/articles', roles: [ROLE_USER, ROLE_MANAGER], methods: [GET] }
-    - { path: '/api/v1/companies/\d+/articles/\d+', roles: [ROLE_USER, ROLE_MANAGER], methods: [GET, PUT, POST ] }
+    - { path: '/api/v1/companies/\d+/articles/\d+', roles: [ROLE_USER, ROLE_MANAGER], methods: [GET, PUT, POST, DELETE ] }
     - { path: '/api/v1/companies/\d+/categories/', roles: [ROLE_USER, ROLE_MANAGER], methods: [GET] }
     - { path: '/api/v1/articles', roles: [ROLE_USER, ROLE_MANAGER], methods: [POST] }
 
