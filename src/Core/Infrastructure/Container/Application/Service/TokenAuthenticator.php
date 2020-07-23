@@ -5,6 +5,8 @@ namespace App\Core\Infrastructure\Container\Application\Service;
 
 
 use App\Security\Application\Service\UserService;
+use App\Security\Domain\Entity\User;
+use Firebase\JWT\ExpiredException;
 use Firebase\JWT\JWT;
 use Firebase\JWT\SignatureInvalidException;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -73,7 +75,7 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
     /**
      * @param mixed $credentials
      * @param UserProviderInterface $userProvider
-     * @return \App\Security\Domain\Entity\User|UserInterface|null
+     * @return User|UserInterface|null
      */
     public function getUser($credentials, UserProviderInterface $userProvider)
     {
@@ -81,6 +83,8 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
             $jwtPayload = JWT::decode($credentials, $_ENV['JWT_SECRET'], ['HS256']);
         } catch (SignatureInvalidException $exception) {
             throw new AuthenticationException('Token is invalid', 401);
+        } catch (ExpiredException $exception) {
+            throw new AuthenticationException('Token is expired', 401);
         }
 
         return $this->userService->fromCpf($jwtPayload->cpf);
