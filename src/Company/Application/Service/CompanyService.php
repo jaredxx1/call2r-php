@@ -89,8 +89,7 @@ class CompanyService
             if (is_null($foundSection)) {
                 $localSection = new Section(
                     null,
-                    $section['name'],
-                    $section['priority']
+                    $section['name']
                 );
                 if (!$nameOfSections->contains($localSection->getName())) {
                     $sections->add($localSection);
@@ -179,8 +178,7 @@ class CompanyService
             if (is_null($foundSection)) {
                 $localSection = new Section(
                     null,
-                    $section['name'],
-                    $section['priority']
+                    $section['name']
                 );
                 if (!$nameOfSections->contains($localSection->getName())) {
                     $sections->add($localSection);

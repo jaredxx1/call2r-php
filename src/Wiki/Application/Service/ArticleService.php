@@ -8,7 +8,6 @@ use App\Company\Application\Exception\CompanyNotFoundException;
 use App\Company\Domain\Repository\CompanyRepository;
 use App\Wiki\Application\Command\CreateArticleCommand;
 use App\Wiki\Application\Command\UpdateArticleCommand;
-use App\Wiki\Application\Exception\ArticleNotAuthorized;
 use App\Wiki\Application\Exception\ArticleNotFoundException;
 use App\Wiki\Application\Query\DeleteArticleCommand;
 use App\Wiki\Application\Query\FindAllArticlesFromCompanyQuery;
@@ -70,35 +69,18 @@ class ArticleService
      */
     public function create(CreateArticleCommand $command)
     {
-        $company = $this->companyRepository->fromId($command->idCompany());
+        $company = $this->companyRepository->fromId($command->getIdCompany());
         if (is_null($company)) {
             throw new CompanyNotFoundException();
         }
 
-        $categories = new ArrayCollection();
-        $titleOfCategories = new ArrayCollection();
-        foreach ($command->categories() as $category) {
-            $foundCategory = $this->categoryRepository->fromArticleTitle($category['title'], $category['idCompany']);
-            if (is_null($foundCategory)) {
-                $localCategory = new Category(
-                    null,
-                    $category['idCompany'],
-                    $category['title']
-                );
-                if(!$titleOfCategories->contains($localCategory->getTitle())){
-                    $categories->add($localCategory);
-                    $titleOfCategories->add($localCategory->getTitle());
-                }
-            } else {
-                $categories->add($foundCategory);
-            }
-        }
+        $categories = $this->createCategoriesObject($command);
 
         $article = new Article(
             null,
-            $command->idCompany(),
-            $command->title(),
-            $command->description(),
+            $command->getIdCompany(),
+            $command->getTitle(),
+            $command->getDescription(),
             $categories
         );
 
@@ -114,7 +96,6 @@ class ArticleService
      */
     public function update(UpdateArticleCommand $command)
     {
-        dd($command);
         $article = $this->articleRepository->fromId($command->getId());
         if (is_null($article)) {
             throw new ArticleNotFoundException();
@@ -134,24 +115,7 @@ class ArticleService
         }
 
         if(!is_null($command->getCategories())){
-            $categories = new ArrayCollection();
-            $titleOfCategories = new ArrayCollection();
-            foreach ($command->getCategories() as $category) {
-                $foundCategory = $this->categoryRepository->fromArticleTitle($category['title'], $category['idCompany']);
-                if (is_null($foundCategory)) {
-                    $localCategory = new Category(
-                        null,
-                        $category['idCompany'],
-                        $category['title']
-                    );
-                    if(!$titleOfCategories->contains($localCategory->getTitle())){
-                        $categories->add($localCategory);
-                        $titleOfCategories->add($localCategory->getTitle());
-                    }
-                } else {
-                    $categories->add($foundCategory);
-                }
-            }
+            $categories = $this->createCategoriesObject($command);
 
             $article->setCategories($categories);
         }
@@ -198,6 +162,33 @@ class ArticleService
         }
 
         $this->articleRepository->delete($article);
+    }
+
+    /**
+     * @param mixed $command
+     * @return ArrayCollection
+     */
+    private function createCategoriesObject($command): ArrayCollection
+    {
+        $categories = new ArrayCollection();
+        $titleOfCategories = new ArrayCollection();
+        foreach ($command->getCategories() as $category) {
+            $foundCategory = $this->categoryRepository->fromArticleTitle($category['title'], $category['idCompany']);
+            if (is_null($foundCategory)) {
+                $localCategory = new Category(
+                    null,
+                    $category['idCompany'],
+                    $category['title']
+                );
+                if (!$titleOfCategories->contains($localCategory->getTitle())) {
+                    $categories->add($localCategory);
+                    $titleOfCategories->add($localCategory->getTitle());
+                }
+            } else {
+                $categories->add($foundCategory);
+            }
+        }
+        return $categories;
     }
 
 }

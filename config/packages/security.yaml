@@ -27,37 +27,37 @@ security:
   # Easy way to control access for large sections of your site
   # Note: Only the *first* access control that matches will be used
   access_control:
-#    # Wiki
-#    - { path: '/api/v1/companies/\d+/articles', roles: [ROLE_USER, ROLE_MANAGER], methods: [GET] }
-#    - { path: '/api/v1/companies/\d+/articles/\d+', roles: [ROLE_USER, ROLE_MANAGER], methods: [GET, PUT, POST, DELETE ] }
-#    - { path: '/api/v1/companies/\d+/categories/', roles: [ROLE_USER, ROLE_MANAGER], methods: [GET] }
-#    - { path: '/api/v1/articles', roles: [ROLE_USER, ROLE_MANAGER], methods: [POST] }
+    # Wiki
+    - { path: '/api/v1/companies/\d+/articles', roles: [ROLE_USER, ROLE_MANAGER], methods: [GET] }
+    - { path: '/api/v1/companies/\d+/articles/\d+', roles: [ROLE_USER, ROLE_MANAGER], methods: [GET, PUT, POST, DELETE ] }
+    - { path: '/api/v1/companies/\d+/categories/', roles: [ROLE_USER, ROLE_MANAGER], methods: [GET] }
+    - { path: '/api/v1/articles', roles: [ROLE_USER, ROLE_MANAGER], methods: [POST] }
 
-#    # Company
-#    - { path: '/api/v1/companies/mother', roles: [ROLE_ADMIN], methods: [GET] }
-#    - { path: '/api/v1/companies/\d+', roles: [ROLE_ADMIN], methods: [GET, PUT] }
-#    - { path: '/api/v1/companies', roles: [ROLE_ADMIN], methods: [GET, POST] }
-#    - { path: '/api/v1/sections/\d+', roles: [ROLE_ADMIN, ROLE_MANAGER], methods: [PUT] }
-#    - { path: '/api/v1/sections', roles: [ROLE_ADMIN, ROLE_MANAGER], methods: [GET] }
-#
-#    # Attendance
-#    - { path: '/api/v1/requests/move/\d+/awaiting-support', roles: [ROLE_USER, ROLE_MANAGER], methods: [POST] }
-#    - { path: '/api/v1/requests/move/\d+/awaiting-response', roles: [ROLE_USER, ROLE_MANAGER], methods: [POST] }
-#    - { path: '/api/v1/requests/move/\d+/in-attendance', roles: [ROLE_USER, ROLE_MANAGER], methods: [POST] }
-#    - { path: '/api/v1/requests/move/\d+/finished', roles: [ROLE_USER, ROLE_MANAGER], methods: [POST] }
-#    - { path: '/api/v1/requests/move/\d+/canceled', roles: [ROLE_USER, ROLE_MANAGER], methods: [POST] }
-#    - { path: '/api/v1/requests/move/\d+/approved', roles: [ROLE_USER, ROLE_MANAGER], methods: [POST] }
-#    - { path: '/api/v1/requests/\d+/approve', roles: [ROLE_USER, ROLE_MANAGER], methods: [POST] }
-#    - { path: '/api/v1/requests/\d+/disapprove', roles: [ROLE_USER, ROLE_MANAGER], methods: [POST] }
-#    - { path: '/api/v1/requests/export-requests-to-pdf', roles: [ROLE_MANAGER], methods: [GET] }
-#    - { path: '/api/v1/requests/\d+/transfer-company', roles: [ROLE_USER, ROLE_MANAGER], methods: [POST] }
-#    - { path: '/api/v1/requests/\d+', roles: [ROLE_USER, ROLE_MANAGER], methods: [PUT] }
-#    - { path: '/api/v1/requests', roles: [ROLE_USER, ROLE_MANAGER], methods: [GET, POST] }
-#
-#    # User
-#    - { path: '/api/v1/users/manager', roles: [ROLE_MANAGER], methods: [GET] }
-#    - { path: '/api/v1/users/support', roles: [ROLE_MANAGER], methods: [GET] }
-#    - { path: '/api/v1/users/reset-password', roles: [ROLE_ADMIN, ROLE_MANAGER, ROLE_USER, ROLE_CLIENT], methods: [POST] }
-#    - { path: '/api/v1/users/\d+/image', roles: [ROLE_USER, ROLE_MANAGER], methods: [POST] }
-#    - { path: '/api/v1/users/\d+', roles: [ROLE_USER, ROLE_MANAGER], methods: [GET, PUT] }
-#    - { path: '/api/v1/users', roles: [ROLE_ADMIN, ROLE_MANAGER], methods: [POST] }
+    # Company
+    - { path: '/api/v1/companies/mother', roles: [ROLE_ADMIN], methods: [GET] }
+    - { path: '/api/v1/companies/\d+', roles: [ROLE_ADMIN], methods: [GET, PUT] }
+    - { path: '/api/v1/companies', roles: [ROLE_ADMIN], methods: [GET, POST] }
+    - { path: '/api/v1/sections/\d+', roles: [ROLE_ADMIN, ROLE_MANAGER], methods: [PUT] }
+    - { path: '/api/v1/sections', roles: [ROLE_ADMIN, ROLE_MANAGER], methods: [GET] }
+
+    # Attendance
+    - { path: '/api/v1/requests/move/\d+/awaiting-support', roles: [ROLE_USER, ROLE_MANAGER], methods: [POST] }
+    - { path: '/api/v1/requests/move/\d+/awaiting-response', roles: [ROLE_USER, ROLE_MANAGER], methods: [POST] }
+    - { path: '/api/v1/requests/move/\d+/in-attendance', roles: [ROLE_USER, ROLE_MANAGER], methods: [POST] }
+    - { path: '/api/v1/requests/move/\d+/finished', roles: [ROLE_USER, ROLE_MANAGER], methods: [POST] }
+    - { path: '/api/v1/requests/move/\d+/canceled', roles: [ROLE_USER, ROLE_MANAGER], methods: [POST] }
+    - { path: '/api/v1/requests/move/\d+/approved', roles: [ROLE_USER, ROLE_MANAGER], methods: [POST] }
+    - { path: '/api/v1/requests/\d+/approve', roles: [ROLE_USER, ROLE_MANAGER], methods: [POST] }
+    - { path: '/api/v1/requests/\d+/disapprove', roles: [ROLE_USER, ROLE_MANAGER], methods: [POST] }
+    - { path: '/api/v1/requests/export-requests-to-pdf', roles: [ROLE_MANAGER], methods: [GET] }
+    - { path: '/api/v1/requests/\d+/transfer-company', roles: [ROLE_USER, ROLE_MANAGER], methods: [POST] }
+    - { path: '/api/v1/requests/\d+', roles: [ROLE_USER, ROLE_MANAGER], methods: [PUT] }
+    - { path: '/api/v1/requests', roles: [ROLE_USER, ROLE_MANAGER], methods: [GET, POST] }
+
+    # User
+    - { path: '/api/v1/users/manager', roles: [ROLE_MANAGER], methods: [GET] }
+    - { path: '/api/v1/users/support', roles: [ROLE_MANAGER], methods: [GET] }
+    - { path: '/api/v1/users/reset-password', roles: [ROLE_ADMIN, ROLE_MANAGER, ROLE_USER, ROLE_CLIENT], methods: [POST] }
+    - { path: '/api/v1/users/\d+/image', roles: [ROLE_USER, ROLE_MANAGER], methods: [POST] }
+    - { path: '/api/v1/users/\d+', roles: [ROLE_USER, ROLE_MANAGER], methods: [GET, PUT] }
+    - { path: '/api/v1/users', roles: [ROLE_ADMIN, ROLE_MANAGER], methods: [POST] }
