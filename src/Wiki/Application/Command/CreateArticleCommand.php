@@ -101,66 +101,33 @@ class CreateArticleCommand implements CommandInterface
     /**
      * @return int
      */
-    public function idCompany(): int
+    public function getIdCompany(): int
     {
         return $this->idCompany;
     }
 
     /**
-     * @param int $idCompany
-     */
-    public function setIdCompany(int $idCompany): void
-    {
-        $this->idCompany = $idCompany;
-    }
-
-    /**
      * @return string
      */
-    public function title(): string
+    public function getTitle(): string
     {
         return $this->title;
     }
 
     /**
-     * @param string $title
-     */
-    public function setTitle(string $title): void
-    {
-        $this->title = $title;
-    }
-
-    /**
      * @return string
      */
-    public function description(): string
+    public function getDescription(): string
     {
         return $this->description;
     }
 
     /**
-     * @param string $description
-     */
-    public function setDescription(string $description): void
-    {
-        $this->description = $description;
-    }
-
-    /**
      * @return array
      */
-    public function categories(): array
+    public function getCategories(): array
     {
         return $this->categories;
     }
-
-    /**
-     * @param array $categories
-     */
-    public function setCategories(array $categories): void
-    {
-        $this->categories = $categories;
-    }
-
 
 }

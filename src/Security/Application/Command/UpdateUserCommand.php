@@ -41,6 +41,7 @@ class UpdateUserCommand implements CommandInterface
 
     /**
      * UpdateUserCommand constructor.
+     * @param int $id
      * @param string $password
      * @param string $email
      * @param bool $active

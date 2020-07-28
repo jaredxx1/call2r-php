@@ -53,8 +53,6 @@ class SectionService
         }
 
         $section->setName($command->name());
-        $section->setPriority($command->priority());
-
         return $this->sectionRepository->update($section);
     }
 
