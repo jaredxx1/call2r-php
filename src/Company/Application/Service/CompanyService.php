@@ -75,36 +75,20 @@ class CompanyService
 
         $sla = new SLA(
             null,
-            $command->sla()['p1'],
-            $command->sla()['p2'],
-            $command->sla()['p3'],
-            $command->sla()['p4'],
-            $command->sla()['p5']
+            $command->getSla()['p1'],
+            $command->getSla()['p2'],
+            $command->getSla()['p3'],
+            $command->getSla()['p4'],
+            $command->getSla()['p5']
         );
 
-        $sections = new ArrayCollection();
-        $nameOfSections = new ArrayCollection();
-        foreach ($command->sections() as $section) {
-            $foundSection = $this->sectionRepository->fromName($section['name']);
-            if (is_null($foundSection)) {
-                $localSection = new Section(
-                    null,
-                    $section['name']
-                );
-                if (!$nameOfSections->contains($localSection->getName())) {
-                    $sections->add($localSection);
-                    $nameOfSections->add($localSection->getName());
-                }
-            } else {
-                $sections->add($foundSection);
-            }
-        }
+        $sections = $this->createSectionsObjects($command);
 
         $company = new Company(
             null,
-            $command->name(),
-            $command->description(),
-            $command->cnpj(),
+            $command->getName(),
+            $command->getDescription(),
+            $command->getCnpj(),
             $command->isMother(),
             $command->isActive(),
             $sla,
@@ -158,54 +142,57 @@ class CompanyService
      */
     public function update(UpdateCompanyCommand $command): ?Company
     {
-
-        $id = $command->id();
-        $company = $this->companyRepository->fromId($id);
-        $sla = $this->slaRepository->fromId($company->getSla()->getId());
+        $company = $this->companyRepository->fromId($command->getId());
 
         if (empty($company)) {
             throw new CompanyNotFoundException();
         }
 
-        if (is_null($sla)) {
-            throw new SlaNotFoundException();
+        if(!is_null($command->getName())){
+            $company->setName($command->getName());
         }
 
-        $sections = new ArrayCollection();
-        $nameOfSections = new ArrayCollection();
-        foreach ($command->sections() as $section) {
-            $foundSection = $this->sectionRepository->fromName($section['name']);
-            if (is_null($foundSection)) {
-                $localSection = new Section(
-                    null,
-                    $section['name']
-                );
-                if (!$nameOfSections->contains($localSection->getName())) {
-                    $sections->add($localSection);
-                    $nameOfSections->add($localSection->getName());
-                }
-            } else {
-                $sections->add($foundSection);
+        if(!is_null($command->getDescription())){
+            $company->setDescription($command->getDescription());
+        }
+
+        if(!is_null($command->getActive())){
+            $company->setActive($command->getActive());
+        }
+
+        if(!is_null($command->getSla())){
+            $sla = $this->slaRepository->fromId($company->getSla()->getId());
+            if (is_null($sla)) {
+                throw new SlaNotFoundException();
             }
+
+            if(key_exists('p1', $command->getSla())){
+                $sla->setP1($command->getSla()['p1']);
+            }
+
+            if(key_exists('p2', $command->getSla())){
+                $sla->setP2($command->getSla()['p2']);
+            }
+
+            if(key_exists('p3', $command->getSla())){
+                $sla->setP3($command->getSla()['p3']);
+            }
+
+            if(key_exists('p4', $command->getSla())){
+                $sla->setP4($command->getSla()['p4']);
+            }
+
+            if(key_exists('p5', $command->getSla())){
+                $sla->setP5($command->getSla()['p5']);
+            }
+
+            $this->slaRepository->update($sla);
         }
 
-        // Save sla
-        $sla->setP1($command->sla()['p1']);
-        $sla->setP2($command->sla()['p2']);
-        $sla->setP3($command->sla()['p3']);
-        $sla->setP4($command->sla()['p4']);
-        $sla->setP5($command->sla()['p5']);
-
-        $this->slaRepository->update($sla);
-
-        // set new sections to company
-
-        $company->setSections($sections);
-
-        // Save company
-        $company->setName($command->name());
-        $company->setDescription($command->description());
-        $company->setActive($command->isActive());
+        if(!is_null($command->getSections())){
+            $sections = $this->createSectionsObjects($command);
+            $company->setSections($sections);
+        }
 
         $this->companyRepository->update($company);
 
@@ -225,5 +212,31 @@ class CompanyService
         }
 
         return $company;
+    }
+
+    /**
+     * @param mixed $command
+     * @return ArrayCollection
+     */
+    private function createSectionsObjects($command): ArrayCollection
+    {
+        $sections = new ArrayCollection();
+        $nameOfSections = new ArrayCollection();
+        foreach ($command->getSections() as $section) {
+            $foundSection = $this->sectionRepository->fromName($section['name']);
+            if (is_null($foundSection)) {
+                $localSection = new Section(
+                    null,
+                    $section['name']
+                );
+                if (!$nameOfSections->contains($localSection->getName())) {
+                    $sections->add($localSection);
+                    $nameOfSections->add($localSection->getName());
+                }
+            } else {
+                $sections->add($foundSection);
+            }
+        }
+        return $sections;
     }
 }

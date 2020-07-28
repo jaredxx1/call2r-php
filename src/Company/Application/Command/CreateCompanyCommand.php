@@ -41,7 +41,7 @@ class CreateCompanyCommand implements CommandInterface
     private $active;
 
     /**
-     * @var SLA
+     * @var array
      */
     private $sla;
 
@@ -61,15 +61,7 @@ class CreateCompanyCommand implements CommandInterface
      * @param array $sla
      * @param array $sections
      */
-    public function __construct(
-        string $name,
-        string $description,
-        string $cnpj,
-        bool $mother,
-        bool $active,
-        array $sla,
-        array $sections
-    )
+    public function __construct(string $name, string $description, string $cnpj, bool $mother, bool $active, array $sla, array $sections)
     {
         $this->name = $name;
         $this->description = $description;
@@ -79,6 +71,7 @@ class CreateCompanyCommand implements CommandInterface
         $this->sla = $sla;
         $this->sections = $sections;
     }
+
 
     /**
      * @param array $data
@@ -110,6 +103,7 @@ class CreateCompanyCommand implements CommandInterface
 
         //SLA object validation
         $sla = $data['sla'];
+
 
         Assert::keyExists($sla, 'p1', 'Field sla p1 is required');
         Assert::keyExists($sla, 'p2', 'Field sla p2 is required');
@@ -161,7 +155,7 @@ class CreateCompanyCommand implements CommandInterface
     /**
      * @return string
      */
-    public function name(): string
+    public function getName(): string
     {
         return $this->name;
     }
@@ -169,7 +163,7 @@ class CreateCompanyCommand implements CommandInterface
     /**
      * @return string
      */
-    public function description(): string
+    public function getDescription(): string
     {
         return $this->description;
     }
@@ -177,7 +171,7 @@ class CreateCompanyCommand implements CommandInterface
     /**
      * @return string
      */
-    public function cnpj(): string
+    public function getCnpj(): string
     {
         return $this->cnpj;
     }
@@ -201,7 +195,7 @@ class CreateCompanyCommand implements CommandInterface
     /**
      * @return array
      */
-    public function sla(): array
+    public function getSla(): array
     {
         return $this->sla;
     }
@@ -209,8 +203,10 @@ class CreateCompanyCommand implements CommandInterface
     /**
      * @return array
      */
-    public function sections(): array
+    public function getSections(): array
     {
         return $this->sections;
     }
+
+
 }
