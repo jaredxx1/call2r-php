@@ -104,7 +104,6 @@ class CreateCompanyCommand implements CommandInterface
         //SLA object validation
         $sla = $data['sla'];
 
-
         Assert::keyExists($sla, 'p1', 'Field sla p1 is required');
         Assert::keyExists($sla, 'p2', 'Field sla p2 is required');
         Assert::keyExists($sla, 'p3', 'Field sla p3 is required');
