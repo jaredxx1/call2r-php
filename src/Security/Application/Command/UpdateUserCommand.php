@@ -22,6 +22,11 @@ class UpdateUserCommand implements CommandInterface
     /**
      * @var string
      */
+    private $name;
+
+    /**
+     * @var string
+     */
     private $password;
 
     /**
@@ -41,14 +46,17 @@ class UpdateUserCommand implements CommandInterface
 
     /**
      * UpdateUserCommand constructor.
+     * @param int $id
+     * @param string $name
      * @param string $password
      * @param string $email
      * @param bool $active
      * @param string $role
      */
-    public function __construct(int $id, ?string $password, ?string $email, ?bool $active, ?string $role)
+    public function __construct(int $id, string $name, string $password, string $email, bool $active, string $role)
     {
         $this->id = $id;
+        $this->name = $name;
         $this->password = $password;
         $this->email = $email;
         $this->active = $active;
@@ -63,6 +71,10 @@ class UpdateUserCommand implements CommandInterface
     {
         Assert::keyExists($data, 'id', 'Param id is required');
         Assert::integer($data['id'], 'Field id must be an integer');
+
+        if (key_exists('name', $data)) {
+            Assert::stringNotEmpty($data['name'], 'Field name cannot be empty');
+        }
 
         if (key_exists('email', $data)) {
             Assert::stringNotEmpty($data['email'], 'Field email cannot be empty');
@@ -82,6 +94,7 @@ class UpdateUserCommand implements CommandInterface
 
         return new self(
             $data['id'],
+            $data['name'] ?? null,
             $data['password'] ?? null,
             $data['email'] ?? null,
             $data['isActive'] ?? null,
@@ -108,7 +121,15 @@ class UpdateUserCommand implements CommandInterface
     /**
      * @return string
      */
-    public function getPassword(): ?string
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPassword(): string
     {
         return $this->password;
     }
@@ -116,7 +137,7 @@ class UpdateUserCommand implements CommandInterface
     /**
      * @return string
      */
-    public function getEmail(): ?string
+    public function getEmail(): string
     {
         return $this->email;
     }
@@ -124,7 +145,7 @@ class UpdateUserCommand implements CommandInterface
     /**
      * @return bool
      */
-    public function isActive(): ?bool
+    public function isActive(): bool
     {
         return $this->active;
     }
@@ -132,7 +153,7 @@ class UpdateUserCommand implements CommandInterface
     /**
      * @return string
      */
-    public function getRole(): ?string
+    public function getRole(): string
     {
         return $this->role;
     }
