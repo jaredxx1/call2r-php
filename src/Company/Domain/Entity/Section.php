@@ -25,21 +25,14 @@ class Section implements JsonSerializable
 
 
     /**
-     * @var int
-     */
-    private $priority;
-
-    /**
      * Section constructor.
      * @param int|null $id
      * @param string $name
-     * @param int $priority
      */
-    public function __construct(?int $id, string $name, int $priority)
+    public function __construct(?int $id, string $name)
     {
         $this->id = $id;
         $this->name = $name;
-        $this->priority = $priority;
     }
 
 
@@ -58,8 +51,7 @@ class Section implements JsonSerializable
     {
         return [
             'id' => $this->getId(),
-            'name' => $this->getName(),
-            'priority' => $this->getPriority()
+            'name' => $this->getName()
         ];
     }
 
@@ -94,21 +86,4 @@ class Section implements JsonSerializable
     {
         $this->name = $name;
     }
-
-    /**
-     * @return int
-     */
-    public function getPriority(): int
-    {
-        return $this->priority;
-    }
-
-    /**
-     * @param int $priority
-     */
-    public function setPriority(int $priority): void
-    {
-        $this->priority = $priority;
-    }
-
 }
