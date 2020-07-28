@@ -135,11 +135,8 @@ class CreateCompanyCommand implements CommandInterface
 
         foreach ($sections as $section) {
             Assert::keyExists($section, 'name', 'Field section name is required');
-            Assert::keyExists($section, 'priority', 'Field section priority is required');
             Assert::stringNotEmpty($section['name'], 'Field section name is empty');
             Assert::string($section['name'], 'Field section name is not a string');
-            Assert::integer($section['priority'], 'Field section priority is not an int');
-            Assert::notEq($section['priority'], 0, 'Field sections priority not be 0');
         }
 
         return new self(
