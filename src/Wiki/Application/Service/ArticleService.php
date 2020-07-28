@@ -114,38 +114,47 @@ class ArticleService
      */
     public function update(UpdateArticleCommand $command)
     {
-        $article = $this->articleRepository->fromId($command->id());
+        dd($command);
+        $article = $this->articleRepository->fromId($command->getId());
         if (is_null($article)) {
             throw new ArticleNotFoundException();
         }
 
-        $company = $this->companyRepository->fromId($command->idCompany());
+        $company = $this->companyRepository->fromId($command->getIdCompany());
         if (is_null($company)) {
             throw new CompanyNotFoundException();
         }
 
-        $categories = new ArrayCollection();
-        $titleOfCategories = new ArrayCollection();
-        foreach ($command->categories() as $category) {
-            $foundCategory = $this->categoryRepository->fromArticleTitle($category['title'], $category['idCompany']);
-            if (is_null($foundCategory)) {
-                $localCategory = new Category(
-                    null,
-                    $category['idCompany'],
-                    $category['title']
-                );
-                if(!$titleOfCategories->contains($localCategory->getTitle())){
-                    $categories->add($localCategory);
-                    $titleOfCategories->add($localCategory->getTitle());
-                }
-            } else {
-                $categories->add($foundCategory);
-            }
+        if(!is_null($command->getTitle())){
+            $article->setTitle($command->getTitle());
         }
 
-        $article->setDescription($command->description());
-        $article->setTitle($command->title());
-        $article->setCategories($categories);
+        if(!is_null($command->getDescription())){
+            $article->setDescription($command->getDescription());
+        }
+
+        if(!is_null($command->getCategories())){
+            $categories = new ArrayCollection();
+            $titleOfCategories = new ArrayCollection();
+            foreach ($command->getCategories() as $category) {
+                $foundCategory = $this->categoryRepository->fromArticleTitle($category['title'], $category['idCompany']);
+                if (is_null($foundCategory)) {
+                    $localCategory = new Category(
+                        null,
+                        $category['idCompany'],
+                        $category['title']
+                    );
+                    if(!$titleOfCategories->contains($localCategory->getTitle())){
+                        $categories->add($localCategory);
+                        $titleOfCategories->add($localCategory->getTitle());
+                    }
+                } else {
+                    $categories->add($foundCategory);
+                }
+            }
+
+            $article->setCategories($categories);
+        }
 
         return $this->articleRepository->update($article);
     }

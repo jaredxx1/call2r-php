@@ -24,17 +24,17 @@ class UpdateArticleCommand implements CommandInterface
     private $idCompany;
 
     /**
-     * @var string
+     * @var string|null
      */
     private $title;
 
     /**
-     * @var string
+     * @var string|null
      */
     private $description;
 
     /**
-     * @var array
+     * @var array|null
      */
     private $categories;
 
@@ -42,11 +42,11 @@ class UpdateArticleCommand implements CommandInterface
      * UpdateArticleCommand constructor.
      * @param int $id
      * @param int $idCompany
-     * @param string $title
-     * @param string $description
-     * @param array $categories
+     * @param string|null $title
+     * @param string|null $description
+     * @param array|null $categories
      */
-    public function __construct(int $id, int $idCompany, string $title, string $description, array $categories)
+    public function __construct(int $id, int $idCompany, ?string $title, ?string $description, ?array $categories)
     {
         $this->id = $id;
         $this->idCompany = $idCompany;
@@ -66,34 +66,40 @@ class UpdateArticleCommand implements CommandInterface
         Assert::eq($data['urlArticle'], $data['id'], 'Id article not the same');
         $data['idCompany'] = $data['urlCompany'];
 
-        Assert::keyExists($data, 'title', 'Field title is required');
-        Assert::keyExists($data, 'description', 'Field description is required');
-        Assert::keyExists($data, 'categories', 'Field categories is required');
-
-        Assert::integer($data['id'], ' Field id  is not an integer');
-        Assert::string($data['title'], ' Field title is not a string');
-        Assert::string($data['description'], ' Field description is not a string');
-
-        Assert::stringNotEmpty($data['title'], 'Field title is empty');
-        Assert::stringNotEmpty($data['description'], 'Field description is empty');
-
-        $categories = $data['categories'];
-        Assert::isArray($categories, 'Field categories is not an array');
-
-        foreach ($categories as $category) {
-            Assert::keyExists($category, 'title', 'Field category title name is required');
-
-            Assert::stringNotEmpty($category['title'], 'Field category title is empty');
-
-            Assert::string($category['title'], 'Field category title is not a string');
+        if (key_exists('title', $data)) {
+            Assert::stringNotEmpty($data['title'], 'Field title cannot be empty');
         }
+
+        if (key_exists('description', $data)) {
+            Assert::stringNotEmpty($data['description'], 'Field description cannot be empty');
+        }
+
+        if (key_exists('categories', $data)) {
+            self::validateCategories($data['categories']);
+        }
+
         return new self(
             $data['id'],
             $data['idCompany'],
-            $data['description'],
-            $data['title'],
-            $data['categories']
+            $data['description'] ?? null,
+            $data['title'] ?? null,
+            $data['categories'] ?? null
         );
+    }
+
+    /**
+     * @param $categories
+     */
+    private static function validateCategories($categories): void
+    {
+        $categories = $categories['categories'];
+        Assert::isArray($categories, 'Field categories is not an array');
+
+        foreach ($categories as $category) {
+            if (key_exists('title', $category)) {
+                Assert::stringNotEmpty($category['title'], 'Field title cannot be empty');
+            }
+        }
     }
 
     /**
@@ -107,82 +113,40 @@ class UpdateArticleCommand implements CommandInterface
     /**
      * @return int
      */
-    public function id(): int
+    public function getId(): int
     {
         return $this->id;
     }
 
     /**
-     * @param int $id
-     */
-    public function setId(int $id): void
-    {
-        $this->id = $id;
-    }
-
-    /**
-     * @return string
-     */
-    public function title(): string
-    {
-        return $this->title;
-    }
-
-    /**
-     * @param string $title
-     */
-    public function setTitle(string $title): void
-    {
-        $this->title = $title;
-    }
-
-    /**
-     * @return string
-     */
-    public function description(): string
-    {
-        return $this->description;
-    }
-
-    /**
-     * @param string $description
-     */
-    public function setDescription(string $description): void
-    {
-        $this->description = $description;
-    }
-
-    /**
-     * @return array
-     */
-    public function categories(): array
-    {
-        return $this->categories;
-    }
-
-    /**
-     * @param array $categories
-     */
-    public function setCategories(array $categories): void
-    {
-        $this->categories = $categories;
-    }
-
-    /**
      * @return int
      */
-    public function idCompany(): int
+    public function getIdCompany(): int
     {
         return $this->idCompany;
     }
 
     /**
-     * @param int $idCompany
+     * @return string|null
      */
-    public function setIdCompany(int $idCompany): void
+    public function getTitle(): ?string
     {
-        $this->idCompany = $idCompany;
+        return $this->title;
     }
 
+    /**
+     * @return string|null
+     */
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
 
+    /**
+     * @return array|null
+     */
+    public function getCategories(): ?array
+    {
+        return $this->categories;
+    }
 }
