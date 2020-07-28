@@ -17,6 +17,7 @@ use App\Security\Application\Exception\UserNotFoundException;
 use App\Security\Application\Query\FindUsersByRoleQuery;
 use App\Security\Domain\Entity\User;
 use App\Security\Domain\Repository\UserRepository;
+use DateTime;
 use Exception;
 use Firebase\JWT\JWT;
 use Ramsey\Uuid\Uuid;
@@ -38,7 +39,7 @@ final class UserService
      * @var S3
      */
     private $s3;
-  
+
     /**
      * @var EmailService
      */
@@ -134,6 +135,7 @@ final class UserService
      *
      * @param CreateUserCommand $command
      * @return User|null
+     * @throws Exception
      */
     public function createUser(CreateUserCommand $command)
     {
@@ -141,12 +143,13 @@ final class UserService
 
         $user = new User(
             null,
+            $command->getName(),
             $command->getCpf(),
             $hashedPassword,
             $command->getRole(),
             $command->getEmail(),
             null,
-            $command->getBirthdate(),
+            new DateTime($command->getBirthdate()),
             $command->isActive(),
             $command->getCompanyId()
         );
@@ -164,7 +167,12 @@ final class UserService
         $user = $this->fromId($command->getId());
 
         if (!is_null($command->getPassword())) {
-            $user->setPassword($command->getPassword());
+            $hashedPassword = password_hash($command->getPassword(), PASSWORD_BCRYPT);
+            $user->setPassword($hashedPassword);
+        }
+
+        if (!is_null($command->getName())) {
+            $user->setName($command->getName());
         }
 
         if (!is_null($command->getEmail())) {
@@ -221,7 +229,7 @@ final class UserService
 
         return $this->userRepository->updateUser($user);
     }
-  
+
     /**
      * @param ResetPasswordCommand $command
      * @throws UserNotFoundException

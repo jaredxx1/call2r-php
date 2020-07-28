@@ -2,6 +2,7 @@
 
 namespace App\Security\Domain\Entity;
 
+use DateTime;
 use JsonSerializable;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -16,6 +17,11 @@ class User implements UserInterface, JsonSerializable
      * @var int
      */
     private $id;
+
+    /**
+     * @var string
+     */
+    private $name;
 
     /**
      * @var string
@@ -43,7 +49,7 @@ class User implements UserInterface, JsonSerializable
     private $image;
 
     /**
-     * @var
+     * @var Datetime
      */
     private $birthdate;
 
@@ -60,18 +66,20 @@ class User implements UserInterface, JsonSerializable
     /**
      * User constructor.
      * @param int|null $id
+     * @param string $name
      * @param string $cpf
      * @param string $password
      * @param string $role
      * @param string $email
      * @param string|null $image
-     * @param $birthdate
+     * @param Datetime $birthdate
      * @param bool $active
      * @param int $companyId
      */
-    public function __construct(?int $id, string $cpf, string $password, string $role, string $email, ?string $image, $birthdate, bool $active, int $companyId)
+    public function __construct(?int $id, string $name, string $cpf, string $password, string $role, string $email, ?string $image, Datetime $birthdate, bool $active, int $companyId)
     {
         $this->id = $id;
+        $this->name = $name;
         $this->cpf = $cpf;
         $this->password = $password;
         $this->role = $role;
@@ -97,6 +105,7 @@ class User implements UserInterface, JsonSerializable
     {
         return [
             'id' => $this->getId(),
+            'name' => $this->getName(),
             'cpf' => $this->getCpf(),
             'birthdate' => $this->getBirthdate(),
             'email' => $this->getEmail(),
@@ -140,21 +149,20 @@ class User implements UserInterface, JsonSerializable
     }
 
     /**
-     * @return mixed
+     * @return DateTime
      */
-    public function getBirthdate()
+    public function getBirthdate(): DateTime
     {
         return $this->birthdate;
     }
 
     /**
-     * @param mixed $birthdate
+     * @param DateTime $birthdate
      */
-    public function setBirthdate($birthdate): void
+    public function setBirthdate(DateTime $birthdate): void
     {
         $this->birthdate = $birthdate;
     }
-
 
     /**
      * @return string
@@ -285,5 +293,21 @@ class User implements UserInterface, JsonSerializable
     public function setImage(?string $image): void
     {
         $this->image = $image;
+    }
+
+    /**
+     * @return string
+     */
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    /**
+     * @param string $name
+     */
+    public function setName(string $name): void
+    {
+        $this->name = $name;
     }
 }

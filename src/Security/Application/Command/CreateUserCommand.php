@@ -4,7 +4,10 @@
 namespace App\Security\Application\Command;
 
 
+use App\Core\Infrastructure\Container\Application\Exception\InvalidDateFormatException;
 use App\Core\Infrastructure\Container\Application\Utils\Command\CommandInterface;
+use Carbon\Carbon;
+use Exception;
 use Webmozart\Assert\Assert;
 
 /**
@@ -20,7 +23,12 @@ class CreateUserCommand implements CommandInterface
     private $cpf;
 
     /**
-     * @var
+     * @var string
+     */
+    private $name;
+
+    /**
+     * @var string
      */
     private $birthdate;
 
@@ -52,16 +60,18 @@ class CreateUserCommand implements CommandInterface
     /**
      * CreateUserCommand constructor.
      * @param string $cpf
-     * @param $birthdate
+     * @param string $name
+     * @param string $birthdate
      * @param string $email
      * @param string $password
      * @param int $companyId
      * @param bool $active
      * @param string $role
      */
-    public function __construct(string $cpf, $birthdate, string $email, string $password, int $companyId, bool $active, string $role)
+    public function __construct(string $cpf, string $name, string $birthdate, string $email, string $password, int $companyId, bool $active, string $role)
     {
         $this->cpf = $cpf;
+        $this->name = $name;
         $this->birthdate = $birthdate;
         $this->email = $email;
         $this->password = $password;
@@ -70,13 +80,16 @@ class CreateUserCommand implements CommandInterface
         $this->role = $role;
     }
 
+
     /**
      * @param array $data
      * @return CreateUserCommand
+     * @throws InvalidDateFormatException
      */
     public static function fromArray($data)
     {
         Assert::keyExists($data, 'cpf', 'Field cpf is required');
+        Assert::keyExists($data, 'name', 'Field name is required');
         Assert::keyExists($data, 'birthdate', 'Field birthdate is required');
         Assert::keyExists($data, 'email', 'Field email is required');
         Assert::keyExists($data, 'password', 'Field password is required');
@@ -84,8 +97,15 @@ class CreateUserCommand implements CommandInterface
         Assert::keyExists($data, 'isActive', 'Field isActive is required');
         Assert::keyExists($data, 'role', 'Field role is required');
 
+        try {
+            $birthdate = Carbon::createFromFormat('Y-m-d', $data['birthdate']);
+            $data['birthdate'] = $birthdate;
+        } catch (Exception $e) {
+            throw new InvalidDateFormatException();
+        }
+
         Assert::stringNotEmpty($data['cpf'], 'Field cpf cannot be empty');
-        Assert::stringNotEmpty($data['birthdate'], 'Field birthdate cannot be empty');
+        Assert::stringNotEmpty($data['name'], 'Field name cannot be empty');
         Assert::stringNotEmpty($data['email'], 'Field email cannot be empty');
         Assert::stringNotEmpty($data['password'], 'Field password cannot be empty');
         Assert::integer($data['companyId'], 'Field companyId is not an integer');
@@ -95,6 +115,7 @@ class CreateUserCommand implements CommandInterface
 
         return new self(
             $data['cpf'],
+            $data['name'],
             $data['birthdate'],
             $data['email'],
             $data['password'],
@@ -121,9 +142,17 @@ class CreateUserCommand implements CommandInterface
     }
 
     /**
-     * @return mixed
+     * @return string
      */
-    public function getBirthdate()
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    /**
+     * @return string
+     */
+    public function getBirthdate(): string
     {
         return $this->birthdate;
     }
@@ -167,4 +196,6 @@ class CreateUserCommand implements CommandInterface
     {
         return $this->role;
     }
+
+
 }
