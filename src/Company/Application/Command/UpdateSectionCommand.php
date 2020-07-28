@@ -25,21 +25,14 @@ class UpdateSectionCommand implements CommandInterface
     private $name;
 
     /**
-     * @var int
-     */
-    private $priority;
-
-    /**
      * UpdateSectionCommand constructor.
      * @param int $id
      * @param string $name
-     * @param int $priority
      */
-    public function __construct(int $id, string $name, int $priority)
+    public function __construct(int $id, string $name)
     {
         $this->id = $id;
         $this->name = $name;
-        $this->priority = $priority;
     }
 
     /**
@@ -52,18 +45,15 @@ class UpdateSectionCommand implements CommandInterface
 
         Assert::keyExists($data, 'id', 'Field id is required');
         Assert::keyExists($data, 'name', 'Field name is required');
-        Assert::keyExists($data, 'priority', 'Field priority is required');
 
         Assert::stringNotEmpty($data['name'], 'Field name cannot be empty');
 
         Assert::integer($data['id'], 'Field id is not an integer');
         Assert::string($data['name'], 'Field name is not a string');
-        Assert::integer($data['priority'], 'Field priority is not an integer');
 
         return new self(
             $data['id'],
-            $data['name'],
-            $data['priority']
+            $data['name']
         );
 
     }
@@ -91,14 +81,5 @@ class UpdateSectionCommand implements CommandInterface
     {
         return $this->name;
     }
-
-    /**
-     * @return int
-     */
-    public function priority(): int
-    {
-        return $this->priority;
-    }
-
 
 }
