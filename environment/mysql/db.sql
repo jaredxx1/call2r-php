@@ -33,7 +33,6 @@ create table tb_section
 (
     id_section int auto_increment primary key,
     name       varchar(255),
-    priority   int,
     UNIQUE KEY (name)
 );
 
@@ -151,7 +150,7 @@ INSERT INTO call2r.tb_sla (id_sla, p1, p2, p3, p4, p5) VALUES (2, 1, 2, 3, 4, 5)
 INSERT INTO call2r.tb_company (id_company, active, cnpj, description, mother, name, sla_id) VALUES (1, 1, '72572151000125', 'Mother compnay', 1, 'mother company', 1);
 INSERT INTO call2r.tb_company (id_company, active, cnpj, description, mother, name, sla_id) VALUES (2, 1, '3434567150222', 'Support company', 0, 'Support company', 2);
 
-INSERT INTO call2r.tb_section (id_section, name, priority) VALUES (1, 'section', 1);
+INSERT INTO call2r.tb_section (id_section, name) VALUES (1, 'section');
 
 INSERT INTO call2r.tb_company_section (id_company, id_section) VALUES (2, 1);
 
