@@ -186,7 +186,7 @@ class CompanyService
                 $sla->setP5($command->getSla()['p5']);
             }
 
-            $this->slaRepository->update($sla);
+            $company->setSla($sla);
         }
 
         if(!is_null($command->getSections())){
