@@ -10,6 +10,9 @@
         <field name="title" column="title" type="string"/>
         <field name="description" column="description" type="string"/>
         <many-to-many field="categories" target-entity="App\Wiki\Domain\Entity\Category" fetch="EAGER">
+            <cascade>
+                <cascade-persist />
+            </cascade>
             <join-table name="tb_article_category">
                 <join-columns>
                     <join-column name="id_article" referenced-column-name="id_article" />
