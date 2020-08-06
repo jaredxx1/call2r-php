@@ -51,7 +51,7 @@ security:
     - { path: '/api/v1/requests/\d+/disapprove', roles: [ROLE_USER, ROLE_MANAGER], methods: [POST] }
     - { path: '/api/v1/requests/export-requests-to-pdf', roles: [ROLE_MANAGER], methods: [GET] }
     - { path: '/api/v1/requests/\d+/transfer-company', roles: [ROLE_USER, ROLE_MANAGER], methods: [POST] }
-    - { path: '/api/v1/requests/\d+', roles: [ROLE_USER, ROLE_MANAGER], methods: [PUT] }
+    - { path: '/api/v1/requests/\d+', roles: [ROLE_USER, ROLE_MANAGER], methods: [GET, PUT] }
     - { path: '/api/v1/requests', roles: [ROLE_USER, ROLE_MANAGER], methods: [GET, POST] }
 
     # User
