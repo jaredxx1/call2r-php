@@ -14,6 +14,7 @@ use App\Attendance\Application\Exception\UnauthorizedStatusChangeException;
 use App\Attendance\Application\Exception\UnauthorizedStatusUpdateException;
 use App\Attendance\Application\Exception\UnauthorizedTransferCompanyException;
 use App\Attendance\Application\Query\ExportRequestsToPdfQuery;
+use App\Attendance\Application\Query\FindRequestByIdQuery;
 use App\Attendance\Domain\Entity\Log;
 use App\Attendance\Domain\Entity\Request;
 use App\Attendance\Domain\Entity\Status;
@@ -552,4 +553,21 @@ class RequestService
         $url = $this->s3->sendFile('request',$uuid,$uuid.'.pdf','requestsFile.pdf','application/pdf');
         return ["url" => $url];
     }
+
+    /**
+     * @param FindRequestByIdQuery $query
+     * @return Request
+     * @throws RequestNotFoundException
+     */
+    public function fromId(FindRequestByIdQuery $query)
+    {
+        $request = $this->requestRepository->fromId($query->getId());
+
+        if (is_null($request)) {
+            throw new RequestNotFoundException();
+        }
+
+        return $request;
+    }
+
 }

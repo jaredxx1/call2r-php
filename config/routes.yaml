@@ -145,6 +145,13 @@ create_request:
   controller: App\Attendance\Presentation\Http\Action\CreateRequestAction
   methods:    POST
 
+get_request_by_id:
+  path: /api/v1/requests/{id}
+  controller: App\Attendance\Presentation\Http\Action\FindRequestByIdAction
+  methods:    GET
+  requirements:
+    id: '\d+'
+
 update_request:
   path: /api/v1/requests/{id}
   controller: App\Attendance\Presentation\Http\Action\UpdateRequestAction

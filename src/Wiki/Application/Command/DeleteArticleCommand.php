@@ -1,17 +1,17 @@
 <?php
 
 
-namespace App\Wiki\Application\Query;
+namespace App\Wiki\Application\Command;
 
 
-use App\Core\Infrastructure\Container\Application\Utils\Query\QueryInterface;
+use App\Core\Infrastructure\Container\Application\Utils\Command\CommandInterface;
 use Webmozart\Assert\Assert;
 
 /**
  * Class DeleteArticleCommand
  * @package App\Wiki\Application\Query
  */
-class DeleteArticleCommand implements QueryInterface
+class DeleteArticleCommand implements CommandInterface
 {
     /**
      * @var int
