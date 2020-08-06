@@ -5,7 +5,7 @@ namespace App\Wiki\Presentation\Http\Action;
 
 
 use App\Core\Presentation\Http\AbstractAction;
-use App\Wiki\Application\Query\DeleteArticleCommand;
+use App\Wiki\Application\Command\DeleteArticleCommand;
 use App\Wiki\Application\Service\ArticleService;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
