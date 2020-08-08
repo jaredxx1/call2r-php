@@ -36,6 +36,6 @@ class CategoryService
      */
     public function fromCompany(FindAllCategoriesFromCompanyQuery $query)
     {
-        return $this->categoryRepository->fromCompany($query->id());
+        return $this->categoryRepository->fromCompany($query->getId());
     }
 }

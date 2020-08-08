@@ -34,7 +34,6 @@ class DeleteArticleCommand implements CommandInterface
         $this->idCompany = $idCompany;
     }
 
-
     /**
      * @param array $data
      * @return DeleteArticleCommand
@@ -63,16 +62,16 @@ class DeleteArticleCommand implements CommandInterface
     /**
      * @return int
      */
-    public function idCompany(): int
+    public function getIdArticle(): int
     {
-        return $this->idCompany;
+        return $this->idArticle;
     }
 
     /**
      * @return int
      */
-    public function idArticle(): int
+    public function getIdCompany(): int
     {
-        return $this->idArticle;
+        return $this->idCompany;
     }
 }
