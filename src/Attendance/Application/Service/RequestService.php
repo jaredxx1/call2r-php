@@ -191,7 +191,7 @@ class RequestService
             $command->getPriority(),
             $command->getSection(),
             null,
-            null,
+            $command->getToken()['user_id'],
             Carbon::now(),
             Carbon::now(),
             null,

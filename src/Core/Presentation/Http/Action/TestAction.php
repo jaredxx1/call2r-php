@@ -11,26 +11,9 @@ use Symfony\Component\HttpFoundation\Response;
 class TestAction
 {
 
-    /**
-     * @var RequestService
-     */
-    private $service;
-
-    /**
-     * TestAction constructor.
-     * @param RequestService $service
-     */
-    public function __construct(RequestService $service)
-    {
-        $this->service = $service;
-    }
-
     public function __invoke()
     {
-        $request = $this->service->findById(2);
-        RequestService::calculateSla($request);
-
-        return new JsonResponse($request, Response::HTTP_OK);
+        return new JsonResponse([], Response::HTTP_OK);
     }
 
 }

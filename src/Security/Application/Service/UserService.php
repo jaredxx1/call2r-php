@@ -5,13 +5,13 @@ namespace App\Security\Application\Service;
 
 
 use App\Core\Infrastructure\Container\Application\Exception\EmailSendException;
-use App\Core\Infrastructure\Storaged\AWS\S3;
 use App\Core\Infrastructure\Email\EmailService;
+use App\Core\Infrastructure\Storaged\AWS\S3;
 use App\Security\Application\Command\CreateUserCommand;
 use App\Security\Application\Command\LoginCommand;
-use App\Security\Application\Command\UpdateUserImageCommand;
 use App\Security\Application\Command\ResetPasswordCommand;
 use App\Security\Application\Command\UpdateUserCommand;
+use App\Security\Application\Command\UpdateUserImageCommand;
 use App\Security\Application\Exception\InvalidCredentialsException;
 use App\Security\Application\Exception\UserNotFoundException;
 use App\Security\Application\Query\FindUsersByRoleQuery;
@@ -21,7 +21,6 @@ use DateTime;
 use Exception;
 use Firebase\JWT\JWT;
 use Ramsey\Uuid\Uuid;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
  * Class UserService
@@ -103,6 +102,8 @@ final class UserService
             "iat" => $now_seconds,
             "exp" => $now_seconds + (60 * 60),
             "user_id" => $user->getId(),
+            'name' => $user->getName(),
+            'user_company' => $user->getCompanyId(),
             'cpf' => $user->getCpf(),
             'roles' => $user->getRoles(),
         ];

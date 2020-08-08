@@ -6,8 +6,11 @@ namespace App\Attendance\Presentation\Http\Action;
 
 use App\Attendance\Application\Command\CreateRequestCommand;
 use App\Attendance\Application\Service\RequestService;
+use App\Core\Infrastructure\Container\Application\Service\TokenAuthenticator;
 use App\Core\Presentation\Http\AbstractAction;
+use App\Security\Application\Service\UserService;
 use Exception;
+use Firebase\JWT\JWT;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,16 +25,29 @@ class CreateRequestAction extends AbstractAction
     /**
      * @var RequestService
      */
-    private $service;
+    private $requestService;
 
+    /**
+     * @var TokenAuthenticator
+     */
+    private $tokenAuthenticator;
+
+    /**
+     * @var UserService
+     */
+    private $userService;
 
     /**
      * CreateRequestAction constructor.
-     * @param RequestService $service
+     * @param RequestService $requestService
+     * @param TokenAuthenticator $tokenAuthenticator
+     * @param UserService $userService
      */
-    public function __construct(RequestService $service)
+    public function __construct(RequestService $requestService, TokenAuthenticator $tokenAuthenticator, UserService $userService)
     {
-        $this->service = $service;
+        $this->requestService = $requestService;
+        $this->tokenAuthenticator = $tokenAuthenticator;
+        $this->userService = $userService;
     }
 
     /**
@@ -42,8 +58,11 @@ class CreateRequestAction extends AbstractAction
     {
         try {
             $data = json_decode($request->getContent(), true);
+            $jwt = $this->tokenAuthenticator->getCredentials($request);
+            $token = JWT::decode($jwt, $_ENV['JWT_SECRET'], ['HS256']);
+            $data['token'] = (array) $token;
             $command = CreateRequestCommand::fromArray($data);
-            $request = $this->service->create($command);
+            $request = $this->requestService->create($command);
         } catch (Exception $exception) {
             return $this->errorResponse($exception->getMessage(), $exception->getCode() ? $exception->getCode() : Response::HTTP_BAD_REQUEST);
         } catch (Throwable $exception) {

@@ -35,20 +35,27 @@ class CreateRequestCommand implements CommandInterface
     private $section;
 
     /**
+     * @var array
+     */
+    private $token;
+
+    /**
      * CreateRequestCommand constructor.
      * @param int $companyId
      * @param string $title
      * @param string $description
      * @param int $priority
      * @param string $section
+     * @param array $token
      */
-    public function __construct(int $companyId, string $title, string $description, int $priority, string $section)
+    public function __construct(int $companyId, string $title, string $description, int $priority, string $section, array $token)
     {
         $this->companyId = $companyId;
         $this->title = $title;
         $this->description = $description;
         $this->priority = $priority;
         $this->section = $section;
+        $this->token = $token;
     }
 
     /**
@@ -78,7 +85,8 @@ class CreateRequestCommand implements CommandInterface
             $data['title'],
             $data['description'],
             $data['priority'],
-            $data['section']
+            $data['section'],
+            $data['token']
         );
     }
 
@@ -169,4 +177,13 @@ class CreateRequestCommand implements CommandInterface
     {
         $this->section = $section;
     }
+
+    /**
+     * @return array
+     */
+    public function getToken(): array
+    {
+        return $this->token;
+    }
+
 }
