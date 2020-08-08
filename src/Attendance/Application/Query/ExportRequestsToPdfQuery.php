@@ -98,7 +98,7 @@ class ExportRequestsToPdfQuery implements CommandInterface
         if (key_exists('initialDate', $data) && !(key_exists('finalDate', $data))) {
             try{
                 $initialDate = Carbon::createFromFormat('Y-m-d', $data['initialDate']);
-                $finalDate = Carbon::now();
+                $finalDate = Carbon::now()->timezone('America/Sao_Paulo');
             }catch (Exception $e){
                 throw new InvalidDateFormatException();
             }
