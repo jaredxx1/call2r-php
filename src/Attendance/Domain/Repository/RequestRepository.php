@@ -6,7 +6,7 @@ namespace App\Attendance\Domain\Repository;
 
 use App\Attendance\Domain\Entity\Request;
 use App\Attendance\Domain\Entity\Status;
-use App\Security\Domain\Entity\User;
+use App\User\Domain\Entity\User;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**

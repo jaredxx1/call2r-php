@@ -1,11 +1,11 @@
 <?php
 
 
-namespace App\Attendance\Presentation\Http\Action;
+namespace App\User\Presentation\Http\Action;
 
 
-use App\Attendance\Application\Service\RequestService;
 use App\Core\Presentation\Http\AbstractAction;
+use App\User\Application\Query\FindUsersByRoleQuery;
 use App\User\Application\Service\UserService;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -14,47 +14,42 @@ use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
 /**
- * Class FindRequestsAction
- * @package App\Attendance\Presentation\Http\Action
+ * Class FindUsersByRoleAction
+ * @package App\User\Presentation\Http\Action
  */
-class FindRequestsAction extends AbstractAction
+class FindUsersByRoleAction extends AbstractAction
 {
-    /**
-     * @var RequestService
-     */
-    private $service;
-
     /**
      * @var UserService
      */
     private $userService;
 
     /**
-     * FindRequestsAction constructor.
-     * @param RequestService $service
+     * LoginAction constructor.
      * @param UserService $userService
      */
-    public function __construct(RequestService $service, UserService $userService)
+    public function __construct(UserService $userService)
     {
-        $this->service = $service;
         $this->userService = $userService;
     }
 
     /**
      * @param Request $request
+     * @param string $role
      * @return JsonResponse
      */
-    public function __invoke(Request $request)
+    public function __invoke(Request $request, string $role)
     {
         try {
-            $user = $this->userService->fromId(1);
-            $requests = $this->service->findAll($user);
+            $data = ['role' => $role];
+            $query = FindUsersByRoleQuery::fromArray($data);
+            $users = $this->userService->findUsersByRole($query);
         } catch (Exception $exception) {
             return $this->errorResponse($exception->getMessage(), $exception->getCode() ? $exception->getCode() : Response::HTTP_BAD_REQUEST);
         } catch (Throwable $exception) {
             return $this->errorResponse($exception->getMessage(), $exception->getCode() ? $exception->getCode() : Response::HTTP_BAD_REQUEST);
         }
 
-        return new JsonResponse($requests, Response::HTTP_OK);
+        return new JsonResponse($users, Response::HTTP_OK);
     }
 }

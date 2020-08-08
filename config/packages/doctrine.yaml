@@ -24,11 +24,11 @@ doctrine:
                 prefix: 'App\Wiki\Domain\Entity'
                 alias: Wiki
                 
-            Security:
+            User:
                 is_bundle: false
                 type: xml
-                dir: '%kernel.project_dir%/src/Security/Infrastructure/Persistence/Doctrine/ORM'
-                prefix: 'App\Security\Domain\Entity'
+                dir: '%kernel.project_dir%/src/User/Infrastructure/Persistence/Doctrine/ORM'
+                prefix: 'App\User\Domain\Entity'
                 alias: Security
 
             Attendance:

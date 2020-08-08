@@ -4,8 +4,8 @@
 namespace App\Core\Infrastructure\Container\Application\Service;
 
 
-use App\Security\Application\Service\UserService;
-use App\Security\Domain\Entity\User;
+use App\User\Application\Service\UserService;
+use App\User\Domain\Entity\User;
 use Firebase\JWT\ExpiredException;
 use Firebase\JWT\JWT;
 use Firebase\JWT\SignatureInvalidException;
