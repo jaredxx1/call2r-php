@@ -59,7 +59,7 @@ class ArticleService
      */
     public function fromCompany(FindAllArticlesFromCompanyQuery $query)
     {
-        return $this->articleRepository->fromCompany($query->id());
+        return $this->articleRepository->fromCompany($query->getId());
     }
 
     /**
@@ -131,12 +131,12 @@ class ArticleService
      */
     public function fromArticle(FindArticlesByIdQuery $query)
     {
-        $company = $this->companyRepository->fromId($query->idCompany());
+        $company = $this->companyRepository->fromId($query->getIdCompany());
         if (is_null($company)) {
             throw new CompanyNotFoundException();
         }
 
-        $article = $this->articleRepository->fromId($query->idArticle());
+        $article = $this->articleRepository->fromId($query->getIdArticle());
         if (is_null($article)) {
             throw new ArticleNotFoundException();
         }
@@ -151,12 +151,12 @@ class ArticleService
      */
     public function delete(DeleteArticleCommand $query)
     {
-        $article = $this->articleRepository->fromId($query->idArticle());
+        $article = $this->articleRepository->fromId($query->getIdArticle());
         if (is_null($article)) {
             throw new ArticleNotFoundException();
         }
 
-        $company = $this->companyRepository->fromId($query->idCompany());
+        $company = $this->companyRepository->fromId($query->getIdCompany());
         if(is_null($company)){
             throw new CompanyNotFoundException();
         }

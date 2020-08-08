@@ -63,7 +63,7 @@ class FindArticlesByIdQuery implements QueryInterface
     /**
      * @return int
      */
-    public function idCompany(): int
+    public function getIdCompany(): int
     {
         return $this->idCompany;
     }
@@ -79,7 +79,7 @@ class FindArticlesByIdQuery implements QueryInterface
     /**
      * @return int
      */
-    public function idArticle(): int
+    public function getIdArticle(): int
     {
         return $this->idArticle;
     }
