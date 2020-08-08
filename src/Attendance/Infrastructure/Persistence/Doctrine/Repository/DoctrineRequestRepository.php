@@ -7,7 +7,7 @@ namespace App\Attendance\Infrastructure\Persistence\Doctrine\Repository;
 use App\Attendance\Domain\Entity\Request;
 use App\Attendance\Domain\Entity\Status;
 use App\Attendance\Domain\Repository\RequestRepository;
-use App\Security\Domain\Entity\User;
+use App\User\Domain\Entity\User;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\ORM\EntityManagerInterface;
 

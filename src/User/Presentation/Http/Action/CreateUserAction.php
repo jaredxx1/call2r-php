@@ -1,11 +1,11 @@
 <?php
 
 
-namespace App\Attendance\Presentation\Http\Action;
+namespace App\User\Presentation\Http\Action;
 
 
-use App\Attendance\Application\Service\RequestService;
 use App\Core\Presentation\Http\AbstractAction;
+use App\User\Application\Command\CreateUserCommand;
 use App\User\Application\Service\UserService;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -13,48 +13,34 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
-/**
- * Class FindRequestsAction
- * @package App\Attendance\Presentation\Http\Action
- */
-class FindRequestsAction extends AbstractAction
+class CreateUserAction extends AbstractAction
 {
-    /**
-     * @var RequestService
-     */
-    private $service;
-
     /**
      * @var UserService
      */
     private $userService;
 
     /**
-     * FindRequestsAction constructor.
-     * @param RequestService $service
+     * LoginAction constructor.
      * @param UserService $userService
      */
-    public function __construct(RequestService $service, UserService $userService)
+    public function __construct(UserService $userService)
     {
-        $this->service = $service;
         $this->userService = $userService;
     }
 
-    /**
-     * @param Request $request
-     * @return JsonResponse
-     */
     public function __invoke(Request $request)
     {
         try {
-            $user = $this->userService->fromId(1);
-            $requests = $this->service->findAll($user);
+            $data = json_decode($request->getContent(), true);
+            $command = CreateUserCommand::fromArray($data);
+            $user = $this->userService->createUser($command);
         } catch (Exception $exception) {
             return $this->errorResponse($exception->getMessage(), $exception->getCode() ? $exception->getCode() : Response::HTTP_BAD_REQUEST);
         } catch (Throwable $exception) {
             return $this->errorResponse($exception->getMessage(), $exception->getCode() ? $exception->getCode() : Response::HTTP_BAD_REQUEST);
         }
 
-        return new JsonResponse($requests, Response::HTTP_OK);
+        return new JsonResponse($user, Response::HTTP_CREATED);
     }
 }

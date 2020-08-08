@@ -8,7 +8,7 @@ use App\Attendance\Application\Command\CreateRequestCommand;
 use App\Attendance\Application\Service\RequestService;
 use App\Core\Infrastructure\Container\Application\Service\TokenAuthenticator;
 use App\Core\Presentation\Http\AbstractAction;
-use App\Security\Application\Service\UserService;
+use App\User\Application\Service\UserService;
 use Exception;
 use Firebase\JWT\JWT;
 use Symfony\Component\HttpFoundation\JsonResponse;

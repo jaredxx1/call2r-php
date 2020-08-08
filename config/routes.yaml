@@ -6,7 +6,7 @@ alive:
 
 login:
   path: /login
-  controller: App\Security\Presentation\Http\Action\LoginAction
+  controller: App\User\Presentation\Http\Action\LoginAction
   methods:    POST
 
 test:
@@ -103,40 +103,40 @@ get_all_categories:
 ## =============== User routes
 get_user_by_id:
   path: /api/v1/users/{id}
-  controller: App\Security\Presentation\Http\Action\FindUserByIdAction
+  controller: App\User\Presentation\Http\Action\FindUserByIdAction
   methods:    GET
   requirements:
     id: '\d+'
 
 get_users_by_role:
   path: /api/v1/users/{role}
-  controller: App\Security\Presentation\Http\Action\FindUsersByRoleAction
+  controller: App\User\Presentation\Http\Action\FindUsersByRoleAction
   methods:    GET
   requirements:
     role: '^(manager|support)$'
 
 create_user:
   path: /api/v1/users
-  controller: App\Security\Presentation\Http\Action\CreateUserAction
+  controller: App\User\Presentation\Http\Action\CreateUserAction
   methods:    POST
 
 update_user:
   path: /api/v1/users/{id}
-  controller: App\Security\Presentation\Http\Action\UpdateUserAction
+  controller: App\User\Presentation\Http\Action\UpdateUserAction
   methods:    PUT
   requirements:
     id: '\d+'
 
 update_image:
   path: /api/v1/users/{idUser}/image
-  controller: App\Security\Presentation\Http\Action\UpdateUserImageAction
+  controller: App\User\Presentation\Http\Action\UpdateUserImageAction
   methods:    POST
   requirements:
     idUser: '\d+'
-    
+
 reset_password:
   path: /api/v1/users/reset-password
-  controller: App\Security\Presentation\Http\Action\ResetPasswordAction
+  controller: App\User\Presentation\Http\Action\ResetPasswordAction
   methods:    POST
 
 ## =============== Attendance Routes
@@ -158,7 +158,7 @@ update_request:
   methods:    PUT
   requirements:
     id: '\d+'
-    
+
 find_requests:
   path: /api/v1/requests
   controller: App\Attendance\Presentation\Http\Action\FindRequestsAction
@@ -226,7 +226,7 @@ create_pdf:
   methods:    GET
   requirements:
     requestId: '\d+'
-    
+
 transfer_company:
   path: /api/v1/requests/{requestId}/transfer-company
   controller: App\Attendance\Presentation\Http\Action\TransferCompanyAction

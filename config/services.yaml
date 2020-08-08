@@ -31,8 +31,8 @@ services:
         resource: '../src/Wiki/Presentation/Http/Action'
         tags: ['controller.service_arguments']
         
-    App\Security\Presentation\Http\Action\:
-        resource: '../src/Security/Presentation/Http/Action'
+    App\User\Presentation\Http\Action\:
+        resource: '../src/User/Presentation/Http/Action'
         tags: ['controller.service_arguments']
 
     App\Attendance\Presentation\Http\Action\:
