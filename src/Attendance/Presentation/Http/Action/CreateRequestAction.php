@@ -6,12 +6,9 @@ namespace App\Attendance\Presentation\Http\Action;
 
 use App\Attendance\Application\Command\CreateRequestCommand;
 use App\Attendance\Application\Service\RequestService;
-use App\Core\Infrastructure\Container\Application\Service\TokenAuthenticator;
 use App\Core\Presentation\Http\AbstractAction;
 use App\User\Application\Service\UserService;
-use App\User\Domain\Entity\User;
 use Exception;
-use Firebase\JWT\JWT;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -30,11 +27,6 @@ class CreateRequestAction extends AbstractAction
     private $requestService;
 
     /**
-     * @var TokenAuthenticator
-     */
-    private $tokenAuthenticator;
-
-    /**
      * @var UserService
      */
     private $userService;
@@ -42,15 +34,14 @@ class CreateRequestAction extends AbstractAction
     /**
      * CreateRequestAction constructor.
      * @param RequestService $requestService
-     * @param TokenAuthenticator $tokenAuthenticator
      * @param UserService $userService
      */
-    public function __construct(RequestService $requestService, TokenAuthenticator $tokenAuthenticator, UserService $userService)
+    public function __construct(RequestService $requestService, UserService $userService)
     {
         $this->requestService = $requestService;
-        $this->tokenAuthenticator = $tokenAuthenticator;
         $this->userService = $userService;
     }
+
 
     /**
      * @param Request $request
