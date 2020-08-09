@@ -260,11 +260,11 @@ class RequestService
     }
 
     /**
-     * @param UserInterface $user
+     * @param User $user
      * @return array
      * @throws Exception
      */
-    public function findAll(UserInterface $user)
+    public function findAll(User $user)
     {
         switch ($user->getRole()) {
             case 'ROLE_USER':
