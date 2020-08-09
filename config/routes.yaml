@@ -130,7 +130,7 @@ update_user:
 update_image:
   path: /api/v1/users/{idUser}/image
   controller: App\User\Presentation\Http\Action\UpdateUserImageAction
-  methods:    POST
+  methods:    PUT
   requirements:
     idUser: '\d+'
 

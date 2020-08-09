@@ -167,10 +167,11 @@ final class UserService
     {
         $user = $this->fromId($command->getId());
 
-        if (!is_null($command->getPassword())) {
-            //verificar senha antiga
-            $hashedPassword = password_hash($command->getPassword(), PASSWORD_BCRYPT);
-            $user->setPassword($hashedPassword);
+        if (   !is_null($command->getNewPassword())
+            && !is_null($command->getOldPassword())
+            && password_verify($command->getOldPassword(), $user->getPassword())) {
+            $newHashedPassword = password_hash($command->getNewPassword(), PASSWORD_BCRYPT);
+            $user->setPassword($newHashedPassword);
         }
 
         if (!is_null($command->getName())) {
@@ -185,8 +186,8 @@ final class UserService
             $user->setRole($command->getRole());
         }
 
-        if (!is_null($command->isActive())) {
-            $user->setActive($command->isActive());
+        if (!is_null($command->getActive())) {
+            $user->setActive($command->getActive());
         }
 
         return $this->userRepository->updateUser($user);
@@ -246,6 +247,15 @@ final class UserService
             throw new UserNotFoundException();
         }
 
-        $this->emailService->sendEmail($user->getEmail(),'nome','Reset Password','<H1>Your new password</H1>');
+        $newPassword = substr(sha1(time()), 0, 6);
+
+        $hashedPassword = password_hash($newPassword, PASSWORD_BCRYPT);
+
+        $user->setPassword($hashedPassword);
+
+        $this->userRepository->updateUser($user);
+
+        $this->emailService->sendEmail($user->getEmail(),'nome','Reset Password','<H1>Your new password is ->'.$newPassword.'</H1>');
+
     }
 }

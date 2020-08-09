@@ -20,44 +20,51 @@ class UpdateUserCommand implements CommandInterface
     private $id;
 
     /**
-     * @var string
+     * @var string|null
      */
     private $name;
 
     /**
-     * @var string
+     * @var string|null
      */
-    private $password;
+    private $newPassword;
 
     /**
-     * @var string
+     * @var string|null
+     */
+    private $oldPassword;
+
+    /**
+     * @var string|null
      */
     private $email;
 
     /**
-     * @var boolean
+     * @var boolean|null
      */
     private $active;
 
     /**
-     * @var string
+     * @var string|null
      */
     private $role;
 
     /**
      * UpdateUserCommand constructor.
      * @param int $id
-     * @param string $name
-     * @param string $password
-     * @param string $email
-     * @param bool $active
-     * @param string $role
+     * @param string|null $name
+     * @param string|null $newPassword
+     * @param string|null $oldPassword
+     * @param string|null $email
+     * @param bool|null $active
+     * @param string|null $role
      */
-    public function __construct(int $id, string $name, string $password, string $email, bool $active, string $role)
+    public function __construct(int $id, ?string $name, ?string $newPassword, ?string $oldPassword, ?string $email, ?bool $active, ?string $role)
     {
         $this->id = $id;
         $this->name = $name;
-        $this->password = $password;
+        $this->newPassword = $newPassword;
+        $this->oldPassword = $oldPassword;
         $this->email = $email;
         $this->active = $active;
         $this->role = $role;
@@ -80,8 +87,12 @@ class UpdateUserCommand implements CommandInterface
             Assert::stringNotEmpty($data['email'], 'Field email cannot be empty');
         }
 
-        if (key_exists('password', $data)) {
-            Assert::stringNotEmpty($data['password'], 'Field password cannot be empty');
+        if (key_exists('newPassword', $data)) {
+            Assert::stringNotEmpty($data['newPassword'], 'Field password cannot be empty');
+        }
+
+        if (key_exists('oldPassword', $data)) {
+            Assert::stringNotEmpty($data['oldPassword'], 'Field password cannot be empty');
         }
 
         if (key_exists('isActive', $data)) {
@@ -95,7 +106,8 @@ class UpdateUserCommand implements CommandInterface
         return new self(
             $data['id'],
             $data['name'] ?? null,
-            $data['password'] ?? null,
+            $data['newPassword'] ?? null,
+            $data['oldPassword'] ?? null,
             $data['email'] ?? null,
             $data['isActive'] ?? null,
             $data['role'] ?? null
@@ -119,41 +131,49 @@ class UpdateUserCommand implements CommandInterface
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getName(): string
+    public function getName(): ?string
     {
         return $this->name;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getPassword(): string
+    public function getNewPassword(): ?string
     {
-        return $this->password;
+        return $this->newPassword;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getEmail(): string
+    public function getOldPassword(): ?string
+    {
+        return $this->oldPassword;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getEmail(): ?string
     {
         return $this->email;
     }
 
     /**
-     * @return bool
+     * @return bool|null
      */
-    public function isActive(): bool
+    public function getActive(): ?bool
     {
         return $this->active;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getRole(): string
+    public function getRole(): ?string
     {
         return $this->role;
     }
