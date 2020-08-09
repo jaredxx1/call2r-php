@@ -168,6 +168,7 @@ final class UserService
         $user = $this->fromId($command->getId());
 
         if (!is_null($command->getPassword())) {
+            //verificar senha antiga
             $hashedPassword = password_hash($command->getPassword(), PASSWORD_BCRYPT);
             $user->setPassword($hashedPassword);
         }
