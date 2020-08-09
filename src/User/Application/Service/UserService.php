@@ -13,6 +13,7 @@ use App\User\Application\Command\ResetPasswordCommand;
 use App\User\Application\Command\UpdateUserCommand;
 use App\User\Application\Command\UpdateUserImageCommand;
 use App\User\Application\Exception\InvalidCredentialsException;
+use App\User\Application\Exception\InvalidUserPrivileges;
 use App\User\Application\Exception\UserNotFoundException;
 use App\User\Application\Query\FindUsersByRoleQuery;
 use App\User\Domain\Entity\User;
@@ -133,13 +134,17 @@ final class UserService
     }
 
     /**
-     *
      * @param CreateUserCommand $command
+     * @param User $user
      * @return User|null
      * @throws Exception
      */
-    public function createUser(CreateUserCommand $command)
+    public function createUser(CreateUserCommand $command, User $user)
     {
+        if (!self::validateUserPrivilege($command, $user)) {
+            throw new InvalidUserPrivileges();
+        }
+
         $hashedPassword = password_hash($command->getPassword(), PASSWORD_BCRYPT);
 
         $user = new User(
@@ -159,6 +164,24 @@ final class UserService
     }
 
     /**
+     * @param CreateUserCommand $command
+     * @param User $user
+     * @return bool
+     */
+    private static function validateUserPrivilege(CreateUserCommand $command, User $user)
+    {
+        if ($user->getRole() == 'ROLE_ADMIN') {
+            return ($command->getRole() == 'ROLE_MANAGER') || ($command->getRole() == 'ROLE_ADMIN');
+        }
+
+        if ($user->getRole() == 'ROLE_MANAGER') {
+            return ($command->getRole() == 'ROLE_USER') || ($command->getRole() == 'ROLE_CLIENT');
+        }
+
+        return false;
+    }
+
+    /**
      * @param UpdateUserCommand $command
      * @return User
      * @throws UserNotFoundException
@@ -167,7 +190,7 @@ final class UserService
     {
         $user = $this->fromId($command->getId());
 
-        if (   !is_null($command->getNewPassword())
+        if (!is_null($command->getNewPassword())
             && !is_null($command->getOldPassword())
             && password_verify($command->getOldPassword(), $user->getPassword())) {
             $newHashedPassword = password_hash($command->getNewPassword(), PASSWORD_BCRYPT);
@@ -226,7 +249,7 @@ final class UserService
         $name = $uploadedFile->getClientOriginalName();
         $contentType = $uploadedFile->getMimeType();
 
-        $url = $this->s3->sendFile('user',$uuid->serialize(), $path, $name ,$contentType);
+        $url = $this->s3->sendFile('user', $uuid->serialize(), $path, $name, $contentType);
 
         $user->setImage($url);
 
@@ -239,11 +262,12 @@ final class UserService
      * @throws EmailSendException
      * @throws \PHPMailer\PHPMailer\Exception
      */
-    public function resetPassword(ResetPasswordCommand $command){
+    public function resetPassword(ResetPasswordCommand $command)
+    {
 
         $user = $this->userRepository->fromCpfBirthdate($command->getCpf(), $command->getBirthdate());
 
-        if(is_null($user)){
+        if (is_null($user)) {
             throw new UserNotFoundException();
         }
 
@@ -255,7 +279,8 @@ final class UserService
 
         $this->userRepository->updateUser($user);
 
-        $this->emailService->sendEmail($user->getEmail(),'nome','Reset Password','<H1>Your new password is ->'.$newPassword.'</H1>');
+        $this->emailService->sendEmail($user->getEmail(), 'nome', 'Reset Password', '<H1>Your new password is ->' . $newPassword . '</H1>');
 
     }
 }
+
