@@ -33,6 +33,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Exception;
 use Mpdf\Mpdf;
 use Ramsey\Uuid\Uuid;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * Class RequestService
@@ -259,11 +260,11 @@ class RequestService
     }
 
     /**
-     * @param User $user
+     * @param UserInterface $user
      * @return array
      * @throws Exception
      */
-    public function findAll(User $user)
+    public function findAll(UserInterface $user)
     {
         switch ($user->getRole()) {
             case 'ROLE_USER':
