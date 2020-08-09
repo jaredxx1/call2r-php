@@ -33,6 +33,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Exception;
 use Mpdf\Mpdf;
 use Ramsey\Uuid\Uuid;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * Class RequestService
