@@ -9,6 +9,7 @@ use App\Core\Presentation\Http\AbstractAction;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Throwable;
 
 /**
@@ -33,13 +34,14 @@ class MoveToApprovedAction extends AbstractAction
 
     /**
      * @param int $requestId
+     * @param UserInterface $user
      * @return JsonResponse
      */
-    public function __invoke(int $requestId)
+    public function __invoke(int $requestId, UserInterface $user)
     {
         try {
             $request = $this->service->findById($requestId);
-            $request = $this->service->moveToApproved($request);
+            $request = $this->service->moveToApproved($request, $user);
         } catch (Exception $exception) {
             return $this->errorResponse($exception->getMessage(), $exception->getCode() ? $exception->getCode() : Response::HTTP_BAD_REQUEST);
         } catch (Throwable $exception) {

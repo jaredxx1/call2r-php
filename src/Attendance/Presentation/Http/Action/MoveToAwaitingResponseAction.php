@@ -9,6 +9,7 @@ use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Throwable;
 
 /**
@@ -34,13 +35,14 @@ class MoveToAwaitingResponseAction extends AbstractAction
     /**
      * @param Request $request
      * @param int $requestId
+     * @param UserInterface $user
      * @return JsonResponse
      */
-    public function __invoke(Request $request, int $requestId)
+    public function __invoke(Request $request, int $requestId, UserInterface $user)
     {
         try {
             $request = $this->service->findById($requestId);
-            $request = $this->service->moveToAwaitingResponse($request);
+            $request = $this->service->moveToAwaitingResponse($request,$user);
         } catch (Exception $exception) {
             return $this->errorResponse($exception->getMessage(), $exception->getCode() ? $exception->getCode() : Response::HTTP_BAD_REQUEST);
         } catch (Throwable $exception) {

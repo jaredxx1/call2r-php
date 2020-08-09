@@ -35,27 +35,20 @@ class CreateRequestCommand implements CommandInterface
     private $section;
 
     /**
-     * @var array
-     */
-    private $token;
-
-    /**
      * CreateRequestCommand constructor.
      * @param int $companyId
      * @param string $title
      * @param string $description
      * @param int $priority
      * @param string $section
-     * @param array $token
      */
-    public function __construct(int $companyId, string $title, string $description, int $priority, string $section, array $token)
+    public function __construct(int $companyId, string $title, string $description, int $priority, string $section)
     {
         $this->companyId = $companyId;
         $this->title = $title;
         $this->description = $description;
         $this->priority = $priority;
         $this->section = $section;
-        $this->token = $token;
     }
 
     /**
@@ -85,8 +78,7 @@ class CreateRequestCommand implements CommandInterface
             $data['title'],
             $data['description'],
             $data['priority'],
-            $data['section'],
-            $data['token']
+            $data['section']
         );
     }
 
@@ -107,27 +99,11 @@ class CreateRequestCommand implements CommandInterface
     }
 
     /**
-     * @param int $companyId
-     */
-    public function setCompanyId(int $companyId): void
-    {
-        $this->companyId = $companyId;
-    }
-
-    /**
      * @return string
      */
     public function getTitle(): string
     {
         return $this->title;
-    }
-
-    /**
-     * @param string $title
-     */
-    public function setTitle(string $title): void
-    {
-        $this->title = $title;
     }
 
     /**
@@ -139,27 +115,11 @@ class CreateRequestCommand implements CommandInterface
     }
 
     /**
-     * @param string $description
-     */
-    public function setDescription(string $description): void
-    {
-        $this->description = $description;
-    }
-
-    /**
      * @return int
      */
     public function getPriority(): int
     {
         return $this->priority;
-    }
-
-    /**
-     * @param int $priority
-     */
-    public function setPriority(int $priority): void
-    {
-        $this->priority = $priority;
     }
 
     /**
@@ -169,21 +129,4 @@ class CreateRequestCommand implements CommandInterface
     {
         return $this->section;
     }
-
-    /**
-     * @param string $section
-     */
-    public function setSection(string $section): void
-    {
-        $this->section = $section;
-    }
-
-    /**
-     * @return array
-     */
-    public function getToken(): array
-    {
-        return $this->token;
-    }
-
 }
