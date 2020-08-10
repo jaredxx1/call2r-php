@@ -958,10 +958,6 @@ class RequestService
             throw new InvalidUserPrivileges();
         }
 
-        if($request->getCompanyId() != $user->getCompanyId()){
-            throw new InvalidUserPrivileges();
-        }
-
         return $request;
     }
 
