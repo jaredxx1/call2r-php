@@ -7,7 +7,10 @@ namespace App\Company\Application\Service;
 use App\Company\Application\Command\UpdateSectionCommand;
 use App\Company\Application\Exception\SectionNotFoundException;
 use App\Company\Domain\Entity\Section;
+use App\Company\Domain\Repository\CompanyRepository;
 use App\Company\Domain\Repository\SectionRepository;
+use App\User\Application\Exception\InvalidUserPrivileges;
+use App\User\Domain\Entity\User;
 
 /**
  * Class SectionService
@@ -22,12 +25,19 @@ class SectionService
     private $sectionRepository;
 
     /**
+     * @var CompanyRepository
+     */
+    private $companyRepository;
+
+    /**
      * SectionService constructor.
      * @param SectionRepository $sectionRepository
+     * @param CompanyRepository $companyRepository
      */
-    public function __construct(SectionRepository $sectionRepository)
+    public function __construct(SectionRepository $sectionRepository, CompanyRepository $companyRepository)
     {
         $this->sectionRepository = $sectionRepository;
+        $this->companyRepository = $companyRepository;
     }
 
     /**
@@ -40,14 +50,20 @@ class SectionService
 
     /**
      * @param UpdateSectionCommand $command
+     * @param User $user
      * @return Section|null
+     * @throws InvalidUserPrivileges
      * @throws SectionNotFoundException
      */
-    public function update(UpdateSectionCommand $command)
+    public function update(UpdateSectionCommand $command, User $user)
     {
         $section = $this->sectionRepository->fromId($command->id());
+        $company = $this->companyRepository->fromId($user->getCompanyId());
 
-        // Not found
+        if ((!$company->getSections()->contains($section)) && ($user->getRole() != 'ROLE_ADMIN')) {
+            throw new InvalidUserPrivileges();
+        }
+
         if (is_null($section)) {
             throw new SectionNotFoundException();
         }

@@ -8,7 +8,7 @@ use Exception;
 use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
-class InitialDateIsGreaterThenFinalException extends Exception
+class UnauthorizedRequestUpdateException extends Exception
 {
     /**
      * UnauthorizedStatusChangeException constructor.
@@ -16,7 +16,7 @@ class InitialDateIsGreaterThenFinalException extends Exception
      * @param int $code
      * @param Throwable|null $previous
      */
-    public function __construct($message = "Initial date is greater then final date.", $code = Response::HTTP_BAD_REQUEST, Throwable $previous = null)
+    public function __construct($message = "Unauthorized request updated action.", $code = Response::HTTP_FORBIDDEN, Throwable $previous = null)
     {
         parent::__construct($message, $code, $previous);
     }

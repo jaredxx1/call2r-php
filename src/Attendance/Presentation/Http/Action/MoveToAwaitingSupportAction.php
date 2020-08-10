@@ -4,7 +4,7 @@
 namespace App\Attendance\Presentation\Http\Action;
 
 
-use App\Attendance\Application\Exception\RequestNotFoundException;
+use App\Attendance\Application\Command\MoveToAwaitingSupportCommand;
 use App\Attendance\Application\Service\RequestService;
 use App\Core\Presentation\Http\AbstractAction;
 use Exception;
@@ -43,8 +43,10 @@ class MoveToAwaitingSupportAction extends AbstractAction
     public function __invoke(Request $request, int $requestId, UserInterface $user)
     {
         try {
+            $data = json_decode($request->getContent(), true);
+            $command = MoveToAwaitingSupportCommand::fromArray($data);
             $request = $this->service->findById($requestId);
-            $request = $this->service->moveToAwaitingSupport($request, $user);
+            $request = $this->service->moveToAwaitingSupport($command, $request, $user);
         } catch (Exception $exception) {
             return $this->errorResponse($exception->getMessage(), $exception->getCode() ? $exception->getCode() : Response::HTTP_BAD_REQUEST);
         } catch (Throwable $exception) {

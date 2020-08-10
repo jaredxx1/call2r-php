@@ -7,7 +7,6 @@ namespace App\Attendance\Presentation\Http\Action;
 use App\Attendance\Application\Service\RequestService;
 use App\Core\Presentation\Http\AbstractAction;
 use App\User\Application\Service\UserService;
-use App\User\Domain\Entity\User;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;

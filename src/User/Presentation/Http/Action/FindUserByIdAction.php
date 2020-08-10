@@ -11,6 +11,7 @@ use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Throwable;
 
 /**
@@ -36,14 +37,15 @@ class FindUserByIdAction extends AbstractAction
     /**
      * @param Request $request
      * @param int $id
+     * @param UserInterface $user
      * @return JsonResponse
      */
-    public function __invoke(Request $request, int $id)
+    public function __invoke(Request $request, int $id, UserInterface $user)
     {
         try {
             $data = ['id' => $id];
             $query = FindUserByIdQuery::fromArray($data);
-            $user = $this->userService->fromId($query->getId());
+            $user = $this->userService->fromId($query->getId(), $user);
         } catch (Exception $exception) {
             return $this->errorResponse($exception->getMessage(), $exception->getCode() ? $exception->getCode() : Response::HTTP_BAD_REQUEST);
         } catch (Throwable $exception) {

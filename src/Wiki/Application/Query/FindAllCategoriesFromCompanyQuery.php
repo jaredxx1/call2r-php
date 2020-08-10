@@ -16,15 +16,15 @@ class FindAllCategoriesFromCompanyQuery implements QueryInterface
     /**
      * @var int
      */
-    private $id;
+    private $idCompany;
 
     /**
      * FindAllCategoriesFromCompanyQuery constructor.
-     * @param int $id
+     * @param int $idCompany
      */
-    public function __construct(int $id)
+    public function __construct(int $idCompany)
     {
-        $this->id = $id;
+        $this->idCompany = $idCompany;
     }
 
     /**
@@ -33,11 +33,11 @@ class FindAllCategoriesFromCompanyQuery implements QueryInterface
      */
     public static function fromArray($data)
     {
-        Assert::keyExists($data, 'id', "Id must be a integer");
-        Assert::integer($data['id'], "Id must be a integer");
+        Assert::keyExists($data, 'idCompany', "Id must be a integer");
+        Assert::integer($data['idCompany'], "Id must be a integer");
 
         return new self(
-            $data['id']
+            $data['idCompany']
         );
     }
 
@@ -52,8 +52,8 @@ class FindAllCategoriesFromCompanyQuery implements QueryInterface
     /**
      * @return int
      */
-    public function getId(): int
+    public function getIdCompany(): int
     {
-        return $this->id;
+        return $this->idCompany;
     }
 }

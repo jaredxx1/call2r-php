@@ -107,22 +107,6 @@ class Log implements JsonSerializable
     }
 
     /**
-     * @return DateTime
-     */
-    public function getCreatedAt(): ?DateTime
-    {
-        return $this->createdAt;
-    }
-
-    /**
-     * @param DateTime $createdAt
-     */
-    public function setCreatedAt(DateTime $createdAt): void
-    {
-        $this->createdAt = $createdAt;
-    }
-
-    /**
      * @return string
      */
     public function getCommand(): ?string
@@ -136,5 +120,21 @@ class Log implements JsonSerializable
     public function setCommand(string $command): void
     {
         $this->command = $command;
+    }
+
+    /**
+     * @return DateTime
+     */
+    public function getCreatedAt(): ?DateTime
+    {
+        return $this->createdAt;
+    }
+
+    /**
+     * @param DateTime $createdAt
+     */
+    public function setCreatedAt(DateTime $createdAt): void
+    {
+        $this->createdAt = $createdAt;
     }
 }

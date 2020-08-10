@@ -4,6 +4,7 @@
 namespace App\Core\Infrastructure\Email;
 
 use App\Core\Infrastructure\Container\Application\Exception\EmailSendException;
+use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\PHPMailer;
 
 /**
@@ -35,7 +36,7 @@ class EmailService
      * @param string $subject
      * @param string $template
      * @throws EmailSendException
-     * @throws \PHPMailer\PHPMailer\Exception
+     * @throws Exception
      */
     public function sendEmail(string $email, string $emailName, string $subject, string $template)
     {

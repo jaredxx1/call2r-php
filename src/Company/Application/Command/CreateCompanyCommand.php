@@ -4,7 +4,6 @@
 namespace App\Company\Application\Command;
 
 
-use App\Company\Domain\Entity\SLA;
 use App\Core\Infrastructure\Container\Application\Utils\Command\CommandInterface;
 use Webmozart\Assert\Assert;
 

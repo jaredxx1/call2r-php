@@ -113,7 +113,7 @@ get_users_by_role:
   controller: App\User\Presentation\Http\Action\FindUsersByRoleAction
   methods:    GET
   requirements:
-    role: '^(manager|support)$'
+    role: '^(manager|support|client|admin)$'
 
 create_user:
   path: /api/v1/users

@@ -101,20 +101,6 @@ class UpdateCompanyCommand implements CommandInterface
     }
 
     /**
-     * @param $sections
-     */
-    private static function validateSections($sections): void
-    {
-        Assert::isArray($sections, 'Field sections is not an array');
-
-        foreach ($sections as $section) {
-            if (key_exists('name', $section)) {
-                Assert::stringNotEmpty($section['name'], 'Field section name is empty');
-            }
-        }
-    }
-
-    /**
      * @param $sla
      */
     private static function validateSla($sla): void
@@ -144,6 +130,20 @@ class UpdateCompanyCommand implements CommandInterface
         if (key_exists('p5', $sla)) {
             Assert::integer($sla['p5'], 'Field sla p5 is not a integer');
             Assert::notEq($sla['p5'], 0, 'Field sla p5 not be 0');
+        }
+    }
+
+    /**
+     * @param $sections
+     */
+    private static function validateSections($sections): void
+    {
+        Assert::isArray($sections, 'Field sections is not an array');
+
+        foreach ($sections as $section) {
+            if (key_exists('name', $section)) {
+                Assert::stringNotEmpty($section['name'], 'Field section name is empty');
+            }
         }
     }
 

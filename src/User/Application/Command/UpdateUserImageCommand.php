@@ -7,7 +7,6 @@ namespace App\User\Application\Command;
 use App\Core\Infrastructure\Container\Application\Utils\Command\CommandInterface;
 use App\User\Application\Exception\InvalidFileException;
 use App\User\Domain\Entity\User;
-use Carbon\Exceptions\InvalidFormatException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Webmozart\Assert\Assert;
 
@@ -15,7 +14,7 @@ use Webmozart\Assert\Assert;
  * Class UpdateUserImageCommand
  * @package App\User\Application\Command
  */
-class UpdateUserImageCommand  implements CommandInterface
+class UpdateUserImageCommand implements CommandInterface
 {
 
     /**
@@ -47,11 +46,11 @@ class UpdateUserImageCommand  implements CommandInterface
     public static function fromArray($data)
     {
 
-        Assert::notNull($data['uploadFile'],'File is null');
+        Assert::notNull($data['uploadFile'], 'File is null');
 
         $image = $data['uploadFile'];
 
-        if(!preg_match('/image\//', $image->getMimeType())){
+        if (!preg_match('/image\//', $image->getMimeType())) {
             throw new InvalidFileException();
         }
 

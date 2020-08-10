@@ -7,6 +7,7 @@ namespace App\Company\Domain\Entity;
 
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Exception;
 use JsonSerializable;
 
 /**
@@ -81,7 +82,7 @@ class Company implements JsonSerializable
 
     /**
      * @return array|mixed
-     * @throws \Exception
+     * @throws Exception
      */
     public function jsonSerialize()
     {
@@ -90,7 +91,7 @@ class Company implements JsonSerializable
 
     /**
      * @return array
-     * @throws \Exception
+     * @throws Exception
      */
     public function toArray(): array
     {
@@ -99,7 +100,7 @@ class Company implements JsonSerializable
             'name' => $this->getName(),
             'description' => $this->getDescription(),
             'cnpj' => $this->getCnpj(),
-            'isMother' =>   $this->isMother(),
+            'isMother' => $this->isMother(),
             'isActive' => $this->isActive(),
             'sla' => $this->getSla(),
             'sections' => $this->getSections()->getValues()

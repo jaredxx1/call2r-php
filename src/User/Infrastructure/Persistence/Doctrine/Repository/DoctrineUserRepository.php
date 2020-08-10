@@ -34,21 +34,18 @@ class DoctrineUserRepository implements UserRepository
     /**
      * @param string $cpf
      * @return User|null
+     * @throws NonUniqueResultException
      */
     public function fromCpf(string $cpf): ?User
     {
-        try {
-            return $this->entityManager
-                ->createQueryBuilder()
-                ->select('u')
-                ->from('App\User\Domain\Entity\User', 'u')
-                ->where('u.cpf = :cpf')
-                ->setParameter('cpf', $cpf)
-                ->getQuery()
-                ->getOneOrNullResult();
-
-        } catch (NonUniqueResultException $e) {
-        }
+        return $this->entityManager
+            ->createQueryBuilder()
+            ->select('u')
+            ->from('App\User\Domain\Entity\User', 'u')
+            ->where('u.cpf = :cpf')
+            ->setParameter('cpf', $cpf)
+            ->getQuery()
+            ->getOneOrNullResult();
 
     }
 
@@ -85,31 +82,65 @@ class DoctrineUserRepository implements UserRepository
     }
 
     /**
+     * @param User $user
      * @return array
      */
-    public function findSupportUsers(): array
+    public function findSupportUsers(User $user): array
     {
         return $this->entityManager
             ->createQueryBuilder()
             ->select('u')
             ->from('App\User\Domain\Entity\User', 'u')
             ->where('u.role = :role')
+            ->andWhere('u.companyId = :userRequestCompany')
             ->setParameter('role', 'ROLE_USER')
+            ->setParameter('userRequestCompany', $user->getCompanyId())
             ->getQuery()
             ->getResult();
     }
 
     /**
+     * @param User $user
      * @return array
      */
-    public function findManagers(): array
+    public function findManagers(User $user): array
+    {
+        $query =  $this->entityManager
+            ->createQueryBuilder()
+            ->select('u')
+            ->from('App\User\Domain\Entity\User', 'u')
+            ->where('u.role = :role')
+            ->setParameter('role', 'ROLE_MANAGER');
+
+        if($user->getRole() == 'ROLE_MANAGER'){
+            $query->andWhere('u.companyId = :userRequestCompany')
+                ->setParameter('userRequestCompany', $user->getCompanyId());
+        }
+
+        return $query->getQuery()->getResult();
+    }
+
+    public function findAdmins(User $user): array
+    {
+        return $this->entityManager
+        ->createQueryBuilder()
+        ->select('u')
+        ->from('App\User\Domain\Entity\User', 'u')
+        ->where('u.role = :role')
+        ->setParameter('role', 'ROLE_ADMIN')
+        ->getQuery()
+        ->getResult();
+    }
+
+
+    public function findClientUsers(User $user): array
     {
         return $this->entityManager
             ->createQueryBuilder()
             ->select('u')
             ->from('App\User\Domain\Entity\User', 'u')
             ->where('u.role = :role')
-            ->setParameter('role', 'ROLE_MANAGER')
+            ->setParameter('role', 'ROLE_CLIENT')
             ->getQuery()
             ->getResult();
     }

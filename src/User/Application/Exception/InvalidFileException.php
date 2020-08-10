@@ -8,7 +8,7 @@ use Exception;
 use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
-class InvalidFileException  extends Exception
+class InvalidFileException extends Exception
 {
     public function __construct($message = "Invalid file format", $code = Response::HTTP_UNSUPPORTED_MEDIA_TYPE, Throwable $previous = null)
     {

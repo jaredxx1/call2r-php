@@ -3,6 +3,7 @@
 namespace App\Attendance\Presentation\Http\Action;
 
 
+use App\Attendance\Application\Command\MoveToAwaitingResponseCommand;
 use App\Attendance\Application\Service\RequestService;
 use App\Core\Presentation\Http\AbstractAction;
 use Exception;
@@ -41,8 +42,10 @@ class MoveToAwaitingResponseAction extends AbstractAction
     public function __invoke(Request $request, int $requestId, UserInterface $user)
     {
         try {
+            $data = json_decode($request->getContent(), true);
+            $command = MoveToAwaitingResponseCommand::fromArray($data);
             $request = $this->service->findById($requestId);
-            $request = $this->service->moveToAwaitingResponse($request,$user);
+            $request = $this->service->moveToAwaitingResponse($command, $request, $user);
         } catch (Exception $exception) {
             return $this->errorResponse($exception->getMessage(), $exception->getCode() ? $exception->getCode() : Response::HTTP_BAD_REQUEST);
         } catch (Throwable $exception) {

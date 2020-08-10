@@ -13,22 +13,20 @@ use JsonSerializable;
 class Status implements JsonSerializable
 {
 
-    /**
-     * @var int
-     */
-    private $id;
-
-    /**
-     * @var string
-     */
-    private $name;
-
     const awaitingSupport = 1;
     const inAttendance = 2;
     const awaitingResponse = 3;
     const approved = 4;
     const canceled = 5;
     const finished = 6;
+    /**
+     * @var int
+     */
+    private $id;
+    /**
+     * @var string
+     */
+    private $name;
 
     /**
      * Status constructor.

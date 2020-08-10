@@ -32,14 +32,28 @@ interface UserRepository
     public function fromLoginCredentials(string $cpf, string $password): ?User;
 
     /**
+     * @param User $user
      * @return array
      */
-    public function findSupportUsers(): array;
+    public function findSupportUsers(User $user): array;
 
     /**
+     * @param User $user
      * @return array
      */
-    public function findManagers(): array;
+    public function findManagers(User $user): array;
+
+    /**
+     * @param User $user
+     * @return array
+     */
+    public function findAdmins(User $user): array;
+
+    /**
+     * @param User $user
+     * @return array
+     */
+    public function findClientUsers(User $user): array;
 
     /**
      * @param User $user
@@ -59,4 +73,5 @@ interface UserRepository
      * @return User|null
      */
     public function fromCpfBirthdate(string $cpf, $birthdate): ?User;
+
 }

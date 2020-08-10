@@ -14,7 +14,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Throwable;
 
-class UpdateRequestAction  extends AbstractAction
+class UpdateRequestAction extends AbstractAction
 {
     /**
      * @var RequestService

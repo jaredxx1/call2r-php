@@ -7,10 +7,10 @@ namespace App\Attendance\Presentation\Http\Action;
 use App\Attendance\Application\Command\ApproveRequestCommand;
 use App\Attendance\Application\Service\RequestService;
 use App\Core\Presentation\Http\AbstractAction;
+use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Exception;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Throwable;
 

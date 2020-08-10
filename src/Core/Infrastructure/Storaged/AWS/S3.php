@@ -7,7 +7,6 @@ namespace App\Core\Infrastructure\Storaged\AWS;
 use Aws\S3\Exception\S3Exception;
 use Aws\S3\S3Client;
 use Exception;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class S3
 {
@@ -52,7 +51,7 @@ class S3
              */
             $url = $this->s3Client->putObject(array(
                 'Bucket' => self::bucket,
-                'Key' => $directory . '/' . $key . '/'. $name,
+                'Key' => $directory . '/' . $key . '/' . $name,
                 'SourceFile' => $path,
                 'ACL' => "public-read",
                 'ContentType' => $contentType

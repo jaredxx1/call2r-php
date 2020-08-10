@@ -4,7 +4,6 @@
 namespace App\Attendance\Application\Command;
 
 
-use App\Attendance\Domain\Entity\Request;
 use App\Core\Infrastructure\Container\Application\Utils\Command\CommandInterface;
 use Webmozart\Assert\Assert;
 
@@ -12,7 +11,7 @@ use Webmozart\Assert\Assert;
  * Class TransferCompanyCommand
  * @package App\Attendance\Application\Command
  */
-class TransferCompanyCommand  implements CommandInterface
+class TransferCompanyCommand implements CommandInterface
 {
 
     /**
@@ -31,17 +30,25 @@ class TransferCompanyCommand  implements CommandInterface
     private $requestId;
 
     /**
+     * @var string|null
+     */
+    private $message;
+
+    /**
      * TransferCompanyCommand constructor.
      * @param string $section
      * @param int $companyId
      * @param int $requestId
+     * @param string|null $message
      */
-    public function __construct(string $section, int $companyId, int $requestId)
+    public function __construct(string $section, int $companyId, int $requestId, ?string $message)
     {
         $this->section = $section;
         $this->companyId = $companyId;
         $this->requestId = $requestId;
+        $this->message = $message;
     }
+
 
     /**
      * @param array $data
@@ -59,10 +66,15 @@ class TransferCompanyCommand  implements CommandInterface
         Assert::integer($data['companyId'], 'Field companyId not an integer.');
         Assert::integer($data['requestId'], 'Field requestId not an integer.');
 
+        if (key_exists('message', $data)) {
+            Assert::stringNotEmpty($data['message'], 'Field message cannot be empty.');
+        }
+
         return new self(
             $data['section'],
             $data['companyId'],
-            $data['requestId']
+            $data['requestId'],
+            $data['message'] ?? null
         );
     }
 
@@ -97,4 +109,22 @@ class TransferCompanyCommand  implements CommandInterface
     {
         return $this->requestId;
     }
+
+    /**
+     * @return string|null
+     */
+    public function getMessage(): ?string
+    {
+        return $this->message;
+    }
+
+    /**
+     * @param string|null $message
+     */
+    public function setMessage(?string $message): void
+    {
+        $this->message = $message;
+    }
+
+
 }

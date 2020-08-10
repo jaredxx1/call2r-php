@@ -39,13 +39,13 @@ class UpdateUserAction extends AbstractAction
      * @param int $id
      * @return JsonResponse
      */
-    public function __invoke(Request $request, int $id)
+    public function __invoke(Request $request, int $id, UserInterface $user)
     {
         try {
             $data = json_decode($request->getContent(), true);
             $data['id'] = $id;
             $command = UpdateUserCommand::fromArray($data);
-            $user = $this->userService->updateUser($command);
+            $user = $this->userService->updateUser($command,$user);
         } catch (Exception $exception) {
             return $this->errorResponse($exception->getMessage(), $exception->getCode() ? $exception->getCode() : Response::HTTP_BAD_REQUEST);
         } catch (Throwable $exception) {

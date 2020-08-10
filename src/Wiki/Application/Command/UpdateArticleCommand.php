@@ -73,7 +73,7 @@ class UpdateArticleCommand implements CommandInterface
         if (key_exists('description', $data)) {
             Assert::stringNotEmpty($data['description'], 'Field description cannot be empty');
         }
-        
+
         if (key_exists('categories', $data)) {
             self::validateCategories($data['categories']);
         }

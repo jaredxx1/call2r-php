@@ -4,7 +4,6 @@
 namespace App\Attendance\Presentation\Http\Action;
 
 
-use App\Attendance\Application\Command\ApproveRequestCommand;
 use App\Attendance\Application\Command\TransferCompanyCommand;
 use App\Attendance\Application\Service\RequestService;
 use App\Core\Presentation\Http\AbstractAction;
@@ -19,7 +18,7 @@ use Throwable;
  * Class TransferCompanyAction
  * @package App\Attendance\Presentation\Http\Action
  */
-class TransferCompanyAction  extends AbstractAction
+class TransferCompanyAction extends AbstractAction
 {
     /**
      * @var RequestService

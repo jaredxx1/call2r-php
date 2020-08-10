@@ -5,9 +5,7 @@ namespace App\Attendance\Domain\Repository;
 
 
 use App\Attendance\Domain\Entity\Request;
-use App\Attendance\Domain\Entity\Status;
 use App\User\Domain\Entity\User;
-use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * Interface RequestRepository
@@ -61,7 +59,7 @@ interface RequestRepository
      * @param int|null $requestedBy
      * @return array
      */
-    public function searchRequests(?string $title, ?string $initialDate, ?string $finalDate, ?int $statusId,?int $assignedTo, ?int $requestedBy): array;
+    public function searchRequests(?string $title, ?string $initialDate, ?string $finalDate, ?int $statusId, ?int $assignedTo, ?int $requestedBy): array;
 
 
 }

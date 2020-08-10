@@ -111,7 +111,7 @@ class CreateUserCommand implements CommandInterface
         Assert::integer($data['companyId'], 'Field companyId is not an integer');
         Assert::boolean($data['isActive'], 'Field isActive is not a boolean');
 
-        Assert::oneOf($data['role'], ['ROLE_MANAGER', 'ROLE_USER','ROLE_CLIENT', 'ROLE_ADMIN'], 'Field role is neither admin neither manager neither user');
+        Assert::oneOf($data['role'], ['ROLE_MANAGER', 'ROLE_USER', 'ROLE_CLIENT', 'ROLE_ADMIN'], 'Field role is neither admin neither manager neither user');
 
         return new self(
             $data['cpf'],

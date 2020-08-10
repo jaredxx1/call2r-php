@@ -5,6 +5,7 @@ namespace App\Wiki\Domain\Entity;
 
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Exception;
 use JsonSerializable;
 
 /**
@@ -59,7 +60,7 @@ class Article implements JsonSerializable
 
     /**
      * @return array|mixed
-     * @throws \Exception
+     * @throws Exception
      */
     public function jsonSerialize()
     {
@@ -68,7 +69,7 @@ class Article implements JsonSerializable
 
     /**
      * @return array
-     * @throws \Exception
+     * @throws Exception
      */
     public function toArray(): array
     {

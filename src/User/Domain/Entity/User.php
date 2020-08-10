@@ -135,6 +135,22 @@ class User implements UserInterface, JsonSerializable
     /**
      * @return string
      */
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    /**
+     * @param string $name
+     */
+    public function setName(string $name): void
+    {
+        $this->name = $name;
+    }
+
+    /**
+     * @return string
+     */
     public function getCpf(): string
     {
         return $this->cpf;
@@ -178,6 +194,22 @@ class User implements UserInterface, JsonSerializable
     public function setEmail(string $email): void
     {
         $this->email = $email;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getImage(): ?string
+    {
+        return $this->image;
+    }
+
+    /**
+     * @param string|null $image
+     */
+    public function setImage(?string $image): void
+    {
+        $this->image = $image;
     }
 
     /**
@@ -277,37 +309,5 @@ class User implements UserInterface, JsonSerializable
     public function setRole(string $role): void
     {
         $this->role = $role;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getImage(): ?string
-    {
-        return $this->image;
-    }
-
-    /**
-     * @param string|null $image
-     */
-    public function setImage(?string $image): void
-    {
-        $this->image = $image;
-    }
-
-    /**
-     * @return string
-     */
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    /**
-     * @param string $name
-     */
-    public function setName(string $name): void
-    {
-        $this->name = $name;
     }
 }

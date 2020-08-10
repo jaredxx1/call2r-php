@@ -11,14 +11,14 @@
         <field name="description" column="description" type="string"/>
         <many-to-many field="categories" target-entity="App\Wiki\Domain\Entity\Category" fetch="EAGER">
             <cascade>
-                <cascade-persist />
+                <cascade-persist/>
             </cascade>
             <join-table name="tb_article_category">
                 <join-columns>
-                    <join-column name="id_article" referenced-column-name="id_article" />
+                    <join-column name="id_article" referenced-column-name="id_article"/>
                 </join-columns>
                 <inverse-join-columns>
-                    <join-column name="id_category" referenced-column-name="id_category" />
+                    <join-column name="id_category" referenced-column-name="id_category"/>
                 </inverse-join-columns>
             </join-table>
         </many-to-many>

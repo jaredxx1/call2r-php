@@ -7,8 +7,8 @@ namespace App\Company\Infrastructure\Persistence\Doctrine\Repository;
 use App\Company\Domain\Entity\Section;
 use App\Company\Domain\Repository\SectionRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\Persistence\ObjectRepository;
-use \Doctrine\ORM\NonUniqueResultException;
 
 /**
  * Class DoctrineSectionRepository

@@ -3,8 +3,12 @@
 
 namespace App\Wiki\Application\Service;
 
+use App\Company\Application\Exception\CompanyNotFoundException;
 use App\Company\Domain\Repository\CompanyRepository;
+use App\User\Application\Exception\InvalidUserPrivileges;
+use App\User\Domain\Entity\User;
 use App\Wiki\Application\Query\FindAllCategoriesFromCompanyQuery;
+use App\Wiki\Domain\Entity\Category;
 use App\Wiki\Domain\Repository\CategoryRepository;
 
 class CategoryService
@@ -32,10 +36,22 @@ class CategoryService
 
     /**
      * @param FindAllCategoriesFromCompanyQuery $query
-     * @return \App\Wiki\Domain\Entity\Category|null
+     * @param User $user
+     * @return Category|null
+     * @throws CompanyNotFoundException
+     * @throws InvalidUserPrivileges
      */
-    public function fromCompany(FindAllCategoriesFromCompanyQuery $query)
+    public function fromCompany(FindAllCategoriesFromCompanyQuery $query, User $user)
     {
-        return $this->categoryRepository->fromCompany($query->getId());
+        $company = $this->companyRepository->fromId($query->getIdCompany());
+        if (is_null($company)) {
+            throw new CompanyNotFoundException();
+        }
+
+        if ($user->getCompanyId() != $company->getId()) {
+            throw new InvalidUserPrivileges();
+        }
+
+        return $this->categoryRepository->fromCompany($query->getIdCompany());
     }
 }

@@ -6,6 +6,8 @@ namespace App\Wiki\Application\Service;
 
 use App\Company\Application\Exception\CompanyNotFoundException;
 use App\Company\Domain\Repository\CompanyRepository;
+use App\User\Application\Exception\InvalidUserPrivileges;
+use App\User\Domain\Entity\User;
 use App\Wiki\Application\Command\CreateArticleCommand;
 use App\Wiki\Application\Command\DeleteArticleCommand;
 use App\Wiki\Application\Command\UpdateArticleCommand;
@@ -55,23 +57,43 @@ class ArticleService
 
     /**
      * @param FindAllArticlesFromCompanyQuery $query
+     * @param User $user
      * @return mixed
+     * @throws CompanyNotFoundException
+     * @throws InvalidUserPrivileges
      */
-    public function fromCompany(FindAllArticlesFromCompanyQuery $query)
+    public function fromCompany(FindAllArticlesFromCompanyQuery $query, User $user)
     {
-        return $this->articleRepository->fromCompany($query->getId());
+        $company = $this->companyRepository->fromId($query->getIdCompany());
+        if (is_null($company)) {
+            throw new CompanyNotFoundException();
+        }
+
+        if (($user->getCompanyId() != $company->getId())
+            || ($user->getCompanyId() == $this->companyRepository->getMother()->getId())) {
+            throw new InvalidUserPrivileges();
+        }
+
+        return $this->articleRepository->fromCompany($query->getIdCompany());
     }
 
     /**
      * @param CreateArticleCommand $command
+     * @param User $user
      * @return Article|null
      * @throws CompanyNotFoundException
+     * @throws InvalidUserPrivileges
      */
-    public function create(CreateArticleCommand $command)
+    public function create(CreateArticleCommand $command, User $user)
     {
         $company = $this->companyRepository->fromId($command->getIdCompany());
         if (is_null($company)) {
             throw new CompanyNotFoundException();
+        }
+
+        if (($user->getCompanyId() != $company->getId())
+            || ($user->getCompanyId() == $this->companyRepository->getMother()->getId())) {
+            throw new InvalidUserPrivileges();
         }
 
         $categories = $this->createCategoriesObject($command);
@@ -87,81 +109,6 @@ class ArticleService
         $article = $this->articleRepository->create($article);
 
         return $article;
-    }
-
-    /**
-     * @param UpdateArticleCommand $command
-     * @return Article|null
-     * @throws ArticleNotFoundException|CompanyNotFoundException
-     */
-    public function update(UpdateArticleCommand $command)
-    {
-        $article = $this->articleRepository->fromId($command->getId());
-        if (is_null($article)) {
-            throw new ArticleNotFoundException();
-        }
-
-        $company = $this->companyRepository->fromId($command->getIdCompany());
-        if (is_null($company)) {
-            throw new CompanyNotFoundException();
-        }
-
-        if(!is_null($command->getTitle())){
-            $article->setTitle($command->getTitle());
-        }
-
-        if(!is_null($command->getDescription())){
-            $article->setDescription($command->getDescription());
-        }
-
-        if(!is_null($command->getCategories())){
-            $categories = $this->createCategoriesObject($command);
-
-            $article->setCategories($categories);
-        }
-
-        return $this->articleRepository->update($article);
-    }
-
-    /**
-     * @param FindArticlesByIdQuery $query
-     * @return Article
-     * @throws ArticleNotFoundException
-     * @throws CompanyNotFoundException
-     */
-    public function fromArticle(FindArticlesByIdQuery $query)
-    {
-        $company = $this->companyRepository->fromId($query->getIdCompany());
-        if (is_null($company)) {
-            throw new CompanyNotFoundException();
-        }
-
-        $article = $this->articleRepository->fromId($query->getIdArticle());
-        if (is_null($article)) {
-            throw new ArticleNotFoundException();
-        }
-
-        return $article;
-    }
-
-    /**
-     * @param DeleteArticleCommand $query
-     * @throws ArticleNotFoundException
-     * @throws CompanyNotFoundException
-     */
-    public function delete(DeleteArticleCommand $query)
-    {
-        $article = $this->articleRepository->fromId($query->getIdArticle());
-        if (is_null($article)) {
-            throw new ArticleNotFoundException();
-        }
-
-        $company = $this->companyRepository->fromId($query->getIdCompany());
-        if(is_null($company)){
-            throw new CompanyNotFoundException();
-        }
-
-        $this->articleRepository->delete($article);
     }
 
     /**
@@ -189,6 +136,103 @@ class ArticleService
             }
         }
         return $categories;
+    }
+
+    /**
+     * @param UpdateArticleCommand $command
+     * @param User $user
+     * @return Article|null
+     * @throws ArticleNotFoundException
+     * @throws CompanyNotFoundException
+     * @throws InvalidUserPrivileges
+     */
+    public function update(UpdateArticleCommand $command, User $user)
+    {
+        $company = $this->companyRepository->fromId($command->getIdCompany());
+        if (is_null($company)) {
+            throw new CompanyNotFoundException();
+        }
+
+        if (($user->getCompanyId() != $company->getId())
+            || ($user->getCompanyId() == $this->companyRepository->getMother()->getId())) {
+            throw new InvalidUserPrivileges();
+        }
+
+        $article = $this->articleRepository->fromId($command->getId());
+        if (is_null($article)) {
+            throw new ArticleNotFoundException();
+        }
+
+        if (!is_null($command->getTitle())) {
+            $article->setTitle($command->getTitle());
+        }
+
+        if (!is_null($command->getDescription())) {
+            $article->setDescription($command->getDescription());
+        }
+
+        if (!is_null($command->getCategories())) {
+            $categories = $this->createCategoriesObject($command);
+
+            $article->setCategories($categories);
+        }
+
+        return $this->articleRepository->update($article);
+    }
+
+    /**
+     * @param FindArticlesByIdQuery $query
+     * @param User $user
+     * @return Article
+     * @throws ArticleNotFoundException
+     * @throws CompanyNotFoundException
+     * @throws InvalidUserPrivileges
+     */
+    public function fromArticle(FindArticlesByIdQuery $query, User $user)
+    {
+        $company = $this->companyRepository->fromId($query->getIdCompany());
+        if (is_null($company)) {
+            throw new CompanyNotFoundException();
+        }
+
+        if (($user->getCompanyId() != $company->getId())
+            || ($user->getCompanyId() == $this->companyRepository->getMother()->getId())) {
+            throw new InvalidUserPrivileges();
+        }
+
+        $article = $this->articleRepository->fromId($query->getIdArticle());
+        if (is_null($article)) {
+            throw new ArticleNotFoundException();
+        }
+
+        return $article;
+    }
+
+    /**
+     * @param DeleteArticleCommand $query
+     * @param User $user
+     * @throws ArticleNotFoundException
+     * @throws CompanyNotFoundException
+     * @throws InvalidUserPrivileges
+     */
+    public function delete(DeleteArticleCommand $query, User $user)
+    {
+        $company = $this->companyRepository->fromId($query->getIdCompany());
+        if (is_null($company)) {
+            throw new CompanyNotFoundException();
+        }
+
+        if (($user->getCompanyId() != $company->getId())
+            || ($user->getCompanyId() == $this->companyRepository->getMother()->getId())) {
+            throw new InvalidUserPrivileges();
+        }
+
+        $article = $this->articleRepository->fromId($query->getIdArticle());
+        if (is_null($article)) {
+            throw new ArticleNotFoundException();
+        }
+
+        $this->articleRepository->delete($article);
     }
 
 }

@@ -4,6 +4,8 @@
 namespace App\User\Application\Service;
 
 
+use App\Company\Application\Exception\CompanyNotFoundException;
+use App\Company\Domain\Repository\CompanyRepository;
 use App\Core\Infrastructure\Container\Application\Exception\EmailSendException;
 use App\Core\Infrastructure\Email\EmailService;
 use App\Core\Infrastructure\Storaged\AWS\S3;
@@ -12,7 +14,9 @@ use App\User\Application\Command\LoginCommand;
 use App\User\Application\Command\ResetPasswordCommand;
 use App\User\Application\Command\UpdateUserCommand;
 use App\User\Application\Command\UpdateUserImageCommand;
+use App\User\Application\Exception\DuplicateCpfException;
 use App\User\Application\Exception\InvalidCredentialsException;
+use App\User\Application\Exception\InvalidRegisterInMotherCompany;
 use App\User\Application\Exception\InvalidUserPrivileges;
 use App\User\Application\Exception\UserNotFoundException;
 use App\User\Application\Query\FindUsersByRoleQuery;
@@ -36,6 +40,11 @@ final class UserService
     private $userRepository;
 
     /**
+     * @var CompanyRepository
+     */
+    private $companyRepository;
+
+    /**
      * @var S3
      */
     private $s3;
@@ -48,12 +57,14 @@ final class UserService
     /**
      * UserService constructor.
      * @param UserRepository $userRepository
+     * @param CompanyRepository $companyRepository
      * @param S3 $s3
      * @param EmailService $emailService
      */
-    public function __construct(UserRepository $userRepository, S3 $s3, EmailService $emailService)
+    public function __construct(UserRepository $userRepository, CompanyRepository $companyRepository, S3 $s3, EmailService $emailService)
     {
         $this->userRepository = $userRepository;
+        $this->companyRepository = $companyRepository;
         $this->s3 = $s3;
         $this->emailService = $emailService;
     }
@@ -113,18 +124,31 @@ final class UserService
     }
 
     /**
+     * @param User $user
      * @param FindUsersByRoleQuery $query
      * @return array
      * @throws Exception
      */
-    public function findUsersByRole(FindUsersByRoleQuery $query)
+    public function findUsersByRole(User $user, FindUsersByRoleQuery $query)
     {
         switch ($query->getRole()) {
+            case 'admin':
+                $users = $this->userRepository->findAdmins($user);
+                break;
             case 'manager':
-                $users = $this->userRepository->findManagers();
+                $users = $this->userRepository->findManagers($user);
+                break;
+            case 'client':
+                if($user->getCompanyId() != $this->companyRepository->getMother()->getId()){
+                    throw new InvalidUserPrivileges();
+                }
+                $users = $this->userRepository->findClientUsers($user);
                 break;
             case 'support':
-                $users = $this->userRepository->findSupportUsers();
+                if($user->getCompanyId() == $this->companyRepository->getMother()->getId()){
+                    throw new InvalidUserPrivileges();
+                }
+                $users = $this->userRepository->findSupportUsers($user);
                 break;
             default:
                 throw new Exception('Unexpected role');
@@ -141,10 +165,26 @@ final class UserService
      */
     public function createUser(CreateUserCommand $command, User $user)
     {
+
+        $company = $this->companyRepository->fromId($command->getCompanyId());
+
+        if(is_null($company)){
+            throw new CompanyNotFoundException();
+        }
+
+        if(!is_null($this->userRepository->fromCpf($command->getCpf()))){
+            throw new DuplicateCpfException();
+        }
+
         if (!self::validateUserPrivilege($command, $user)) {
             throw new InvalidUserPrivileges();
         }
 
+        if ($command->getCompanyId() == $this->companyRepository->getMother()->getId()) {
+            if ($command->getRole() == 'ROLE_USER') {
+                throw new InvalidRegisterInMotherCompany();
+            }
+        }
         $hashedPassword = password_hash($command->getPassword(), PASSWORD_BCRYPT);
 
         $user = new User(
@@ -168,14 +208,21 @@ final class UserService
      * @param User $user
      * @return bool
      */
-    private static function validateUserPrivilege(CreateUserCommand $command, User $user)
+    private  function validateUserPrivilege(CreateUserCommand $command, User $user)
     {
         if ($user->getRole() == 'ROLE_ADMIN') {
-            return ($command->getRole() == 'ROLE_MANAGER') || ($command->getRole() == 'ROLE_ADMIN');
+            return (($command->getRole() == 'ROLE_MANAGER') || ($command->getRole() == 'ROLE_ADMIN'));
         }
 
         if ($user->getRole() == 'ROLE_MANAGER') {
-            return ($command->getRole() == 'ROLE_USER') || ($command->getRole() == 'ROLE_CLIENT');
+            if($command->getRole() == 'ROLE_USER'){
+                return ($command->getCompanyId() == $user->getCompanyId())
+                    && ($command->getCompanyId() != $this->companyRepository->getMother()->getId());
+            }
+            if($command->getRole() == 'ROLE_CLIENT'){
+                return ($command->getCompanyId() == $user->getCompanyId())
+                    && ($command->getCompanyId() == $this->companyRepository->getMother()->getId());
+            }
         }
 
         return false;
@@ -183,12 +230,14 @@ final class UserService
 
     /**
      * @param UpdateUserCommand $command
+     * @param User $user
      * @return User
+     * @throws InvalidUserPrivileges
      * @throws UserNotFoundException
      */
-    public function updateUser(UpdateUserCommand $command): User
+    public function updateUser(UpdateUserCommand $command, User $user): User
     {
-        $user = $this->fromId($command->getId());
+        $user = $this->fromId($command->getId(),$user);
 
         if (!is_null($command->getNewPassword())
             && !is_null($command->getOldPassword())
@@ -218,10 +267,12 @@ final class UserService
 
     /**
      * @param string $id
+     * @param User $requestUser
      * @return User|null
+     * @throws InvalidUserPrivileges
      * @throws UserNotFoundException
      */
-    public function fromId(string $id): ?User
+    public function fromId(string $id, User $requestUser): ?User
     {
         $user = $this->userRepository->fromId($id);
 
@@ -229,7 +280,24 @@ final class UserService
             throw new UserNotFoundException();
         }
 
+        if (!self::validateUserRole($user, $requestUser)) {
+            throw new InvalidUserPrivileges();
+        }
+
         return $user;
+    }
+
+    private static function validateUserRole(?User $user, User $requestUser)
+    {
+        if ($user->getId() == $requestUser->getId()) {
+            return true;
+        }
+        if ($requestUser->getRole() == 'ROLE_MANAGER') {
+            return (($user->getRole() == 'ROLE_USER' || $user->getRole() == 'ROLE_CLIENT')
+                && ($user->getCompanyId() == $requestUser->getCompanyId()));
+        }
+
+        return false;
     }
 
     /**
@@ -258,17 +326,18 @@ final class UserService
 
     /**
      * @param ResetPasswordCommand $command
-     * @throws UserNotFoundException
+     * @return array
      * @throws EmailSendException
      * @throws \PHPMailer\PHPMailer\Exception
+     * @throws Exception
      */
     public function resetPassword(ResetPasswordCommand $command)
     {
-
-        $user = $this->userRepository->fromCpfBirthdate($command->getCpf(), $command->getBirthdate());
-
-        if (is_null($user)) {
-            throw new UserNotFoundException();
+        $birthdate = (new DateTime($command->getBirthdate()))->format('Y-m-d');
+        $user = $this->userRepository->fromCpf($command->getCpf());
+        $userBirhtdate = $user->getBirthdate()->format('Y-m-d');
+        if($userBirhtdate != $birthdate){
+            return [];
         }
 
         $newPassword = substr(sha1(time()), 0, 6);

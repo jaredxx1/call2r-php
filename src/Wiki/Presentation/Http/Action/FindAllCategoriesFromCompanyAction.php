@@ -10,6 +10,7 @@ use App\Wiki\Application\Service\CategoryService;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Throwable;
 
 /**
@@ -34,14 +35,15 @@ class FindAllCategoriesFromCompanyAction extends AbstractAction
 
     /**
      * @param int $id
+     * @param UserInterface $user
      * @return JsonResponse
      */
-    public function __invoke(int $id)
+    public function __invoke(int $id, UserInterface $user)
     {
         try {
-            $data = ['id' => $id];
+            $data = ['idCompany' => $id];
             $query = FindAllCategoriesFromCompanyQuery::fromArray($data);
-            $categories = $this->service->fromCompany($query);
+            $categories = $this->service->fromCompany($query, $user);
         } catch (Exception $exception) {
             return $this->errorResponse($exception->getMessage(), $exception->getCode() ? $exception->getCode() : Response::HTTP_BAD_REQUEST);
         } catch (Throwable $exception) {

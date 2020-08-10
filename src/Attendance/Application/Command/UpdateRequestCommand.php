@@ -63,7 +63,7 @@ class UpdateRequestCommand implements CommandInterface
 
         if (key_exists('priority', $data)) {
             Assert::integer($data['priority'], 'Field priority is not an integer');
-            Assert::oneOf($data['priority'], [1,2,3,4,5], 'Field priority is neither 1 neither 2 neither 3 neither 4 or 5');
+            Assert::oneOf($data['priority'], [1, 2, 3, 4, 5], 'Field priority is neither 1 neither 2 neither 3 neither 4 or 5');
         }
 
         return new self(

@@ -40,10 +40,10 @@ class LoginAction extends AbstractAction
      */
     public function __invoke(Request $request)
     {
+
         try {
             $data = json_decode($request->getContent(), true);
             $command = LoginCommand::fromArray($data);
-
             $user = $this->userService->fromLoginCredentials($command);
             $token = $this->userService->generateAuthToken($user);
 

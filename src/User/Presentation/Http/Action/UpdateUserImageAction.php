@@ -5,13 +5,13 @@ namespace App\User\Presentation\Http\Action;
 
 
 use App\Core\Presentation\Http\AbstractAction;
-use App\User\Application\Command\UpdateUserCommand;
 use App\User\Application\Command\UpdateUserImageCommand;
 use App\User\Application\Service\UserService;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Throwable;
 
 /**
@@ -37,12 +37,13 @@ class UpdateUserImageAction extends AbstractAction
     /**
      * @param Request $request
      * @param int $idUser
+     * @param UserInterface $user
      * @return JsonResponse
      */
-    public function __invoke(Request $request, int $idUser)
+    public function __invoke(Request $request, int $idUser, UserInterface $user)
     {
         try {
-            $user = $this->userService->fromId($idUser);
+            $user = $this->userService->fromId($idUser,$user);
             $image = $request->files->getIterator()['image'];
             $data['user'] = $user;
             $data['uploadFile'] = $image;

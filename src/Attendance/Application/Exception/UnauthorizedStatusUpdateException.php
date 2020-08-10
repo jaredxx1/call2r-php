@@ -8,7 +8,7 @@ use Exception;
 use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
-class UnauthorizedStatusUpdateException  extends Exception
+class UnauthorizedStatusUpdateException extends Exception
 {
     /**
      * UnauthorizedStatusChangeException constructor.

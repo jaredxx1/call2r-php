@@ -4,14 +4,16 @@
 namespace App\User\Application\Command;
 
 
+use App\Core\Infrastructure\Container\Application\Exception\InvalidDateFormatException;
 use App\Core\Infrastructure\Container\Application\Utils\Command\CommandInterface;
+use Carbon\Carbon;
 use Webmozart\Assert\Assert;
 
 /**
  * Class ResetPasswordCommand
  * @package App\User\Application\Command
  */
-class ResetPasswordCommand  implements CommandInterface
+class ResetPasswordCommand implements CommandInterface
 {
 
     /**
@@ -44,8 +46,14 @@ class ResetPasswordCommand  implements CommandInterface
         Assert::keyExists($data, 'cpf', 'Field cpf is required');
         Assert::keyExists($data, 'birthdate', 'Field birthdate is required');
 
+        try {
+            $birthdate = Carbon::createFromFormat('Y-m-d', $data['birthdate']);
+            $data['birthdate'] = $birthdate;
+        } catch (Exception $e) {
+            throw new InvalidDateFormatException();
+        }
+
         Assert::string($data['cpf'], 'Field cpf must be a string');
-        Assert::string($data['birthdate'], 'Field birthdate must be a string');
 
         return new self(
             $data['cpf'],

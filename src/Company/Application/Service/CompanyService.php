@@ -118,6 +118,32 @@ class CompanyService
     }
 
     /**
+     * @param mixed $command
+     * @return ArrayCollection
+     */
+    private function createSectionsObjects($command): ArrayCollection
+    {
+        $sections = new ArrayCollection();
+        $nameOfSections = new ArrayCollection();
+        foreach ($command->getSections() as $section) {
+            $foundSection = $this->sectionRepository->fromName($section['name']);
+            if (is_null($foundSection)) {
+                $localSection = new Section(
+                    null,
+                    $section['name']
+                );
+                if (!$nameOfSections->contains($localSection->getName())) {
+                    $sections->add($localSection);
+                    $nameOfSections->add($localSection->getName());
+                }
+            } else {
+                $sections->add($foundSection);
+            }
+        }
+        return $sections;
+    }
+
+    /**
      * @param FindCompanyByIdQuery $query
      * @return Company|null
      * @throws CompanyNotFoundException
@@ -148,48 +174,48 @@ class CompanyService
             throw new CompanyNotFoundException();
         }
 
-        if(!is_null($command->getName())){
+        if (!is_null($command->getName())) {
             $company->setName($command->getName());
         }
 
-        if(!is_null($command->getDescription())){
+        if (!is_null($command->getDescription())) {
             $company->setDescription($command->getDescription());
         }
 
-        if(!is_null($command->getActive())){
+        if (!is_null($command->getActive())) {
             $company->setActive($command->getActive());
         }
 
-        if(!is_null($command->getSla())){
+        if (!is_null($command->getSla())) {
             $sla = $this->slaRepository->fromId($company->getSla()->getId());
             if (is_null($sla)) {
                 throw new SlaNotFoundException();
             }
 
-            if(key_exists('p1', $command->getSla())){
+            if (key_exists('p1', $command->getSla())) {
                 $sla->setP1($command->getSla()['p1']);
             }
 
-            if(key_exists('p2', $command->getSla())){
+            if (key_exists('p2', $command->getSla())) {
                 $sla->setP2($command->getSla()['p2']);
             }
 
-            if(key_exists('p3', $command->getSla())){
+            if (key_exists('p3', $command->getSla())) {
                 $sla->setP3($command->getSla()['p3']);
             }
 
-            if(key_exists('p4', $command->getSla())){
+            if (key_exists('p4', $command->getSla())) {
                 $sla->setP4($command->getSla()['p4']);
             }
 
-            if(key_exists('p5', $command->getSla())){
+            if (key_exists('p5', $command->getSla())) {
                 $sla->setP5($command->getSla()['p5']);
             }
 
             $company->setSla($sla);
         }
 
-        if(!is_null($command->getSections())){
+        if (!is_null($command->getSections())) {
             $sections = $this->createSectionsObjects($command);
             $company->setSections($sections);
         }
@@ -212,31 +238,5 @@ class CompanyService
         }
 
         return $company;
-    }
-
-    /**
-     * @param mixed $command
-     * @return ArrayCollection
-     */
-    private function createSectionsObjects($command): ArrayCollection
-    {
-        $sections = new ArrayCollection();
-        $nameOfSections = new ArrayCollection();
-        foreach ($command->getSections() as $section) {
-            $foundSection = $this->sectionRepository->fromName($section['name']);
-            if (is_null($foundSection)) {
-                $localSection = new Section(
-                    null,
-                    $section['name']
-                );
-                if (!$nameOfSections->contains($localSection->getName())) {
-                    $sections->add($localSection);
-                    $nameOfSections->add($localSection->getName());
-                }
-            } else {
-                $sections->add($foundSection);
-            }
-        }
-        return $sections;
     }
 }

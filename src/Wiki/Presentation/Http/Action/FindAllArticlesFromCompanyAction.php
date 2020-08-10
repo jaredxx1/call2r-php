@@ -11,6 +11,7 @@ use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Throwable;
 
 /**
@@ -36,14 +37,15 @@ class FindAllArticlesFromCompanyAction extends AbstractAction
     /**
      * @param Request $request
      * @param int $idCompany
+     * @param UserInterface $user
      * @return JsonResponse
      */
-    public function __invoke(Request $request, int $idCompany)
+    public function __invoke(Request $request, int $idCompany, UserInterface $user)
     {
         try {
-            $data = ['id' => $idCompany];
+            $data = ['idCompany' => $idCompany];
             $query = FindAllArticlesFromCompanyQuery::fromArray($data);
-            $articles = $this->service->fromCompany($query);
+            $articles = $this->service->fromCompany($query, $user);
         } catch (Exception $exception) {
             return $this->errorResponse($exception->getMessage(), $exception->getCode() ? $exception->getCode() : Response::HTTP_BAD_REQUEST);
         } catch (Throwable $exception) {
