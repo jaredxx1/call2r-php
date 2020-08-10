@@ -950,14 +950,28 @@ class RequestService
     {
         $request = $this->requestRepository->fromId($query->getId());
 
-        if($request->getCompanyId() != $user->getCompanyId()){
-            throw new InvalidUserPrivileges();
-        }
         if (is_null($request)) {
             throw new RequestNotFoundException();
+        }
+
+        if (!self::validationFromId($request, $user)) {
+            throw new InvalidUserPrivileges();
+        }
+
+        if($request->getCompanyId() != $user->getCompanyId()){
+            throw new InvalidUserPrivileges();
         }
 
         return $request;
     }
 
+
+    private function validationFromId(Request $request, User $user)
+    {
+        if($request->getCompanyId() != $user->getCompanyId()){
+            return (($request->getRequestedBy() == $user->getId())
+                || (($user->getRole() == 'ROLE_MANAGER' && $user->getCompanyId() == $this->companyRepository->getMother()->getId())));
+        }
+        return true;
+    }
 }
