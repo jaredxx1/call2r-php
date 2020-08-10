@@ -117,7 +117,7 @@ class DoctrineRequestRepository implements RequestRepository
             ->select('r')
             ->from('Attendance:Request', 'r')
             ->where('r.requestedBy = :userId')
-            ->andWhere('r.companyId = :companyId AND r.assignedTo IS NULL Or r.assignedTo == :userId')
+            ->andWhere('r.companyId = :companyId AND r.assignedTo IS NULL OR r.assignedTo = :userId')
             ->setParameter('companyId', $user->getCompanyId())
             ->setParameter('userId', $user->getId())
             ->getQuery()
