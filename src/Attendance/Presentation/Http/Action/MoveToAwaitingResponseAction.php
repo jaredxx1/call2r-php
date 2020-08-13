@@ -43,6 +43,9 @@ class MoveToAwaitingResponseAction extends AbstractAction
     {
         try {
             $data = json_decode($request->getContent(), true);
+            $request = $this->service->findById($requestId);
+            $data['user'] = $user;
+            $data['request'] = $request;
             $command = MoveToAwaitingResponseCommand::fromArray($data);
             $request = $this->service->findById($requestId);
             $request = $this->service->moveToAwaitingResponse($command, $request, $user);

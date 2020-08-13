@@ -2,15 +2,19 @@
 
 namespace App\Attendance\Application\Service;
 
+use App\Attendance\Application\Command\AnsweredRequestActionCommand;
 use App\Attendance\Application\Command\ApproveRequestCommand;
 use App\Attendance\Application\Command\CreateRequestCommand;
 use App\Attendance\Application\Command\DisapproveRequestCommand;
 use App\Attendance\Application\Command\MoveToAwaitingResponseCommand;
-use App\Attendance\Application\Command\MoveToAwaitingSupportCommand;
 use App\Attendance\Application\Command\MoveToCanceledCommand;
+use App\Attendance\Application\Command\MoveToFinishedCommand;
 use App\Attendance\Application\Command\MoveToInAttendanceCommand;
 use App\Attendance\Application\Command\TransferCompanyCommand;
 use App\Attendance\Application\Command\UpdateRequestCommand;
+use App\Attendance\Application\Exception\AwaitingResponseException;
+use App\Attendance\Application\Exception\CanceledRequestException;
+use App\Attendance\Application\Exception\DisapproveRequestException;
 use App\Attendance\Application\Exception\RequestNotFoundException;
 use App\Attendance\Application\Exception\SectionNotFromCompanyException;
 use App\Attendance\Application\Exception\UnauthorizedRequestUpdateException;
@@ -101,16 +105,12 @@ class RequestService
      * @param User $user
      * @return Request
      * @throws CompanyNotFoundException
-     * @throws InvalidUserPrivileges
      * @throws SectionNotFoundException
      * @throws SectionNotFromCompanyException
      * @throws UnauthorizedStatusChangeException
      */
     public function create(CreateRequestCommand $command, User $user): Request
     {
-        if ($user->getCompanyId() != $this->companyRepository->getMother()->getId()) {
-            throw new InvalidUserPrivileges();
-        }
 
         $status = $this->statusRepository->fromId(Status::awaitingSupport);
         $company = $this->companyRepository->fromId($command->getCompanyId());
@@ -131,7 +131,7 @@ class RequestService
             throw new  SectionNotFoundException();
         }
 
-        if (!($company->getSections()->contains($section))) {
+        if ($company->getSections()->contains($section) == false) {
             throw new SectionNotFromCompanyException();
         }
 
@@ -159,7 +159,7 @@ class RequestService
         );
 
         $request =  $this->requestRepository->create($request);
-        return  $this->moveToAwaitingSupport(null,$request, $user);
+        return  $this->moveToAwaitingSupport($request, $user);
     }
 
     /**
@@ -179,10 +179,6 @@ class RequestService
 
         if (is_null($companyUser)) {
             throw new CompanyNotFoundException();
-        }
-
-        if (!self::validationApproveRequest($request, $user)) {
-            throw new InvalidUserPrivileges();
         }
 
         $log = new Log(null, $command->getMessage()
@@ -215,24 +211,6 @@ class RequestService
     /**
      * @param Request $request
      * @param User $user
-     * @return bool
-     */
-    private function validationApproveRequest(Request $request, User $user)
-    {
-        if ($user->getRole() == 'ROLE_MANAGER' && $user->getCompanyId() == 1) {
-            return true;
-        }
-
-        if ($user->getId() == $request->getRequestedBy()) {
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * @param Request $request
-     * @param User $user
      * @return Request
      * @throws CompanyNotFoundException
      * @throws InvalidUserPrivileges
@@ -253,10 +231,6 @@ class RequestService
             throw new CompanyNotFoundException();
         }
 
-        if (!self::validationMoveToApproved($request, $user)) {
-            throw new InvalidUserPrivileges();
-        }
-
         $log = new Log(null, 'Chamado aprovado'
             . ' por : ' . $user->getName()
             . ' <br> trabalha em: ' . $companyUser->getName()
@@ -268,27 +242,6 @@ class RequestService
         $request->setUpdatedAt(Carbon::now()->timezone('America/Sao_Paulo'));
 
         return $this->requestRepository->update($request);
-    }
-
-    /**
-     * @param Request $request
-     * @param User $user
-     * @return bool
-     */
-    private function validationMoveToApproved(Request $request, User $user)
-    {
-        if ($user->getRole() == 'ROLE_MANAGER' && $user->getCompanyId() != 1) {
-            if ($request->getAssignedTo() != null) {
-                $userAssigned = $this->userRepository->fromId($request->getAssignedTo());
-                return $userAssigned->getCompanyId() == $user->getCompanyId();
-            }
-        }
-
-        if ($user->getId() == $request->getAssignedTo()) {
-            return true;
-        }
-
-        return false;
     }
 
     /**
@@ -404,19 +357,22 @@ class RequestService
      * @throws InvalidUserPrivileges
      * @throws RequestNotFoundException
      * @throws UnauthorizedStatusChangeException
+     * @throws DisapproveRequestException
      */
     public function disapproveRequest(?DisapproveRequestCommand $command, User $user): Request
     {
         $request = $this->findById($command->getRequestId());
 
+        if (
+            !($request->getStatus()->getId() == Status::approved)
+        ) {
+            throw new UnauthorizedStatusChangeException();
+        }
+
         $companyUser = $this->companyRepository->fromId($user->getCompanyId());
 
         if (is_null($companyUser)) {
             throw new CompanyNotFoundException();
-        }
-
-        if (!self::validationDisapproveRequest($request, $user)) {
-            throw new InvalidUserPrivileges();
         }
 
         if(is_null($command)){
@@ -429,40 +385,19 @@ class RequestService
             . ' <br> trabalha em: ' . $companyUser->getName()
             , Carbon::now()->timezone('America/Sao_Paulo'), 'message');
         $request->getLogs()->add($log);
-        $this->requestRepository->update($request);
-        $request = $this->moveToAwaitingSupport(null, $request, $user);
-
+        $this->moveToInAttendance(null, $request, $user);
+        $request = $this->requestRepository->update($request);
         return $request;
     }
 
     /**
      * @param Request $request
      * @param User $user
-     * @return bool
-     */
-    private function validationDisapproveRequest(Request $request, User $user)
-    {
-        if ($user->getRole() == 'ROLE_MANAGER' && $user->getCompanyId() == 1) {
-            return true;
-        }
-
-        if ($user->getId() == $request->getRequestedBy()) {
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * @param MoveToAwaitingSupportCommand|null $command
-     * @param Request $request
-     * @param User $user
      * @return Request
      * @throws CompanyNotFoundException
-     * @throws InvalidUserPrivileges
      * @throws UnauthorizedStatusChangeException
      */
-    public function moveToAwaitingSupport(?MoveToAwaitingSupportCommand $command, Request $request, User $user): Request
+    public function moveToAwaitingSupport(Request $request, User $user): Request
     {
         if (
             !($request->getStatus()->getId() == Status::inAttendance) &&
@@ -479,19 +414,9 @@ class RequestService
             throw new CompanyNotFoundException();
         }
 
-        if (!self::validationMoveToAwaitingSupport($request, $user)) {
-            throw new InvalidUserPrivileges();
-        }
-
-        if(is_null($command)){
-            $command = MoveToAwaitingSupportCommand::fromArray([]);
-            $command->setMessage("");
-        }
-
         $log = new Log(null, 'Chamado aguardando atendimento'
             . ' por : ' . $user->getName()
             . ' <br> trabalha em: ' . $companyUser->getName()
-            . ' <br> mensagem: ' . $command->getMessage()
             , Carbon::now()->timezone('America/Sao_Paulo'), 'awaitingSupport');
         $status = $this->statusRepository->fromId(Status::awaitingSupport);
 
@@ -503,44 +428,19 @@ class RequestService
     }
 
     /**
-     * @param Request $request
-     * @param User $user
-     * @return bool
-     */
-    private function validationMoveToAwaitingSupport(Request $request, User $user)
-    {
-        if ($user->getRole() == 'ROLE_MANAGER' && $user->getCompanyId() == 1) {
-            return true;
-        }
-
-        if ($user->getRole() == 'ROLE_MANAGER' && $user->getCompanyId() != 1) {
-            if ($request->getAssignedTo() != null) {
-                $userAssigned = $this->userRepository->fromId($request->getAssignedTo());
-                return $userAssigned->getCompanyId() == $user->getCompanyId();
-            }
-        }
-
-        if ($user->getId() == $request->getRequestedBy()) {
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
      * @param MoveToInAttendanceCommand|null $command
      * @param Request $request
      * @param User $user
      * @return Request
      * @throws CompanyNotFoundException
-     * @throws InvalidUserPrivileges
      * @throws UnauthorizedStatusChangeException
      */
     public function moveToInAttendance(?MoveToInAttendanceCommand $command, Request $request, User $user): Request
     {
         if (
             !($request->getStatus()->getId() == Status::awaitingSupport) &&
-            !($request->getStatus()->getId() == Status::awaitingResponse)
+            !($request->getStatus()->getId() == Status::awaitingResponse) &&
+            !($request->getStatus()->getId() == Status::approved)
         ) {
             throw new UnauthorizedStatusChangeException();
         }
@@ -551,19 +451,16 @@ class RequestService
             throw new CompanyNotFoundException();
         }
 
-        if (self::validationMoveToInAttendance($request, $user)) {
-            throw new InvalidUserPrivileges();
-        }
+        $message = "";
 
-        if(is_null($command)){
-            $command = MoveToInAttendanceCommand::fromArray([]);
-            $command->setMessage("");
+        if(!is_null($command)){
+            $message = $command->getMessage();
         }
 
         $log = new Log(null, 'Chamado em atendimento'
             . ' por : ' . $user->getName()
             . ' <br> trabalha em: ' . $companyUser->getName()
-            . ' <br> mensagem: ' . $command->getMessage()
+            . ' <br> mensagem: ' . $message
             , Carbon::now()->timezone('America/Sao_Paulo'), 'inAttendance');
         $status = $this->statusRepository->fromId(Status::inAttendance);
 
@@ -576,31 +473,13 @@ class RequestService
     }
 
     /**
-     * @param Request $request
-     * @param User $user
-     * @return bool
-     */
-    private function validationMoveToInAttendance(Request $request, User $user)
-    {
-        if ($user->getRole() == 'ROLE_MANAGER' && $user->getCompanyId() == 1) {
-            return true;
-        }
-
-        if ($user->getId() == $request->getRequestedBy()) {
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
      * @param MoveToAwaitingResponseCommand|null $command
      * @param Request $request
      * @param User $user
      * @return Request
      * @throws CompanyNotFoundException
-     * @throws InvalidUserPrivileges
      * @throws UnauthorizedStatusChangeException
+     * @throws AwaitingResponseException
      */
     public function moveToAwaitingResponse(?MoveToAwaitingResponseCommand  $command, Request $request, User $user): Request
     {
@@ -612,10 +491,6 @@ class RequestService
 
         if (is_null($companyUser)) {
             throw new CompanyNotFoundException();
-        }
-
-        if (!self::validateMoveToAwaitingResponse($request, $user)) {
-            throw new InvalidUserPrivileges();
         }
 
         if(is_null($command)){
@@ -637,32 +512,19 @@ class RequestService
         return $this->requestRepository->update($request);
     }
 
-    private function validateMoveToAwaitingResponse(Request $request, User $user)
-    {
-        if ($user->getId() == $request->getAssignedTo()) {
-            return true;
-        }
-
-        if (($user->getRole() == 'ROLE_MANAGER') && (!is_null($request->getAssignedTo()))) {
-            $userAssigned = $this->userRepository->fromId($request->getAssignedTo());
-            return $user->getCompanyId() == $userAssigned->getCompanyId();
-        }
-
-        return false;
-
-    }
-
     /**
+     * @param MoveToFinishedCommand $command
      * @param Request $request
      * @param User $user
      * @return Request
      * @throws CompanyNotFoundException
      * @throws UnauthorizedStatusChangeException
      */
-    public function moveToFinished(Request $request, User $user): Request
+    public function moveToFinished(MoveToFinishedCommand $command, Request $request, User $user): Request
     {
 
-        if (!($request->getStatus()->getId() == Status::approved)) {
+        if (!($request->getStatus()->getId() == Status::approved)
+            && !($request->getStatus()->getId() == Status::awaitingResponse)) {
             throw new UnauthorizedStatusChangeException();
         }
 
@@ -672,10 +534,10 @@ class RequestService
             throw new CompanyNotFoundException();
         }
 
-
         $log = new Log(null, 'Chamado finalizado'
             . ' por : ' . $user->getName()
             . ' <br> trabalha em: ' . $companyUser->getName()
+            . ' <br> mensagem: ' . $command->getMessage()
             , Carbon::now()->timezone('America/Sao_Paulo'), 'finish');
         $status = $this->statusRepository->fromId(Status::finished);
 
@@ -692,8 +554,8 @@ class RequestService
      * @param User $user
      * @return Request
      * @throws CompanyNotFoundException
-     * @throws InvalidUserPrivileges
      * @throws UnauthorizedStatusChangeException
+     * @throws CanceledRequestException
      */
     public function moveToCanceled(?MoveToCanceledCommand $command, Request $request, User $user): Request
     {
@@ -709,10 +571,6 @@ class RequestService
 
         if (is_null($companyUser)) {
             throw new CompanyNotFoundException();
-        }
-
-        if (!self::validationMoveToCanceled($request, $user)) {
-            throw new InvalidUserPrivileges();
         }
 
         if(is_null($command)){
@@ -732,31 +590,6 @@ class RequestService
         $request->setUpdatedAt(Carbon::now()->timezone('America/Sao_Paulo'));
 
         return $this->requestRepository->update($request);
-    }
-
-    /**
-     * @param Request $request
-     * @param User $user
-     * @return bool
-     */
-    private function validationMoveToCanceled(Request $request, User $user)
-    {
-        if ($user->getRole() == 'ROLE_MANAGER' && $user->getCompanyId() == 1) {
-            return true;
-        }
-
-        if ($user->getRole() == 'ROLE_MANAGER' && $user->getCompanyId() != 1) {
-            if ($request->getAssignedTo() != null) {
-                $userAssigned = $this->userRepository->fromId($request->getAssignedTo());
-                return $userAssigned->getCompanyId() == $user->getCompanyId();
-            }
-        }
-
-        if ($user->getId() == $request->getRequestedBy()) {
-            return true;
-        }
-
-        return false;
     }
 
     /**
@@ -831,8 +664,7 @@ class RequestService
 
         if (
             !($request->getStatus()->getId() == Status::awaitingSupport) &&
-            !($request->getStatus()->getId() == Status::inAttendance) &&
-            !($request->getStatus()->getId() == Status::awaitingResponse)
+            !($request->getStatus()->getId() == Status::inAttendance)
         ) {
             throw new UnauthorizedStatusChangeException();
         }
@@ -863,10 +695,6 @@ class RequestService
             throw new CompanyNotFoundException();
         }
 
-        if (!self::validationTransferCompany($request, $user)) {
-            throw new InvalidUserPrivileges();
-        }
-
         if(is_null($command)){
             $command = TransferCompanyCommand::fromArray([]);
             $command->setMessage("");
@@ -883,21 +711,10 @@ class RequestService
         $request->setAssignedTo(null);
 
         $request = $this->requestRepository->update($request);
-        $request = $this->moveToAwaitingSupport(null, $request, $user);
+        $request = $this->moveToAwaitingSupport($request, $user);
 
         return $request;
     }
-
-    private function validationTransferCompany(Request $request, User $user)
-    {
-        if (($user->getRole() == 'ROLE_MANAGER') && (!is_null($request->getAssignedTo()))) {
-            $userAssigned = $this->userRepository->fromId($request->getAssignedTo());
-            return $user->getCompanyId() == $userAssigned->getCompanyId();
-        }
-
-        return false;
-    }
-
     /**
      * @param ExportRequestsToPdfQuery $query
      * @return array
@@ -969,5 +786,41 @@ class RequestService
                 || (($user->getRole() == 'ROLE_MANAGER' && $user->getCompanyId() == $this->companyRepository->getMother()->getId())));
         }
         return true;
+    }
+
+    /**
+     * @param AnsweredRequestActionCommand $command
+     * @param Request $request
+     * @param User $user
+     * @return Request|null
+     * @throws CompanyNotFoundException
+     * @throws UnauthorizedStatusChangeException
+     */
+    public function AnsweredRequest(AnsweredRequestActionCommand $command, Request $request, User $user)
+    {
+        if (
+            !($request->getStatus()->getId() == Status::awaitingResponse)
+        ) {
+            throw new UnauthorizedStatusChangeException();
+        }
+
+        $companyUser = $this->companyRepository->fromId($user->getCompanyId());
+
+        if (is_null($companyUser)) {
+            throw new CompanyNotFoundException();
+        }
+
+        $log = new Log(null, 'Chamado respondido'
+            . ' por : ' . $user->getName()
+            . ' <br> trabalha em: ' . $companyUser->getName()
+            . ' <br> mensagem: ' . $command->getMessage()
+            , Carbon::now()->timezone('America/Sao_Paulo'), 'inAttendance');
+        $status = $this->statusRepository->fromId(Status::inAttendance);
+
+        $request->getLogs()->add($log);
+        $request->setStatus($status);
+        $request->setUpdatedAt(Carbon::now()->timezone('America/Sao_Paulo'));
+
+        return $this->requestRepository->update($request);
     }
 }

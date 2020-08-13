@@ -24,6 +24,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  */
 class CompanyService
 {
+    const motherId = 1;
 
     /**
      * @var CompanyRepository

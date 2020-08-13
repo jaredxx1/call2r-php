@@ -45,8 +45,10 @@ class MoveToCanceledAction extends AbstractAction
     {
         try {
             $data = json_decode($request->getContent(), true);
-            $command = MoveToCanceledCommand::fromArray($data);
             $request = $this->service->findById($requestId);
+            $data['user'] = $user;
+            $data['request'] = $request;
+            $command = MoveToCanceledCommand::fromArray($data);
             $request = $this->service->moveToCanceled($command, $request, $user);
         } catch (Exception $exception) {
             return $this->errorResponse($exception->getMessage(), $exception->getCode() ? $exception->getCode() : Response::HTTP_BAD_REQUEST);

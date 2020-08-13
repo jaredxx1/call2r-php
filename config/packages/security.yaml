@@ -40,7 +40,8 @@ security:
     - { path: '/api/v1/sections', roles: [ROLE_ADMIN, ROLE_MANAGER], methods: [GET] }
 
     # Attendance
-    - { path: '/api/v1/requests/move/\d+/awaiting-support', roles: [ROLE_CLIENT, ROLE_USER, ROLE_MANAGER], methods: [POST] }
+#    - { path: '/api/v1/requests/move/\d+/awaiting-support', roles: [ROLE_CLIENT, ROLE_USER, ROLE_MANAGER], methods: [POST] }
+    - { path: '/api/v1/requests/\d+/answered-request', roles: [ROLE_CLIENT, ROLE_USER, ROLE_MANAGER], methods: [POST] }
     - { path: '/api/v1/requests/move/\d+/awaiting-response', roles: [ROLE_CLIENT, ROLE_USER, ROLE_MANAGER], methods: [POST] }
     - { path: '/api/v1/requests/move/\d+/in-attendance', roles: [ROLE_CLIENT, ROLE_USER, ROLE_MANAGER], methods: [POST] }
     - { path: '/api/v1/requests/move/\d+/finished', roles: [ROLE_CLIENT, ROLE_USER, ROLE_MANAGER], methods: [POST] }

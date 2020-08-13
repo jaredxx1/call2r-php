@@ -37,6 +37,7 @@ class UpdateUserAction extends AbstractAction
     /**
      * @param Request $request
      * @param int $id
+     * @param UserInterface $user
      * @return JsonResponse
      */
     public function __invoke(Request $request, int $id, UserInterface $user)

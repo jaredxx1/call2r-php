@@ -3,13 +3,17 @@
 
 namespace App\Attendance\Application\Command;
 
+
+use App\Attendance\Application\Exception\AnsweredResponseException;
 use App\Attendance\Application\Exception\AwaitingResponseException;
+use App\Attendance\Application\Exception\CanceledRequestException;
 use App\Attendance\Domain\Entity\Request;
+use App\Company\Application\Service\CompanyService;
 use App\Core\Infrastructure\Container\Application\Utils\Command\CommandInterface;
 use App\User\Domain\Entity\User;
 use Webmozart\Assert\Assert;
 
-class MoveToAwaitingResponseCommand implements CommandInterface
+class AnsweredRequestActionCommand implements CommandInterface
 {
     /**
      * @var string|null
@@ -27,7 +31,7 @@ class MoveToAwaitingResponseCommand implements CommandInterface
     private $request;
 
     /**
-     * MoveToAwaitingResponseCommand constructor.
+     * AnsweredRequestActionCommand constructor.
      * @param string|null $message
      * @param User $user
      * @param Request $request
@@ -45,8 +49,8 @@ class MoveToAwaitingResponseCommand implements CommandInterface
             Assert::stringNotEmpty($data['message'], 'Field message cannot be empty.');
         }
 
-        if(!self::validationAwaitingResponse($data['request'], $data['user'])){
-            throw new AwaitingResponseException();
+        if(!self::validationAnsweredResponse($data['request'], $data['user'])){
+            throw new AnsweredResponseException();
         }
 
         return new self(
@@ -61,11 +65,14 @@ class MoveToAwaitingResponseCommand implements CommandInterface
      * @param User $user
      * @return bool
      */
-    private static function validationAwaitingResponse(Request $request, User $user)
+    private static function validationAnsweredResponse(Request $request, User $user)
     {
-        if(($user->getRole() == User::support) || ($user->getRole() == User::manager)){
-            return ($request->getCompanyId() == $user->getCompanyId())
-                && ($request->getAssignedTo() == $user->getId());
+        if($user->getRole() == User::client){
+            return $user->getId() == $request->getRequestedBy();
+        }
+
+        if($user->getRole() == User::manager){
+            return $user->getCompanyId() == CompanyService::motherId;
         }
 
         return false;
@@ -107,5 +114,4 @@ class MoveToAwaitingResponseCommand implements CommandInterface
     {
         $this->message = $message;
     }
-
 }

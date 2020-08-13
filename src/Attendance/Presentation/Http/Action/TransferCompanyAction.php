@@ -44,6 +44,9 @@ class TransferCompanyAction extends AbstractAction
     {
         try {
             $data = json_decode($request->getContent(), true);
+            $oldRequest = $this->service->findById($requestId);
+            $data['oldRequest'] = $oldRequest;
+            $data['user'] = $user;
             $data['requestId'] = $requestId;
             $command = TransferCompanyCommand::fromArray($data);
             $request = $this->service->transferCompany($command, $user);

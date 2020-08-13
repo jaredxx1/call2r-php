@@ -4,7 +4,11 @@
 namespace App\Attendance\Application\Command;
 
 
+use App\Attendance\Application\Exception\TransferRequestException;
+use App\Attendance\Domain\Entity\Request;
 use App\Core\Infrastructure\Container\Application\Utils\Command\CommandInterface;
+use App\User\Application\Exception\InvalidUserPrivileges;
+use App\User\Domain\Entity\User;
 use Webmozart\Assert\Assert;
 
 /**
@@ -35,24 +39,38 @@ class TransferCompanyCommand implements CommandInterface
     private $message;
 
     /**
+     * @var User
+     */
+    private $user;
+
+    /**
+     * @var Request
+     */
+    private $oldRequest;
+
+    /**
      * TransferCompanyCommand constructor.
      * @param string $section
      * @param int $companyId
      * @param int $requestId
      * @param string|null $message
+     * @param User $user
+     * @param Request $oldRequest
      */
-    public function __construct(string $section, int $companyId, int $requestId, ?string $message)
+    public function __construct(string $section, int $companyId, int $requestId, ?string $message, User $user, Request $oldRequest)
     {
         $this->section = $section;
         $this->companyId = $companyId;
         $this->requestId = $requestId;
         $this->message = $message;
+        $this->user = $user;
+        $this->oldRequest = $oldRequest;
     }
-
 
     /**
      * @param array $data
      * @return TransferCompanyCommand
+     * @throws InvalidUserPrivileges
      */
     public static function fromArray($data)
     {
@@ -70,12 +88,33 @@ class TransferCompanyCommand implements CommandInterface
             Assert::stringNotEmpty($data['message'], 'Field message cannot be empty.');
         }
 
+        if(!self::validationTransferCompany($data['oldRequest'], $data['user'])){
+            throw new TransferRequestException();
+        }
+
         return new self(
             $data['section'],
             $data['companyId'],
             $data['requestId'],
-            $data['message'] ?? null
+            $data['message'] ?? null,
+            $data['user'],
+            $data['oldRequest']
         );
+    }
+
+    /**
+     * @param Request $oldRequest
+     * @param User $user
+     * @return bool
+     */
+    private static function validationTransferCompany(Request $oldRequest, User $user)
+    {
+        if(($user->getRole() == User::support) || ($user->getRole() == User::manager)){
+            return ($oldRequest->getCompanyId() == $user->getCompanyId())
+                && ($oldRequest->getAssignedTo() == $user->getId());
+        }
+
+        return false;
     }
 
     /**
@@ -119,12 +158,26 @@ class TransferCompanyCommand implements CommandInterface
     }
 
     /**
+     * @return User
+     */
+    public function getUser(): User
+    {
+        return $this->user;
+    }
+
+    /**
+     * @return Request
+     */
+    public function getOldRequest(): Request
+    {
+        return $this->oldRequest;
+    }
+
+    /**
      * @param string|null $message
      */
     public function setMessage(?string $message): void
     {
         $this->message = $message;
     }
-
-
 }

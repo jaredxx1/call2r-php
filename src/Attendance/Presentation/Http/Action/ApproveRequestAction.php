@@ -44,6 +44,9 @@ class ApproveRequestAction extends AbstractAction
     {
         try {
             $data = json_decode($request->getContent(), true);
+            $request = $this->service->findById($requestId);
+            $data['user'] = $user;
+            $data['request'] = $request;
             $data['requestId'] = $requestId;
             $command = ApproveRequestCommand::fromArray($data);
             $request = $this->service->approveRequest($command, $user);
