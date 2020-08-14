@@ -4,19 +4,18 @@
 namespace App\Attendance\Presentation\Http\Action;
 
 
+use App\Attendance\Application\Command\SupportApproveCommand;
+use App\Attendance\Application\Command\TransferCompanyCommand;
 use App\Attendance\Application\Service\RequestService;
 use App\Core\Presentation\Http\AbstractAction;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Throwable;
 
-/**
- * Class MoveToApprovedAction
- * @package App\Attendance\Presentation\Http\Action
- */
-class MoveToApprovedAction extends AbstractAction
+class SupportApproveRequestAction extends AbstractAction
 {
     /**
      * @var RequestService
@@ -24,7 +23,7 @@ class MoveToApprovedAction extends AbstractAction
     private $service;
 
     /**
-     * MoveToApprovedAction constructor.
+     * ApproveRequestAction constructor.
      * @param RequestService $service
      */
     public function __construct(RequestService $service)
@@ -33,15 +32,21 @@ class MoveToApprovedAction extends AbstractAction
     }
 
     /**
+     * @param Request $request
      * @param int $requestId
      * @param UserInterface $user
      * @return JsonResponse
      */
-    public function __invoke(int $requestId, UserInterface $user)
+    public function __invoke(Request $request, int $requestId, UserInterface $user)
     {
         try {
+            $data = json_decode($request->getContent(), true);
             $request = $this->service->findById($requestId);
-            $request = $this->service->moveToApproved($request, $user);
+            $data['request'] = $request;
+            $data['user'] = $user;
+            $data['requestId'] = $requestId;
+            $command = SupportApproveCommand::fromArray($data);
+            $request = $this->service->supportApprove($command, $request, $user);
         } catch (Exception $exception) {
             return $this->errorResponse($exception->getMessage(), $exception->getCode() ? $exception->getCode() : Response::HTTP_BAD_REQUEST);
         } catch (Throwable $exception) {
@@ -50,5 +55,4 @@ class MoveToApprovedAction extends AbstractAction
 
         return new JsonResponse($request, Response::HTTP_ACCEPTED);
     }
-
 }

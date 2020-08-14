@@ -43,6 +43,11 @@ class AnsweredRequestActionCommand implements CommandInterface
         $this->request = $request;
     }
 
+    /**
+     * @param array $data
+     * @return AnsweredRequestActionCommand
+     * @throws AnsweredResponseException
+     */
     public static function fromArray($data)
     {
         if (key_exists('message', $data)) {

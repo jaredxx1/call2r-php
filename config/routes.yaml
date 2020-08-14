@@ -199,19 +199,12 @@ move_request_to_canceled:
   requirements:
     requestId: '\d+'
 
-move_request_to_approved:
-  path: /api/v1/requests/move/{requestId}/approved
-  controller: App\Attendance\Presentation\Http\Action\MoveToApprovedAction
-  methods:    POST
-  requirements:
-    requestId: '\d+'
-
 approve_request:
   path: /api/v1/requests/{requestId}/approve
   controller: App\Attendance\Presentation\Http\Action\ApproveRequestAction
   methods:    POST
   requirements:
-    requestId: '\d+'
+    requestId: '\d+'approved
 
 disapprove_request:
   path: /api/v1/requests/{requestId}/disapprove
@@ -237,6 +230,14 @@ transfer_company:
 answered_request:
   path: /api/v1/requests/{requestId}/answered-request
   controller: App\Attendance\Presentation\Http\Action\AnsweredRequestAction
+  methods:    POST
+  requirements:
+    requestId: '\d+'
+
+
+support_approve_request:
+  path: /api/v1/requests/{requestId}/support-approve
+  controller: App\Attendance\Presentation\Http\Action\SupportApproveRequestAction
   methods:    POST
   requirements:
     requestId: '\d+'

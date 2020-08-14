@@ -6,6 +6,7 @@ namespace App\Attendance\Application\Command;
 
 use App\Attendance\Application\Exception\ApproveRequestException;
 use App\Attendance\Domain\Entity\Request;
+use App\Company\Application\Service\CompanyService;
 use App\Core\Infrastructure\Container\Application\Utils\Command\CommandInterface;
 use App\User\Domain\Entity\User;
 use Webmozart\Assert\Assert;
@@ -87,9 +88,12 @@ class ApproveRequestCommand implements CommandInterface
      */
     private static function validationApproveRequest(Request $request, User $user)
     {
-        if(($user->getRole() == User::support) || ($user->getRole() == User::manager)){
-            return ($request->getCompanyId() == $user->getCompanyId())
-                && ($request->getAssignedTo() == $user->getId());
+        if($user->getRole() == User::client){
+            return $user->getId() == $request->getRequestedBy();
+        }
+
+        if($user->getRole() == User::manager){
+            return $user->getCompanyId() == CompanyService::motherId;
         }
 
         return false;
