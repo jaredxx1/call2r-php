@@ -204,7 +204,7 @@ approve_request:
   controller: App\Attendance\Presentation\Http\Action\ApproveRequestAction
   methods:    POST
   requirements:
-    requestId: '\d+'approved
+    requestId: '\d+'
 
 disapprove_request:
   path: /api/v1/requests/{requestId}/disapprove
