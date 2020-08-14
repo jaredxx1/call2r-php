@@ -110,8 +110,7 @@ class TransferCompanyCommand implements CommandInterface
     private static function validationTransferCompany(Request $oldRequest, User $user)
     {
         if($user->getRole() == User::manager){
-            return ($oldRequest->getCompanyId() == $user->getCompanyId())
-                && ($oldRequest->getAssignedTo() == $user->getId());
+            return ($oldRequest->getCompanyId() == $user->getCompanyId());
         }
 
         return false;

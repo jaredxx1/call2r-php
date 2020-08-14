@@ -76,8 +76,7 @@ class MoveToCanceledCommand  implements CommandInterface
         }
 
         if($user->getRole() == User::manager){
-            return ($request->getCompanyId() == $user->getCompanyId())
-                && ($request->getAssignedTo() == $user->getId());
+            return ($request->getCompanyId() == $user->getCompanyId());
         }
 
         return false;
