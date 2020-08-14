@@ -36,10 +36,15 @@ class SupportApproveRequestAction extends AbstractAction
      * @param int $requestId
      * @param UserInterface $user
      * @return JsonResponse
+     * @throws \App\Attendance\Application\Exception\AwaitingResponseException
+     * @throws \App\Attendance\Application\Exception\RequestNotFoundException
+     * @throws \App\Attendance\Application\Exception\SupportApproveException
+     * @throws \App\Attendance\Application\Exception\UnauthorizedStatusChangeException
+     * @throws \App\Company\Application\Exception\CompanyNotFoundException
      */
     public function __invoke(Request $request, int $requestId, UserInterface $user)
     {
-        try {
+//        try {
             $data = json_decode($request->getContent(), true);
             $request = $this->service->findById($requestId);
             $data['request'] = $request;
@@ -47,11 +52,11 @@ class SupportApproveRequestAction extends AbstractAction
             $data['requestId'] = $requestId;
             $command = SupportApproveCommand::fromArray($data);
             $request = $this->service->supportApprove($command, $request, $user);
-        } catch (Exception $exception) {
-            return $this->errorResponse($exception->getMessage(), $exception->getCode() ? $exception->getCode() : Response::HTTP_BAD_REQUEST);
-        } catch (Throwable $exception) {
-            return $this->errorResponse($exception->getMessage(), $exception->getCode() ? $exception->getCode() : Response::HTTP_BAD_REQUEST);
-        }
+//        } catch (Exception $exception) {
+//            return $this->errorResponse($exception->getMessage(), $exception->getCode() ? $exception->getCode() : Response::HTTP_BAD_REQUEST);
+//        } catch (Throwable $exception) {
+//            return $this->errorResponse($exception->getMessage(), $exception->getCode() ? $exception->getCode() : Response::HTTP_BAD_REQUEST);
+//        }
 
         return new JsonResponse($request, Response::HTTP_ACCEPTED);
     }

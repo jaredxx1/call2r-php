@@ -501,15 +501,16 @@ class RequestService
             throw new CompanyNotFoundException();
         }
 
-        if(is_null($command)){
-            $command = MoveToAwaitingResponseCommand::fromArray([]);
-            $command->setMessage("");
+        $message = "";
+
+        if(!is_null($command)){
+            $message = $command->getMessage();
         }
 
         $log = new Log(null, 'Chamado aguardando resposta'
             . ' por : ' . $user->getName()
             . ' <br> trabalha em: ' . $companyUser->getName()
-            . ' <br> mensagem: ' . $command->getMessage()
+            . ' <br> mensagem: ' . $message
             , Carbon::now()->timezone('America/Sao_Paulo'), 'awaitingResponse');
         $status = $this->statusRepository->fromId(Status::awaitingResponse);
 
@@ -860,10 +861,8 @@ class RequestService
             . ' <br> trabalha em: ' . $companyUser->getName()
             . ' <br> mensagem: ' . $command->getMessage()
             , Carbon::now()->timezone('America/Sao_Paulo'), 'inAttendance');
-        $status = $this->statusRepository->fromId(Status::awaitingResponse);
 
         $request->getLogs()->add($log);
-        $request->setStatus($status);
         $request->setUpdatedAt(Carbon::now()->timezone('America/Sao_Paulo'));
 
         $request = $this->moveToAwaitingResponse(null, $request, $user);
