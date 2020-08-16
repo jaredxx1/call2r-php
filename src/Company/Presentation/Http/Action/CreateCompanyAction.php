@@ -10,8 +10,13 @@ use App\Core\Presentation\Http\AbstractAction;
 use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
+/**
+ * Class CreateCompanyAction
+ * @package App\Company\Presentation\Http\Action
+ */
 class CreateCompanyAction extends AbstractAction
 {
 
@@ -20,6 +25,10 @@ class CreateCompanyAction extends AbstractAction
      */
     private $service;
 
+    /**
+     * CreateCompanyAction constructor.
+     * @param CompanyService $service
+     */
     public function __construct(
         CompanyService $service
     )
@@ -27,6 +36,10 @@ class CreateCompanyAction extends AbstractAction
         $this->service = $service;
     }
 
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
     public function __invoke(Request $request)
     {
 
@@ -36,11 +49,11 @@ class CreateCompanyAction extends AbstractAction
             $company = $this->service->create($command);
 
         } catch (Exception $exception) {
-            return $this->errorResponse($exception->getMessage(), $exception->getCode() ? $exception->getCode() : 400);
+            return $this->errorResponse($exception->getMessage(), $exception->getCode() ? $exception->getCode() : Response::HTTP_BAD_REQUEST);
         } catch (Throwable $exception) {
-            return $this->errorResponse($exception->getMessage(), $exception->getCode() ? $exception->getCode() : 400);
+            return $this->errorResponse($exception->getMessage(), $exception->getCode() ? $exception->getCode() : Response::HTTP_BAD_REQUEST);
         }
 
-        return new JsonResponse($company, 201);
+        return new JsonResponse($company, Response::HTTP_CREATED);
     }
 }

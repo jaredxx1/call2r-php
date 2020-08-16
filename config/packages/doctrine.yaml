@@ -16,3 +16,24 @@ doctrine:
                 dir: '%kernel.project_dir%/src/Company/Infrastructure/Persistence/Doctrine/ORM'
                 prefix: 'App\Company\Domain\Entity'
                 alias: Company
+
+            Wiki:
+                is_bundle: false
+                type: xml
+                dir: '%kernel.project_dir%/src/Wiki/Infrastructure/Persistence/Doctrine/ORM'
+                prefix: 'App\Wiki\Domain\Entity'
+                alias: Wiki
+                
+            User:
+                is_bundle: false
+                type: xml
+                dir: '%kernel.project_dir%/src/User/Infrastructure/Persistence/Doctrine/ORM'
+                prefix: 'App\User\Domain\Entity'
+                alias: Security
+
+            Attendance:
+                is_bundle: false
+                type: xml
+                dir: '%kernel.project_dir%/src/Attendance/Infrastructure/Persistence/Doctrine/ORM'
+                prefix: 'App\Attendance\Domain\Entity'
+                alias: Attendance
