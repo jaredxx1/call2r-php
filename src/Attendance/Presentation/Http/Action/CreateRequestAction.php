@@ -52,7 +52,6 @@ class CreateRequestAction extends AbstractAction
     {
         try {
             $data = json_decode($request->getContent(), true);
-            $data['user'] = $user;
             $command = CreateRequestCommand::fromArray($data);
             $request = $this->requestService->create($command, $user);
         } catch (Exception $exception) {

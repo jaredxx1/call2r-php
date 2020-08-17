@@ -12,11 +12,6 @@ use Symfony\Component\Security\Core\User\UserInterface;
  */
 class User implements UserInterface, JsonSerializable
 {
-    const client = "ROLE_CLIENT";
-    const support = "ROLE_USER";
-    const manager = "ROLE_MANAGER";
-    const admin = "ROLE_ADMIN";
-
     /**
      * @var int
      */

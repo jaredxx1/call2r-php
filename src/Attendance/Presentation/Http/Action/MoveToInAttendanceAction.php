@@ -44,9 +44,7 @@ class MoveToInAttendanceAction extends AbstractAction
     {
         try {
             $data = json_decode($request->getContent(), true);
-            $request  = $this->service->findById($requestId);
-            $data['request'] = $request;
-            $data['user'] = $user;
+            $request = $this->service->findById($requestId);
             $command = MoveToInAttendanceCommand::fromArray($data);
             $request = $this->service->moveToInAttendance($command, $request, $user);
         } catch (Exception $exception) {

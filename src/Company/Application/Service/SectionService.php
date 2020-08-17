@@ -52,17 +52,12 @@ class SectionService
      * @param UpdateSectionCommand $command
      * @param User $user
      * @return Section|null
-     * @throws InvalidUserPrivileges
      * @throws SectionNotFoundException
      */
     public function update(UpdateSectionCommand $command, User $user)
     {
         $section = $this->sectionRepository->fromId($command->id());
         $company = $this->companyRepository->fromId($user->getCompanyId());
-
-        if ((!$company->getSections()->contains($section)) && ($user->getRole() != 'ROLE_ADMIN')) {
-            throw new InvalidUserPrivileges();
-        }
 
         if (is_null($section)) {
             throw new SectionNotFoundException();

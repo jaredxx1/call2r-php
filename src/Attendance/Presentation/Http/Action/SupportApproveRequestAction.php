@@ -5,7 +5,6 @@ namespace App\Attendance\Presentation\Http\Action;
 
 
 use App\Attendance\Application\Command\SupportApproveCommand;
-use App\Attendance\Application\Command\TransferCompanyCommand;
 use App\Attendance\Application\Service\RequestService;
 use App\Core\Presentation\Http\AbstractAction;
 use Exception;
@@ -42,9 +41,6 @@ class SupportApproveRequestAction extends AbstractAction
         try {
             $data = json_decode($request->getContent(), true);
             $request = $this->service->findById($requestId);
-            $data['request'] = $request;
-            $data['user'] = $user;
-            $data['requestId'] = $requestId;
             $command = SupportApproveCommand::fromArray($data);
             $request = $this->service->supportApprove($command, $request, $user);
         } catch (Exception $exception) {

@@ -5,12 +5,7 @@ namespace App\Attendance\Presentation\Http\Action;
 
 
 use App\Attendance\Application\Command\AnsweredRequestActionCommand;
-use App\Attendance\Application\Command\MoveToAwaitingResponseCommand;
-use App\Attendance\Application\Exception\AnsweredResponseException;
-use App\Attendance\Application\Exception\RequestNotFoundException;
-use App\Attendance\Application\Exception\UnauthorizedStatusChangeException;
 use App\Attendance\Application\Service\RequestService;
-use App\Company\Application\Exception\CompanyNotFoundException;
 use App\Core\Presentation\Http\AbstractAction;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -19,7 +14,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Throwable;
 
-class AnsweredRequestAction  extends AbstractAction
+class AnsweredRequestAction extends AbstractAction
 {
     /**
      * @var RequestService
@@ -46,8 +41,6 @@ class AnsweredRequestAction  extends AbstractAction
         try {
             $data = json_decode($request->getContent(), true);
             $request = $this->service->findById($requestId);
-            $data['user'] = $user;
-            $data['request'] = $request;
             $command = AnsweredRequestActionCommand::fromArray($data);
             $request = $this->service->AnsweredRequest($command, $request, $user);
         } catch (Exception $exception) {

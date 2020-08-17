@@ -6,6 +6,7 @@ namespace App\User\Application\Command;
 
 use App\Core\Infrastructure\Container\Application\Exception\InvalidDateFormatException;
 use App\Core\Infrastructure\Container\Application\Utils\Command\CommandInterface;
+use App\User\Application\Service\UserService;
 use Carbon\Carbon;
 use Exception;
 use Webmozart\Assert\Assert;
@@ -111,7 +112,9 @@ class CreateUserCommand implements CommandInterface
         Assert::integer($data['companyId'], 'Field companyId is not an integer');
         Assert::boolean($data['isActive'], 'Field isActive is not a boolean');
 
-        Assert::oneOf($data['role'], ['ROLE_MANAGER', 'ROLE_USER', 'ROLE_CLIENT', 'ROLE_ADMIN'], 'Field role is neither admin neither manager neither user');
+        Assert::oneOf($data['role'],
+           ['ROLE_SUPPORT', 'ROLE_CLIENT', 'ROLE_MANAGER_CLIENT','ROLE_MANAGER_SUPPORT', 'ROLE_ADMIN'],
+            'Field role is neither admin neither manager neither user');
 
         return new self(
             $data['cpf'],
