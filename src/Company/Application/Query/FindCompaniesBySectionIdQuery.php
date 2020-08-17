@@ -33,8 +33,8 @@ class FindCompaniesBySectionIdQuery implements QueryInterface
      */
     public static function fromArray($data)
     {
-        Assert::keyExists($data, 'sectionId', "Id must be a integer");
-        Assert::integer($data['sectionId'], "Id must be a integer");
+        Assert::keyExists($data, 'sectionId', "sectionId must be a integer");
+        Assert::integer($data['sectionId'], "sectionId must be a integer");
 
         return new self(
             $data['sectionId']

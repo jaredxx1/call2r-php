@@ -28,12 +28,11 @@ get_company_by_id:
     id: '\d+'
 
 get_companies_by_section_id:
-  path: /api/v1/companies/{id}/section
+  path: /api/v1/companies/{sectionId}/section
   controller: App\Company\Presentation\Http\Action\FindCompaniesBySectionIdAction
   methods:    GET
   requirements:
     id: '\d+'
-
 
 create_company:
   path: /api/v1/companies
