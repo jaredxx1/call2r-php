@@ -49,13 +49,6 @@ get_all_sections:
   controller: App\Company\Presentation\Http\Action\FindAllSectionsAction
   methods:    GET
 
-update_section:
-  path: /api/v1/sections/{id}
-  controller: App\Company\Presentation\Http\Action\UpdateSectionAction
-  methods:    PUT
-  requirements:
-    id: '\d+'
-
 ## =============== Wiki routes
 get_all_articles_from_company:
   path: /api/v1/companies/{idCompany}/articles
