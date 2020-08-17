@@ -29,10 +29,4 @@ interface SectionRepository
      * @return Section|null
      */
     public function fromName(string $name): ?Section;
-
-    /**
-     * @param Section $section
-     * @return Section|null
-     */
-    public function update(Section $section): ?Section;
 }
