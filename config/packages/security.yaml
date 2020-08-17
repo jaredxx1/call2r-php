@@ -55,10 +55,9 @@ security:
     - { path: '/api/v1/requests/move/\d+/in-attendance', roles: [ROLE_SUPPORT, ROLE_MANAGER_SUPPORT], methods: [POST] }
     - { path: '/api/v1/requests/move/\d+/canceled', roles: [ROLE_MANAGER_SUPPORT], methods: [POST] }
     - { path: '/api/v1/requests/\d+/transfer-company', roles: [ROLE_SUPPORT, ROLE_MANAGER_SUPPORT], methods: [POST] }
-    - { path: '/api/v1/requests/\d+/support-approve', roles: [ROLE_SUPPORT, ROLE_MANAGER_SUPPORT], methods: [POST] } ## vai virar submit-for-approval
+    - { path: '/api/v1/requests/\d+/submit-for-approval', roles: [ROLE_SUPPORT, ROLE_MANAGER_SUPPORT], methods: [POST] }
     - { path: '/api/v1/requests/export-requests-to-pdf', roles: [ROLE_MANAGER_SUPPORT, ROLE_MANAGER_CLIENT], methods: [GET] }
     - { path: '/api/v1/requests/\d+/approve', roles: [ROLE_CLIENT, ROLE_MANAGER_CLIENT], methods: [POST] }
     - { path: '/api/v1/requests/move/\d+/awaiting-response', roles: [ROLE_SUPPORT, ROLE_MANAGER_SUPPORT], methods: [POST] }
     - { path: '/api/v1/requests/\d+/answered-request', roles: [ROLE_CLIENT, ROLE_MANAGER_CLIENT], methods: [POST] }
     - { path: '/api/v1/requests/\d+/disapprove', roles: [ROLE_CLIENT, ROLE_MANAGER_CLIENT], methods: [POST] }
-    - { path: '/api/v1/requests/move/\d+/finished', roles: [ROLE_CLIENT, ROLE_USER, ROLE_MANAGER], methods: [POST] } ## esta rota será apagada.
