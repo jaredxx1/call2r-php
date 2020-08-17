@@ -60,18 +60,12 @@ class ArticleService
      * @param User $user
      * @return mixed
      * @throws CompanyNotFoundException
-     * @throws InvalidUserPrivileges
      */
     public function fromCompany(FindAllArticlesFromCompanyQuery $query, User $user)
     {
         $company = $this->companyRepository->fromId($query->getIdCompany());
         if (is_null($company)) {
             throw new CompanyNotFoundException();
-        }
-
-        if (($user->getCompanyId() != $company->getId())
-            || ($user->getCompanyId() == $this->companyRepository->getMother()->getId())) {
-            throw new InvalidUserPrivileges();
         }
 
         return $this->articleRepository->fromCompany($query->getIdCompany());
@@ -82,18 +76,12 @@ class ArticleService
      * @param User $user
      * @return Article|null
      * @throws CompanyNotFoundException
-     * @throws InvalidUserPrivileges
      */
     public function create(CreateArticleCommand $command, User $user)
     {
         $company = $this->companyRepository->fromId($command->getIdCompany());
         if (is_null($company)) {
             throw new CompanyNotFoundException();
-        }
-
-        if (($user->getCompanyId() != $company->getId())
-            || ($user->getCompanyId() == $this->companyRepository->getMother()->getId())) {
-            throw new InvalidUserPrivileges();
         }
 
         $categories = $this->createCategoriesObject($command);
@@ -144,18 +132,12 @@ class ArticleService
      * @return Article|null
      * @throws ArticleNotFoundException
      * @throws CompanyNotFoundException
-     * @throws InvalidUserPrivileges
      */
     public function update(UpdateArticleCommand $command, User $user)
     {
         $company = $this->companyRepository->fromId($command->getIdCompany());
         if (is_null($company)) {
             throw new CompanyNotFoundException();
-        }
-
-        if (($user->getCompanyId() != $company->getId())
-            || ($user->getCompanyId() == $this->companyRepository->getMother()->getId())) {
-            throw new InvalidUserPrivileges();
         }
 
         $article = $this->articleRepository->fromId($command->getId());
@@ -186,18 +168,12 @@ class ArticleService
      * @return Article
      * @throws ArticleNotFoundException
      * @throws CompanyNotFoundException
-     * @throws InvalidUserPrivileges
      */
     public function fromArticle(FindArticlesByIdQuery $query, User $user)
     {
         $company = $this->companyRepository->fromId($query->getIdCompany());
         if (is_null($company)) {
             throw new CompanyNotFoundException();
-        }
-
-        if (($user->getCompanyId() != $company->getId())
-            || ($user->getCompanyId() == $this->companyRepository->getMother()->getId())) {
-            throw new InvalidUserPrivileges();
         }
 
         $article = $this->articleRepository->fromId($query->getIdArticle());
@@ -213,18 +189,12 @@ class ArticleService
      * @param User $user
      * @throws ArticleNotFoundException
      * @throws CompanyNotFoundException
-     * @throws InvalidUserPrivileges
      */
     public function delete(DeleteArticleCommand $query, User $user)
     {
         $company = $this->companyRepository->fromId($query->getIdCompany());
         if (is_null($company)) {
             throw new CompanyNotFoundException();
-        }
-
-        if (($user->getCompanyId() != $company->getId())
-            || ($user->getCompanyId() == $this->companyRepository->getMother()->getId())) {
-            throw new InvalidUserPrivileges();
         }
 
         $article = $this->articleRepository->fromId($query->getIdArticle());

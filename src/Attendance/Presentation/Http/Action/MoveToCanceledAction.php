@@ -41,13 +41,11 @@ class MoveToCanceledAction extends AbstractAction
      * @param UserInterface $user
      * @return JsonResponse
      */
-    public function __invoke(Request  $request, int $requestId, UserInterface $user)
+    public function __invoke(Request $request, int $requestId, UserInterface $user)
     {
         try {
             $data = json_decode($request->getContent(), true);
             $request = $this->service->findById($requestId);
-            $data['user'] = $user;
-            $data['request'] = $request;
             $command = MoveToCanceledCommand::fromArray($data);
             $request = $this->service->moveToCanceled($command, $request, $user);
         } catch (Exception $exception) {

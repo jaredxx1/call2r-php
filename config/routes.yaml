@@ -164,13 +164,6 @@ find_requests:
   controller: App\Attendance\Presentation\Http\Action\FindRequestsAction
   methods:    GET
 
-#move_request_to_awaiting_support:
-#  path: /api/v1/requests/move/{requestId}/awaiting-support
-#  controller: App\Attendance\Presentation\Http\Action\MoveToAwaitingSupportAction
-#  methods:    POST
-#  requirements:
-#    requestId: '\d+'
-
 move_request_to_awaiting_response:
   path: /api/v1/requests/move/{requestId}/awaiting-response
   controller: App\Attendance\Presentation\Http\Action\MoveToAwaitingResponseAction

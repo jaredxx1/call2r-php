@@ -487,7 +487,6 @@ class RequestService
      * @return Request
      * @throws CompanyNotFoundException
      * @throws UnauthorizedStatusChangeException
-     * @throws AwaitingResponseException
      */
     public function moveToAwaitingResponse(?MoveToAwaitingResponseCommand  $command, Request $request, User $user): Request
     {

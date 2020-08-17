@@ -33,6 +33,11 @@ use Ramsey\Uuid\Uuid;
  */
 final class UserService
 {
+    const client = "ROLE_CLIENT";
+    const support = "ROLE_SUPPORT";
+    const managerClient = "ROLE_MANAGER_CLIENT";
+    const managerSupport = "ROLE_MANAGER_SUPPORT";
+    const admin = "ROLE_ADMIN";
 
     /**
      * @var UserRepository
@@ -176,15 +181,6 @@ final class UserService
             throw new DuplicateCpfException();
         }
 
-        if (!self::validateUserPrivilege($command, $user)) {
-            throw new InvalidUserPrivileges();
-        }
-
-        if ($command->getCompanyId() == $this->companyRepository->getMother()->getId()) {
-            if ($command->getRole() == 'ROLE_USER') {
-                throw new InvalidRegisterInMotherCompany();
-            }
-        }
         $hashedPassword = password_hash($command->getPassword(), PASSWORD_BCRYPT);
 
         $user = new User(
@@ -201,31 +197,6 @@ final class UserService
         );
 
         return $this->userRepository->createUser($user);
-    }
-
-    /**
-     * @param CreateUserCommand $command
-     * @param User $user
-     * @return bool
-     */
-    private  function validateUserPrivilege(CreateUserCommand $command, User $user)
-    {
-        if ($user->getRole() == 'ROLE_ADMIN') {
-            return (($command->getRole() == 'ROLE_MANAGER') || ($command->getRole() == 'ROLE_ADMIN'));
-        }
-
-        if ($user->getRole() == 'ROLE_MANAGER') {
-            if($command->getRole() == 'ROLE_USER'){
-                return ($command->getCompanyId() == $user->getCompanyId())
-                    && ($command->getCompanyId() != $this->companyRepository->getMother()->getId());
-            }
-            if($command->getRole() == 'ROLE_CLIENT'){
-                return ($command->getCompanyId() == $user->getCompanyId())
-                    && ($command->getCompanyId() == $this->companyRepository->getMother()->getId());
-            }
-        }
-
-        return false;
     }
 
     /**

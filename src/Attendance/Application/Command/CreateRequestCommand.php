@@ -4,11 +4,7 @@
 namespace App\Attendance\Application\Command;
 
 
-use App\Attendance\Application\Exception\CreateRequestException;
-use App\Company\Application\Service\CompanyService;
 use App\Core\Infrastructure\Container\Application\Utils\Command\CommandInterface;
-use App\User\Application\Exception\InvalidUserPrivileges;
-use App\User\Domain\Entity\User;
 use Webmozart\Assert\Assert;
 
 class CreateRequestCommand implements CommandInterface
@@ -39,27 +35,20 @@ class CreateRequestCommand implements CommandInterface
     private $section;
 
     /**
-     * @var User
-     */
-    private $user;
-
-    /**
      * CreateRequestCommand constructor.
      * @param int $companyId
      * @param string $title
      * @param string $description
      * @param int $priority
      * @param string $section
-     * @param User $user
      */
-    public function __construct(int $companyId, string $title, string $description, int $priority, string $section, User $user)
+    public function __construct(int $companyId, string $title, string $description, int $priority, string $section)
     {
         $this->companyId = $companyId;
         $this->title = $title;
         $this->description = $description;
         $this->priority = $priority;
         $this->section = $section;
-        $this->user = $user;
     }
 
     /**
@@ -84,35 +73,13 @@ class CreateRequestCommand implements CommandInterface
         Assert::stringNotEmpty($data['description'], 'Field description is empty');
         Assert::stringNotEmpty($data['section'], 'Field section is empty');
 
-        if(!self::validateCreateRequest($data['user'])){
-            throw new CreateRequestException();
-        }
-
         return new self(
             $data['companyId'],
             $data['title'],
             $data['description'],
             $data['priority'],
-            $data['section'],
-            $data['user']
+            $data['section']
         );
-    }
-
-    /**
-     * @param User $user
-     * @return bool
-     */
-    private static function validateCreateRequest(User $user)
-    {
-        if($user->getRole() == User::client){
-            return true;
-        }
-
-        if($user->getRole() == User::manager){
-            return $user->getCompanyId() == CompanyService::motherId;
-        }
-
-        return false;
     }
 
     /**
@@ -161,13 +128,5 @@ class CreateRequestCommand implements CommandInterface
     public function getSection(): string
     {
         return $this->section;
-    }
-
-    /**
-     * @return User
-     */
-    public function getUser(): User
-    {
-        return $this->user;
     }
 }

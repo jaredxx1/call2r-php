@@ -17,26 +17,12 @@ class MoveToAwaitingResponseCommand implements CommandInterface
     private $message;
 
     /**
-     * @var User
-     */
-    private $user;
-
-    /**
-     * @var Request
-     */
-    private $request;
-
-    /**
      * MoveToAwaitingResponseCommand constructor.
      * @param string|null $message
-     * @param User $user
-     * @param Request $request
      */
-    public function __construct(?string $message, User $user, Request $request)
+    public function __construct(?string $message)
     {
         $this->message = $message;
-        $this->user = $user;
-        $this->request = $request;
     }
 
     public static function fromArray($data)
@@ -45,51 +31,14 @@ class MoveToAwaitingResponseCommand implements CommandInterface
             Assert::stringNotEmpty($data['message'], 'Field message cannot be empty.');
         }
 
-        if(!self::validationAwaitingResponse($data['request'], $data['user'])){
-            throw new AwaitingResponseException();
-        }
-
         return new self(
-            $data['message'] ?? null,
-            $data['user'],
-            $data['request']
+            $data['message'] ?? null
         );
-    }
-
-    /**
-     * @param Request $request
-     * @param User $user
-     * @return bool
-     */
-    private static function validationAwaitingResponse(Request $request, User $user)
-    {
-        if(($user->getRole() == User::support) || ($user->getRole() == User::manager)){
-            return ($request->getCompanyId() == $user->getCompanyId())
-                && ($request->getAssignedTo() == $user->getId());
-        }
-
-        return false;
     }
 
     public function toArray(): array
     {
         return [];
-    }
-
-    /**
-     * @return User
-     */
-    public function getUser(): User
-    {
-        return $this->user;
-    }
-
-    /**
-     * @return Request
-     */
-    public function getRequest(): Request
-    {
-        return $this->request;
     }
 
     /**

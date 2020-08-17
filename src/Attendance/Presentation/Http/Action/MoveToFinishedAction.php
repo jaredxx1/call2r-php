@@ -4,11 +4,11 @@
 namespace App\Attendance\Presentation\Http\Action;
 
 use App\Attendance\Application\Command\MoveToFinishedCommand;
-use Symfony\Component\HttpFoundation\Request;
 use App\Attendance\Application\Service\RequestService;
 use App\Core\Presentation\Http\AbstractAction;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Throwable;
@@ -44,10 +44,8 @@ class MoveToFinishedAction extends AbstractAction
         try {
             $data = json_decode($request->getContent(), true);
             $request = $this->service->findById($requestId);
-            $data['user'] = $user;
-            $data['request'] = $request;
             $command = MoveToFinishedCommand::fromArray($data);
-            $request = $this->service->moveToFinished($command,$request, $user);
+            $request = $this->service->moveToFinished($command, $request, $user);
         } catch (Exception $exception) {
             return $this->errorResponse($exception->getMessage(), $exception->getCode() ? $exception->getCode() : Response::HTTP_BAD_REQUEST);
         } catch (Throwable $exception) {
