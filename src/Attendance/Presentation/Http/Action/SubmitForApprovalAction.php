@@ -3,7 +3,8 @@
 
 namespace App\Attendance\Presentation\Http\Action;
 
-use App\Attendance\Application\Command\MoveToFinishedCommand;
+
+use App\Attendance\Application\Command\SubmitForApprovalCommand;
 use App\Attendance\Application\Service\RequestService;
 use App\Core\Presentation\Http\AbstractAction;
 use Exception;
@@ -13,11 +14,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Throwable;
 
-/**
- * Class MoveToFinishedAction
- * @package App\Attendance\Presentation\Http\Action
- */
-class MoveToFinishedAction extends AbstractAction
+class SubmitForApprovalAction extends AbstractAction
 {
     /**
      * @var RequestService
@@ -25,7 +22,7 @@ class MoveToFinishedAction extends AbstractAction
     private $service;
 
     /**
-     * MoveToFinishedAction constructor.
+     * ApproveRequestAction constructor.
      * @param RequestService $service
      */
     public function __construct(RequestService $service)
@@ -44,8 +41,8 @@ class MoveToFinishedAction extends AbstractAction
         try {
             $data = json_decode($request->getContent(), true);
             $request = $this->service->findById($requestId);
-            $command = MoveToFinishedCommand::fromArray($data);
-            $request = $this->service->moveToFinished($command, $request, $user);
+            $command = SubmitForApprovalCommand::fromArray($data);
+            $request = $this->service->submitForApproval($command, $request, $user);
         } catch (Exception $exception) {
             return $this->errorResponse($exception->getMessage(), $exception->getCode() ? $exception->getCode() : Response::HTTP_BAD_REQUEST);
         } catch (Throwable $exception) {

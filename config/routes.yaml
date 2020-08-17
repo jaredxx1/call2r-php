@@ -57,13 +57,6 @@ get_all_sections:
   controller: App\Company\Presentation\Http\Action\FindAllSectionsAction
   methods:    GET
 
-update_section:
-  path: /api/v1/sections/{id}
-  controller: App\Company\Presentation\Http\Action\UpdateSectionAction
-  methods:    PUT
-  requirements:
-    id: '\d+'
-
 ## =============== Wiki routes
 get_all_articles_from_company:
   path: /api/v1/companies/{idCompany}/articles
@@ -186,13 +179,6 @@ move_request_to_in_attendance:
   requirements:
     requestId: '\d+'
 
-move_request_to_finished:
-  path: /api/v1/requests/move/{requestId}/finished
-  controller: App\Attendance\Presentation\Http\Action\MoveToFinishedAction
-  methods:    POST
-  requirements:
-    requestId: '\d+'
-
 move_request_to_canceled:
   path: /api/v1/requests/move/{requestId}/canceled
   controller: App\Attendance\Presentation\Http\Action\MoveToCanceledAction
@@ -235,10 +221,9 @@ answered_request:
   requirements:
     requestId: '\d+'
 
-
-support_approve_request:
-  path: /api/v1/requests/{requestId}/support-approve
-  controller: App\Attendance\Presentation\Http\Action\SupportApproveRequestAction
+submit_for_approval:
+  path: /api/v1/requests/{requestId}/submit-for-approval
+  controller: App\Attendance\Presentation\Http\Action\SubmitForApprovalAction
   methods:    POST
   requirements:
     requestId: '\d+'

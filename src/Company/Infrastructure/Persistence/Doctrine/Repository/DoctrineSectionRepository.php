@@ -62,17 +62,6 @@ class DoctrineSectionRepository implements SectionRepository
     }
 
     /**
-     * @param Section $section
-     * @return Section|null
-     */
-    public function update(Section $section): ?Section
-    {
-        $this->entityManager->flush();
-
-        return $section;
-    }
-
-    /**
      * @param int $id
      * @return Section|null
      */
