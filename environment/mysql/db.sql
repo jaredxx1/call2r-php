@@ -47,15 +47,15 @@ create table tb_company_section
 create table tb_user
 (
     id_user    int auto_increment primary key,
-    cpf        varchar(11)                                      null,
-    name       varchar(255)                                     null,
-    password   varchar(255)                                     null,
-    email      varchar(255)                                     null,
-    image      varchar(255)                                     null,
-    role       enum ('ROLE_USER', 'ROLE_ADMIN', 'ROLE_MANAGER','ROLE_CLIENT') null,
-    birthdate  datetime                                             null,
-    active     tinyint(1)                                       null,
-    id_company int                                              null,
+    cpf        varchar(11)                                                                                      null,
+    name       varchar(255)                                                                                     null,
+    password   varchar(255)                                                                                     null,
+    email      varchar(255)                                                                                     null,
+    image      varchar(255)                                                                                     null,
+    role       enum ('ROLE_SUPPORT', 'ROLE_CLIENT', 'ROLE_MANAGER_CLIENT','ROLE_MANAGER_SUPPORT', 'ROLE_ADMIN') null,
+    birthdate  datetime                                                                                         null,
+    active     tinyint(1)                                                                                       null,
+    id_company int                                                                                              null,
     FOREIGN KEY (id_company) REFERENCES tb_company (id_company)
 );
 
@@ -144,18 +144,46 @@ create table tb_requests_logs
         foreign key (log_id) references tb_request_log (id_log)
 );
 
-INSERT INTO call2r.tb_sla (id_sla, p1, p2, p3, p4, p5) VALUES (1, 1, 1, 1, 1, 1);
-INSERT INTO call2r.tb_sla (id_sla, p1, p2, p3, p4, p5) VALUES (2, 1, 2, 3, 4, 5);
+INSERT INTO call2r.tb_sla (id_sla, p1, p2, p3, p4, p5)
+VALUES (1, 1, 1, 1, 1, 1);
+INSERT INTO call2r.tb_sla (id_sla, p1, p2, p3, p4, p5)
+VALUES (2, 1, 2, 3, 4, 5);
+INSERT INTO call2r.tb_sla (id_sla, p1, p2, p3, p4, p5)
+VALUES (3, 1, 2, 3, 4, 5);
 
-INSERT INTO call2r.tb_company (id_company, active, cnpj, description, mother, name, sla_id) VALUES (1, 1, '72572151000125', 'Mother compnay', 1, 'mother company', 1);
-INSERT INTO call2r.tb_company (id_company, active, cnpj, description, mother, name, sla_id) VALUES (2, 1, '3434567150222', 'Support company', 0, 'Support company', 2);
+INSERT INTO call2r.tb_company (id_company, active, cnpj, description, mother, name, sla_id)
+VALUES (1, 1, '72572151000125', 'Mother compnay', 1, 'mother company', 1);
+INSERT INTO call2r.tb_company (id_company, active, cnpj, description, mother, name, sla_id)
+VALUES (2, 1, '3434567150222', 'Support company 1', 0, 'Support company 1', 2);
+INSERT INTO call2r.tb_company (id_company, active, cnpj, description, mother, name, sla_id)
+VALUES (3, 1, '2434567150222', 'Support company 2', 0, 'Support company 2', 3);
 
-INSERT INTO call2r.tb_section (id_section, name) VALUES (1, 'section');
+INSERT INTO call2r.tb_section (id_section, name)
+VALUES (1, 'section 1');
+INSERT INTO call2r.tb_section (id_section, name)
+VALUES (2, 'section 2');
+INSERT INTO call2r.tb_section (id_section, name)
+VALUES (3, 'section 3');
 
-INSERT INTO call2r.tb_company_section (id_company, id_section) VALUES (2, 1);
+INSERT INTO call2r.tb_company_section (id_company, id_section)
+VALUES (1, 1);
+INSERT INTO call2r.tb_company_section (id_company, id_section)
+VALUES (1, 2);
+INSERT INTO call2r.tb_company_section (id_company, id_section)
+VALUES (2, 3);
 
-INSERT INTO call2r.tb_user (id_user, cpf, name, password, email, image, role, birthdate, active, id_company) VALUES (2, '00000000001', 'user client', '$2y$10$myscLaALeJIgJ251Sn9D.eU9CSNK5yooqeMMBmhxuuLVW46nc9AfG', 'user1@email.com.br', null, 'ROLE_CLIENT', '1999-09-24', 1, 1);
-INSERT INTO call2r.tb_user (id_user, cpf, name, password, email, image, role, birthdate, active, id_company) VALUES (1, '00000000000', 'user admin', '$2y$10$55ajY9Zbr38aphiRvkAh6ulg2mUSnESwY79bGFTBl1pZ3NLdXaq9C', 'user@email.com.br', null, 'ROLE_ADMIN', '1998-12-21', 1, 1);
-INSERT INTO call2r.tb_user (id_user, cpf, name, password, email, image, role, birthdate, active, id_company) VALUES (3, '00000000002', 'user manager mother', '$2y$10$mFCdrS417lhZN7m9yWe/BeBFhEl2/EY6XNh6OWpoC4v735.4YKGLu', 'user2@email.com.br', null, 'ROLE_MANAGER', '1999-09-24', 1, 1);
-INSERT INTO call2r.tb_user (id_user, cpf, name, password, email, image, role, birthdate, active, id_company) VALUES (4, '00000000003', 'user support', '$2y$10$myscLaALeJIgJ251Sn9D.eU9CSNK5yooqeMMBmhxuuLVW46nc9AfG', 'user3@email.com.br', null, 'ROLE_USER', '1999-09-24', 1, 2);
-INSERT INTO call2r.tb_user (id_user, cpf, name, password, email, image, role, birthdate, active, id_company) VALUES (5, '00000000004', 'user manager support', '$2y$10$mFCdrS417lhZN7m9yWe/BeBFhEl2/EY6XNh6OWpoC4v735.4YKGLu', 'user4@email.com.br', null, 'ROLE_MANAGER', '1999-09-24', 1, 2);
+INSERT INTO call2r.tb_user (id_user, cpf, name, password, email, image, role, birthdate, active, id_company)
+VALUES (2, '00000000001', 'user client', '$2y$10$myscLaALeJIgJ251Sn9D.eU9CSNK5yooqeMMBmhxuuLVW46nc9AfG',
+        'user1@email.com.br', null, 'ROLE_CLIENT', '1999-09-24', 1, 1);
+INSERT INTO call2r.tb_user (id_user, cpf, name, password, email, image, role, birthdate, active, id_company)
+VALUES (1, '00000000000', 'user admin', '$2y$10$55ajY9Zbr38aphiRvkAh6ulg2mUSnESwY79bGFTBl1pZ3NLdXaq9C',
+        'user@email.com.br', null, 'ROLE_ADMIN', '1998-12-21', 1, 1);
+INSERT INTO call2r.tb_user (id_user, cpf, name, password, email, image, role, birthdate, active, id_company)
+VALUES (3, '00000000002', 'user manager mother', '$2y$10$mFCdrS417lhZN7m9yWe/BeBFhEl2/EY6XNh6OWpoC4v735.4YKGLu',
+        'user2@email.com.br', null, 'ROLE_MANAGER_CLIENT', '1999-09-24', 1, 1);
+INSERT INTO call2r.tb_user (id_user, cpf, name, password, email, image, role, birthdate, active, id_company)
+VALUES (4, '00000000003', 'user support', '$2y$10$myscLaALeJIgJ251Sn9D.eU9CSNK5yooqeMMBmhxuuLVW46nc9AfG',
+        'user3@email.com.br', null, 'ROLE_SUPPORT', '1999-09-24', 1, 2);
+INSERT INTO call2r.tb_user (id_user, cpf, name, password, email, image, role, birthdate, active, id_company)
+VALUES (5, '00000000004', 'user manager support', '$2y$10$mFCdrS417lhZN7m9yWe/BeBFhEl2/EY6XNh6OWpoC4v735.4YKGLu',
+        'user4@email.com.br', null, 'ROLE_MANAGER_SUPPORT', '1999-09-24', 1, 2);
