@@ -27,6 +27,14 @@ get_company_by_id:
   requirements:
     id: '\d+'
 
+get_companies_by_section_id:
+  path: /api/v1/companies/{id}/section
+  controller: App\Company\Presentation\Http\Action\FindCompaniesBySectionIdAction
+  methods:    GET
+  requirements:
+    id: '\d+'
+
+
 create_company:
   path: /api/v1/companies
   controller: App\Company\Presentation\Http\Action\CreateCompanyAction
