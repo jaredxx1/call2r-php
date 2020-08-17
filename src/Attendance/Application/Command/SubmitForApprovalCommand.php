@@ -7,11 +7,7 @@ namespace App\Attendance\Application\Command;
 use App\Core\Infrastructure\Container\Application\Utils\Command\CommandInterface;
 use Webmozart\Assert\Assert;
 
-/**
- * Class MoveToFinishedCommand
- * @package App\Attendance\Application\Command
- */
-class MoveToFinishedCommand implements CommandInterface
+class SubmitForApprovalCommand implements CommandInterface
 {
     /**
      * @var string|null
@@ -19,7 +15,7 @@ class MoveToFinishedCommand implements CommandInterface
     private $message;
 
     /**
-     * MoveToFinishedCommand constructor.
+     * SupportApproveCommand constructor.
      * @param string|null $message
      */
     public function __construct(?string $message)
@@ -27,9 +23,10 @@ class MoveToFinishedCommand implements CommandInterface
         $this->message = $message;
     }
 
+
     /**
      * @param array $data
-     * @return MoveToFinishedCommand
+     * @return SubmitForApprovalCommand
      */
     public static function fromArray($data)
     {
@@ -62,5 +59,4 @@ class MoveToFinishedCommand implements CommandInterface
     {
         $this->message = $message;
     }
-
 }

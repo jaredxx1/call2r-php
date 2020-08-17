@@ -4,34 +4,28 @@
 namespace App\Company\Presentation\Http\Action;
 
 
-use App\Company\Application\Command\UpdateSectionCommand;
-use App\Company\Application\Service\SectionService;
+use App\Company\Application\Query\FindCompaniesBySectionIdQuery;
+use App\Company\Application\Service\CompanyService;
 use App\Core\Presentation\Http\AbstractAction;
-use Exception;
+use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Security\Core\User\UserInterface;
 use Throwable;
 
-/**
- * Class UpdateSectionAction
- * @package App\Company\Presentation\Http\Action
- */
-class UpdateSectionAction extends AbstractAction
+class FindCompaniesBySectionIdAction  extends AbstractAction
 {
     /**
-     * @var SectionService
+     * @var CompanyService
      */
     private $service;
 
-
     /**
-     * UpdateSectionAction constructor.
-     * @param SectionService $service
+     * FindCompanyByIdAction constructor.
+     * @param CompanyService $service
      */
     public function __construct(
-        SectionService $service
+        CompanyService $service
     )
     {
         $this->service = $service;
@@ -42,19 +36,18 @@ class UpdateSectionAction extends AbstractAction
      * @param int $id
      * @return JsonResponse
      */
-    public function __invoke(Request $request, int $id, UserInterface $user)
+    public function __invoke(Request $request, int $id)
     {
         try {
-            $data = json_decode($request->getContent(), true);
-            $data['url'] = $id;
-            $command = UpdateSectionCommand::fromArray($data);
-            $section = $this->service->update($command, $user);
+            $data = ['sectionId' => $id];
+            $query = FindCompaniesBySectionIdQuery::fromArray($data);
+            $company = $this->service->getCompaniesBySection($query);
         } catch (Exception $exception) {
             return $this->errorResponse($exception->getMessage(), $exception->getCode() ? $exception->getCode() : Response::HTTP_BAD_REQUEST);
         } catch (Throwable $exception) {
             return $this->errorResponse($exception->getMessage(), $exception->getCode() ? $exception->getCode() : Response::HTTP_BAD_REQUEST);
         }
 
-        return new JsonResponse($section, Response::HTTP_OK);
+        return new JsonResponse($company, Response::HTTP_OK);
     }
 }

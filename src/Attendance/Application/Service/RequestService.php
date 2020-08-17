@@ -8,14 +8,10 @@ use App\Attendance\Application\Command\CreateRequestCommand;
 use App\Attendance\Application\Command\DisapproveRequestCommand;
 use App\Attendance\Application\Command\MoveToAwaitingResponseCommand;
 use App\Attendance\Application\Command\MoveToCanceledCommand;
-use App\Attendance\Application\Command\MoveToFinishedCommand;
 use App\Attendance\Application\Command\MoveToInAttendanceCommand;
-use App\Attendance\Application\Command\SupportApproveCommand;
+use App\Attendance\Application\Command\SubmitForApprovalCommand;
 use App\Attendance\Application\Command\TransferCompanyCommand;
 use App\Attendance\Application\Command\UpdateRequestCommand;
-use App\Attendance\Application\Exception\AwaitingResponseException;
-use App\Attendance\Application\Exception\CanceledRequestException;
-use App\Attendance\Application\Exception\DisapproveRequestException;
 use App\Attendance\Application\Exception\RequestNotFoundException;
 use App\Attendance\Application\Exception\SectionNotFromCompanyException;
 use App\Attendance\Application\Exception\UnauthorizedRequestUpdateException;
@@ -168,7 +164,6 @@ class RequestService
      * @param User $user
      * @return Request
      * @throws CompanyNotFoundException
-     * @throws InvalidUserPrivileges
      * @throws RequestNotFoundException
      * @throws UnauthorizedStatusChangeException
      */
@@ -220,7 +215,6 @@ class RequestService
      * @param User $user
      * @return Request
      * @throws CompanyNotFoundException
-     * @throws InvalidUserPrivileges
      * @throws UnauthorizedStatusChangeException
      */
     public function moveToApproved(Request $request, User $user): Request
@@ -361,7 +355,6 @@ class RequestService
      * @param User $user
      * @return Request
      * @throws CompanyNotFoundException
-     * @throws DisapproveRequestException
      * @throws RequestNotFoundException
      * @throws UnauthorizedStatusChangeException
      */
@@ -521,14 +514,13 @@ class RequestService
     }
 
     /**
-     * @param MoveToFinishedCommand $command
      * @param Request $request
      * @param User $user
      * @return Request
      * @throws CompanyNotFoundException
      * @throws UnauthorizedStatusChangeException
      */
-    public function moveToFinished(MoveToFinishedCommand $command, Request $request, User $user): Request
+    public function moveToFinished(Request $request, User $user): Request
     {
 
         if (!($request->getStatus()->getId() == Status::approved)
@@ -545,7 +537,6 @@ class RequestService
         $log = new Log(null, 'Chamado finalizado'
             . ' por : ' . $user->getName()
             . ' <br> trabalha em: ' . $companyUser->getName()
-            . ' <br> mensagem: ' . $command->getMessage()
             , Carbon::now()->timezone('America/Sao_Paulo'), 'finish');
         $status = $this->statusRepository->fromId(Status::finished);
 
@@ -563,7 +554,6 @@ class RequestService
      * @return Request
      * @throws CompanyNotFoundException
      * @throws UnauthorizedStatusChangeException
-     * @throws CanceledRequestException
      */
     public function moveToCanceled(?MoveToCanceledCommand $command, Request $request, User $user): Request
     {
@@ -660,7 +650,6 @@ class RequestService
      * @param User $user
      * @return Request
      * @throws CompanyNotFoundException
-     * @throws InvalidUserPrivileges
      * @throws RequestNotFoundException
      * @throws SectionNotFoundException
      * @throws UnauthorizedStatusChangeException
@@ -746,7 +735,7 @@ class RequestService
 
         $mpdf = new Mpdf();
         $uuid = Uuid::uuid4();
-        $mpdf->WriteHTML('<h1 style="text-align: center">CALLR2 PDF</h1>');
+        $mpdf->WriteHTML('<h1 style="text-align: center">CALL2R PDF</h1>');
         $mpdf->WriteHTML('<table style="width:100%;" >');
         $mpdf->WriteHTML('<tr>');
         $mpdf->WriteHTML('<th style="text-align: left">Title</th>');
@@ -834,15 +823,14 @@ class RequestService
     }
 
     /**
-     * @param SupportApproveCommand $command
+     * @param SubmitForApprovalCommand $command
      * @param Request $request
      * @param User $user
      * @return Request|null
-     * @throws AwaitingResponseException
      * @throws CompanyNotFoundException
      * @throws UnauthorizedStatusChangeException
      */
-    public function supportApprove(SupportApproveCommand $command, Request $request, User $user)
+    public function submitForApproval(SubmitForApprovalCommand $command, Request $request, User $user)
     {
         if (!($request->getStatus()->getId() == Status::inAttendance)
         ) {

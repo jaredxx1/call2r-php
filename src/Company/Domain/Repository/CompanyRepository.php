@@ -39,4 +39,10 @@ interface CompanyRepository
      * @return Company|null
      */
     public function update(Company $company): ?Company;
+
+    /**
+     * @param int $sectionId
+     * @return array|null
+     */
+    public function findCompaniesBySection(int $sectionId): ?array;
 }
