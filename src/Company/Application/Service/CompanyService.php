@@ -8,7 +8,9 @@ use App\Company\Application\Command\CreateCompanyCommand;
 use App\Company\Application\Command\UpdateCompanyCommand;
 use App\Company\Application\Exception\CompanyNotFoundException;
 use App\Company\Application\Exception\NonUniqueMotherCompanyException;
+use App\Company\Application\Exception\SectionNotFoundException;
 use App\Company\Application\Exception\SlaNotFoundException;
+use App\Company\Application\Query\FindCompaniesBySectionIdQuery;
 use App\Company\Application\Query\FindCompanyByIdQuery;
 use App\Company\Domain\Entity\Company;
 use App\Company\Domain\Entity\Section;
@@ -239,5 +241,21 @@ class CompanyService
         }
 
         return $company;
+    }
+
+    /**
+     * @param FindCompaniesBySectionIdQuery $query
+     * @return array|null
+     * @throws SectionNotFoundException
+     */
+    public function getCompaniesBySection(FindCompaniesBySectionIdQuery $query)
+    {
+        $section = $this->sectionRepository->fromId($query->getSectionId());
+
+        if(is_null($section)){
+            throw new SectionNotFoundException();
+        }
+
+        return $this->companyRepository->findCompaniesBySection($section->getId());
     }
 }
