@@ -57,9 +57,8 @@ interface RequestRepository
      * @param int|null $statusId
      * @param int|null $assignedTo
      * @param int|null $requestedBy
+     * @param int|null $companyId
      * @return array
      */
-    public function searchRequests(?string $title, ?string $initialDate, ?string $finalDate, ?int $statusId, ?int $assignedTo, ?int $requestedBy): array;
-
-
+    public function searchRequests(?string $title, ?string $initialDate, ?string $finalDate, ?int $statusId, ?int $assignedTo, ?int $requestedBy, ?int $companyId): array;
 }
