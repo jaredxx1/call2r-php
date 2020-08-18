@@ -47,6 +47,7 @@ class UpdateArticleAction extends AbstractAction
             $data = json_decode($request->getContent(), true);
             $data['urlCompany'] = $idCompany;
             $data['urlArticle'] = $idArticle;
+            $data['idCompany'] = $user->getCompanyId();
             $command = UpdateArticleCommand::fromArray($data);
             $article = $this->service->update($command, $user);
         } catch (Exception $exception) {

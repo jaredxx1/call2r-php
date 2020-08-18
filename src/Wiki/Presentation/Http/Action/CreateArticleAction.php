@@ -45,6 +45,7 @@ class CreateArticleAction extends AbstractAction
 
         try {
             $data = json_decode($request->getContent(), true);
+            $data['idCompany'] = $user->getCompanyId();
             $command = CreateArticleCommand::fromArray($data);
             $article = $this->service->create($command, $user);
         } catch (Exception $exception) {

@@ -84,7 +84,7 @@ class ArticleService
             throw new CompanyNotFoundException();
         }
 
-        $categories = $this->createCategoriesObject($command);
+        $categories = $this->createCategoriesObject($command,$command->getIdCompany());
 
         $article = new Article(
             null,
@@ -100,19 +100,20 @@ class ArticleService
     }
 
     /**
-     * @param mixed $command
+     * @param $command
+     * @param int $companyId
      * @return ArrayCollection
      */
-    private function createCategoriesObject($command): ArrayCollection
+    private function createCategoriesObject($command, int $companyId): ArrayCollection
     {
         $categories = new ArrayCollection();
         $titleOfCategories = new ArrayCollection();
         foreach ($command->getCategories() as $category) {
-            $foundCategory = $this->categoryRepository->fromArticleTitle($category['title'], $category['idCompany']);
+            $foundCategory = $this->categoryRepository->fromArticleTitle($category['title'], $companyId);
             if (is_null($foundCategory)) {
                 $localCategory = new Category(
                     null,
-                    $category['idCompany'],
+                    $companyId,
                     $category['title']
                 );
                 if (!$titleOfCategories->contains($localCategory->getTitle())) {
@@ -154,7 +155,7 @@ class ArticleService
         }
 
         if (!is_null($command->getCategories())) {
-            $categories = $this->createCategoriesObject($command);
+            $categories = $this->createCategoriesObject($command, $command->getIdCompany());
 
             $article->setCategories($categories);
         }
