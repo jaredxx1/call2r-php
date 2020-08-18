@@ -14,6 +14,7 @@ use App\Attendance\Application\Command\TransferCompanyCommand;
 use App\Attendance\Application\Command\UpdateRequestCommand;
 use App\Attendance\Application\Exception\RequestNotFoundException;
 use App\Attendance\Application\Exception\SectionNotFromCompanyException;
+use App\Attendance\Application\Exception\UnauthorizedRequestException;
 use App\Attendance\Application\Exception\UnauthorizedRequestUpdateException;
 use App\Attendance\Application\Exception\UnauthorizedStatusChangeException;
 use App\Attendance\Application\Exception\UnauthorizedStatusUpdateException;
@@ -294,7 +295,7 @@ class RequestService
 
         switch ($user->getRole()) {
             case User::client:
-                $requests = $this->requestRepository->findRequestsToClient
+                $requests = $this->requestRepository->findRequestsClient
                 (
                     $query->getAwaitingSupport(),
                     $query->getInAttendance(),
@@ -306,7 +307,7 @@ class RequestService
                 );
                 break;
             case User::support:
-                $requests = $this->requestRepository->findRequestsToSupport
+                $requests = $this->requestRepository->findRequestsSupport
                 (
                     $query->getAwaitingSupport(),
                     $query->getInAttendance(),
@@ -318,7 +319,7 @@ class RequestService
                 );
                 break;
             case User::managerClient:
-                $requests = $this->requestRepository->findRequestsToManagerClient
+                $requests = $this->requestRepository->findRequestsManagerClient
                 (
                     $query->getAwaitingSupport(),
                     $query->getInAttendance(),
@@ -329,7 +330,7 @@ class RequestService
                 );
                 break;
             case User::managerSupport:
-                $requests = $this->requestRepository->findRequestsToManagerSupport
+                $requests = $this->requestRepository->findRequestsManagerSupport
                 (
                     $query->getAwaitingSupport(),
                     $query->getInAttendance(),
@@ -758,32 +759,42 @@ class RequestService
     /**
      * @param FindRequestByIdQuery $query
      * @param User $user
-     * @return Request
-     * @throws InvalidUserPrivileges
+     * @return Request|array
      * @throws RequestNotFoundException
+     * @throws UnauthorizedRequestException
      */
     public function fromId(FindRequestByIdQuery $query, User $user)
     {
-        $request = $this->requestRepository->fromId($query->getId());
+        $request = $this->findById($query->getId());
 
         if (is_null($request)) {
             throw new RequestNotFoundException();
         }
 
-        if (!self::validationFromId($request, $user)) {
-            throw new InvalidUserPrivileges();
+        switch ($user->getRole()) {
+            case User::client:
+                if(!($request->getRequestedBy() == $user->getId())){
+                    throw new UnauthorizedRequestException();
+                }
+                break;
+            case User::support:
+                if(!(
+                    ($request->getCompanyId() == $user->getCompanyId()) &&
+                    (($request->getAssignedTo() == $user->getId()) || ($request->getAssignedTo() == null))
+                )){
+                    throw new UnauthorizedRequestException();
+                }
+                break;
+            case User::managerSupport:
+                if(!($request->getCompanyId() == $user->getCompanyId())){
+                    throw new UnauthorizedRequestException();
+                }
+                break;
+            default:
+                $request = [];
         }
 
         return $request;
-    }
-
-    private function validationFromId(Request $request, User $user)
-    {
-        if ($request->getCompanyId() != $user->getCompanyId()) {
-            return (($request->getRequestedBy() == $user->getId())
-                || (($user->getRole() == 'ROLE_MANAGER' && $user->getCompanyId() == $this->companyRepository->getMother()->getId())));
-        }
-        return true;
     }
 
     /**

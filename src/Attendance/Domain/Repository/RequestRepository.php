@@ -42,7 +42,7 @@ interface RequestRepository
      * @param User $user
      * @return array
      */
-    public function findRequestsToClient(?bool $awaitingSupport, ?bool $inAttendance,?bool $awaitingResponse,?bool $canceled,?bool $approved,?bool $active,User $user): array;
+    public function findRequestsClient(?bool $awaitingSupport, ?bool $inAttendance,?bool $awaitingResponse,?bool $canceled,?bool $approved,?bool $active,User $user): array;
 
     /**
      * @param bool|null $awaitingSupport
@@ -54,7 +54,7 @@ interface RequestRepository
      * @param User $user
      * @return array
      */
-    public function findRequestsToSupport(?bool $awaitingSupport, ?bool $inAttendance,?bool $awaitingResponse,?bool $canceled,?bool $approved,?bool $active,User $user): array;
+    public function findRequestsSupport(?bool $awaitingSupport, ?bool $inAttendance,?bool $awaitingResponse,?bool $canceled,?bool $approved,?bool $active,User $user): array;
 
     /**
      * @param bool|null $awaitingSupport
@@ -65,7 +65,7 @@ interface RequestRepository
      * @param bool|null $active
      * @return array
      */
-    public function findRequestsToManagerClient(?bool $awaitingSupport, ?bool $inAttendance,?bool $awaitingResponse,?bool $canceled,?bool $approved,?bool $active): array;
+    public function findRequestsManagerClient(?bool $awaitingSupport, ?bool $inAttendance,?bool $awaitingResponse,?bool $canceled,?bool $approved,?bool $active): array;
 
     /**
      * @param bool|null $awaitingSupport
@@ -77,7 +77,7 @@ interface RequestRepository
      * @param User $user
      * @return array
      */
-    public function findRequestsToManagerSupport(?bool $awaitingSupport, ?bool $inAttendance,?bool $awaitingResponse,?bool $canceled,?bool $approved,?bool $active,User $user): array;
+    public function findRequestsManagerSupport(?bool $awaitingSupport, ?bool $inAttendance,?bool $awaitingResponse,?bool $canceled,?bool $approved,?bool $active,User $user): array;
 
     /**
      * @param string|null $title
@@ -89,5 +89,4 @@ interface RequestRepository
      * @return array
      */
     public function searchRequests(?string $title, ?string $initialDate, ?string $finalDate, ?int $statusId, ?int $assignedTo, ?int $requestedBy): array;
-
 }
