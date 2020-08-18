@@ -133,7 +133,7 @@ class DoctrineUserRepository implements UserRepository
             ->select('u')
             ->from('App\User\Domain\Entity\User', 'u')
             ->where('u.role = :role')
-            ->setParameter('role', UserService::managerClient)
+            ->setParameter('role', User::managerClient)
             ->getQuery()
             ->getResult();
     }
@@ -148,7 +148,7 @@ class DoctrineUserRepository implements UserRepository
             ->select('u')
             ->from('App\User\Domain\Entity\User', 'u')
             ->where('u.role = :role')
-            ->setParameter('role', UserService::managerSupport)
+            ->setParameter('role', User::managerSupport)
             ->getQuery()
             ->getResult();
     }
@@ -163,7 +163,7 @@ class DoctrineUserRepository implements UserRepository
             ->select('u')
             ->from('App\User\Domain\Entity\User', 'u')
             ->where('u.role = :role')
-            ->setParameter('role', UserService::client)
+            ->setParameter('role', User::client)
             ->getQuery()
             ->getResult();
     }
@@ -180,7 +180,7 @@ class DoctrineUserRepository implements UserRepository
             ->from('App\User\Domain\Entity\User', 'u')
             ->where('u.role = :role')
             ->andWhere('u.companyId = :companyId')
-            ->setParameter('role', UserService::support)
+            ->setParameter('role', User::support)
             ->setParameter('companyId', $companyId)
             ->getQuery()
             ->getResult();

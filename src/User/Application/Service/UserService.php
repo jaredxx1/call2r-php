@@ -33,11 +33,6 @@ use Ramsey\Uuid\Uuid;
  */
 final class UserService
 {
-    const client = "ROLE_CLIENT";
-    const support = "ROLE_SUPPORT";
-    const managerClient = "ROLE_MANAGER_CLIENT";
-    const managerSupport = "ROLE_MANAGER_SUPPORT";
-    const admin = "ROLE_ADMIN";
 
     /**
      * @var UserRepository
