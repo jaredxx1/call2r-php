@@ -33,11 +33,6 @@ use Ramsey\Uuid\Uuid;
  */
 final class UserService
 {
-    const client = "ROLE_CLIENT";
-    const support = "ROLE_SUPPORT";
-    const managerClient = "ROLE_MANAGER_CLIENT";
-    const managerSupport = "ROLE_MANAGER_SUPPORT";
-    const admin = "ROLE_ADMIN";
 
     /**
      * @var UserRepository
@@ -137,23 +132,17 @@ final class UserService
     public function findUsersByRole(User $user, FindUsersByRoleQuery $query)
     {
         switch ($query->getRole()) {
-            case 'admin':
-                $users = $this->userRepository->findAdmins($user);
+            case 'manager-client':
+                $users = $this->userRepository->findClientManagers();
                 break;
-            case 'manager':
-                $users = $this->userRepository->findManagers($user);
+            case 'manager-support':
+                $users = $this->userRepository->findSupportsManagers();
                 break;
             case 'client':
-                if($user->getCompanyId() != $this->companyRepository->getMother()->getId()){
-                    throw new InvalidUserPrivileges();
-                }
-                $users = $this->userRepository->findClientUsers($user);
+                $users = $this->userRepository->findClient();
                 break;
             case 'support':
-                if($user->getCompanyId() == $this->companyRepository->getMother()->getId()){
-                    throw new InvalidUserPrivileges();
-                }
-                $users = $this->userRepository->findSupportUsers($user);
+                $users = $this->userRepository->findSupport($user->getCompanyId());
                 break;
             default:
                 throw new Exception('Unexpected role');

@@ -4,6 +4,7 @@
 namespace App\User\Infrastructure\Persistence\Doctrine\Repository;
 
 
+use App\User\Application\Service\UserService;
 use App\User\Domain\Entity\User;
 use App\User\Domain\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -83,70 +84,6 @@ class DoctrineUserRepository implements UserRepository
 
     /**
      * @param User $user
-     * @return array
-     */
-    public function findSupportUsers(User $user): array
-    {
-        return $this->entityManager
-            ->createQueryBuilder()
-            ->select('u')
-            ->from('App\User\Domain\Entity\User', 'u')
-            ->where('u.role = :role')
-            ->andWhere('u.companyId = :userRequestCompany')
-            ->setParameter('role', 'ROLE_USER')
-            ->setParameter('userRequestCompany', $user->getCompanyId())
-            ->getQuery()
-            ->getResult();
-    }
-
-    /**
-     * @param User $user
-     * @return array
-     */
-    public function findManagers(User $user): array
-    {
-        $query =  $this->entityManager
-            ->createQueryBuilder()
-            ->select('u')
-            ->from('App\User\Domain\Entity\User', 'u')
-            ->where('u.role = :role')
-            ->setParameter('role', 'ROLE_MANAGER');
-
-        if($user->getRole() == 'ROLE_MANAGER'){
-            $query->andWhere('u.companyId = :userRequestCompany')
-                ->setParameter('userRequestCompany', $user->getCompanyId());
-        }
-
-        return $query->getQuery()->getResult();
-    }
-
-    public function findAdmins(User $user): array
-    {
-        return $this->entityManager
-        ->createQueryBuilder()
-        ->select('u')
-        ->from('App\User\Domain\Entity\User', 'u')
-        ->where('u.role = :role')
-        ->setParameter('role', 'ROLE_ADMIN')
-        ->getQuery()
-        ->getResult();
-    }
-
-
-    public function findClientUsers(User $user): array
-    {
-        return $this->entityManager
-            ->createQueryBuilder()
-            ->select('u')
-            ->from('App\User\Domain\Entity\User', 'u')
-            ->where('u.role = :role')
-            ->setParameter('role', 'ROLE_CLIENT')
-            ->getQuery()
-            ->getResult();
-    }
-
-    /**
-     * @param User $user
      * @return User|null
      */
     public function createUser(User $user): ?User
@@ -184,5 +121,68 @@ class DoctrineUserRepository implements UserRepository
             ->setParameter('birthdate', $birthdate)
             ->getQuery()
             ->getOneOrNullResult();
+    }
+
+    /**
+     * @return int|mixed|string
+     */
+    public function findClientManagers()
+    {
+        return $this->entityManager
+            ->createQueryBuilder()
+            ->select('u')
+            ->from('App\User\Domain\Entity\User', 'u')
+            ->where('u.role = :role')
+            ->setParameter('role', User::managerClient)
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * @return int|mixed|string
+     */
+    public function findSupportsManagers()
+    {
+        return $this->entityManager
+            ->createQueryBuilder()
+            ->select('u')
+            ->from('App\User\Domain\Entity\User', 'u')
+            ->where('u.role = :role')
+            ->setParameter('role', User::managerSupport)
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * @return int|mixed|string
+     */
+    public function findClient()
+    {
+        return $this->entityManager
+            ->createQueryBuilder()
+            ->select('u')
+            ->from('App\User\Domain\Entity\User', 'u')
+            ->where('u.role = :role')
+            ->setParameter('role', User::client)
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * @param int $companyId
+     * @return int|mixed|string
+     */
+    public function findSupport(int $companyId)
+    {
+        return $this->entityManager
+            ->createQueryBuilder()
+            ->select('u')
+            ->from('App\User\Domain\Entity\User', 'u')
+            ->where('u.role = :role')
+            ->andWhere('u.companyId = :companyId')
+            ->setParameter('role', User::support)
+            ->setParameter('companyId', $companyId)
+            ->getQuery()
+            ->getResult();
     }
 }

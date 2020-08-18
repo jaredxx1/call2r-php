@@ -33,30 +33,6 @@ interface UserRepository
 
     /**
      * @param User $user
-     * @return array
-     */
-    public function findSupportUsers(User $user): array;
-
-    /**
-     * @param User $user
-     * @return array
-     */
-    public function findManagers(User $user): array;
-
-    /**
-     * @param User $user
-     * @return array
-     */
-    public function findAdmins(User $user): array;
-
-    /**
-     * @param User $user
-     * @return array
-     */
-    public function findClientUsers(User $user): array;
-
-    /**
-     * @param User $user
      * @return User|null
      */
     public function createUser(User $user): ?User;
@@ -73,5 +49,26 @@ interface UserRepository
      * @return User|null
      */
     public function fromCpfBirthdate(string $cpf, $birthdate): ?User;
+
+    /**
+     * @return mixed
+     */
+    public function findClientManagers();
+
+    /**
+     * @return mixed
+     */
+    public function findSupportsManagers();
+
+    /**
+     * @return mixed
+     */
+    public function findClient();
+
+    /**
+     * @param int $companyId
+     * @return mixed
+     */
+    public function findSupport(int $companyId);
 
 }
