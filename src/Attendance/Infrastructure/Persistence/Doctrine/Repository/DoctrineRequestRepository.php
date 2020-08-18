@@ -132,9 +132,10 @@ class DoctrineRequestRepository implements RequestRepository
      * @param int|null $statusId
      * @param int|null $assignedTo
      * @param int|null $requestedBy
+     * @param int|null $companyId
      * @return array
      */
-    public function searchRequests(?string $title, ?string $initialDate, ?string $finalDate, ?int $statusId, ?int $assignedTo, ?int $requestedBy): array
+    public function searchRequests(?string $title, ?string $initialDate, ?string $finalDate, ?int $statusId, ?int $assignedTo, ?int $requestedBy, ?int $companyId): array
     {
 
         $query = $this->entityManager->createQueryBuilder()
@@ -165,6 +166,11 @@ class DoctrineRequestRepository implements RequestRepository
         if (isset($requestedBy)) {
             $query->andWhere('r.requestedBy = :requestedBy')
                 ->setParameter(':requestedBy', $requestedBy);
+        }
+
+        if(isset($companyId)){
+            $query->andWhere('r.companyId = :companyId')
+                ->setParameter('companyId', $companyId);
         }
 
         return $query->getQuery()->getResult();
