@@ -33,6 +33,7 @@ use App\Company\Domain\Repository\CompanyRepository;
 use App\Company\Domain\Repository\SectionRepository;
 use App\Core\Infrastructure\Storaged\AWS\S3;
 use App\User\Application\Exception\InvalidUserPrivileges;
+use App\User\Application\Service\UserService;
 use App\User\Domain\Entity\User;
 use App\User\Domain\Repository\UserRepository;
 use Carbon\Carbon;
@@ -717,20 +718,37 @@ class RequestService
 
     /**
      * @param ExportRequestsToPdfQuery $query
+     * @param User $user
      * @return array
      * @throws MpdfException
-     * @throws Exception
      */
-    public function ExportsRequestsToPdf(ExportRequestsToPdfQuery $query)
+    public function ExportsRequestsToPdf(ExportRequestsToPdfQuery $query, User $user)
     {
-        $result = $this->requestRepository->searchRequests(
-            $query->getTitle(),
-            $query->getInitialDate(),
-            $query->getFinalDate(),
-            $query->getStatusId(),
-            $query->getAssignedTo(),
-            $query->getRequestedBy()
-        );
+        $result = [];
+
+        if($user->getRole() == User::managerSupport){
+            $result = $this->requestRepository->searchRequests(
+                $query->getTitle(),
+                $query->getInitialDate(),
+                $query->getFinalDate(),
+                $query->getStatusId(),
+                $query->getAssignedTo(),
+                $query->getRequestedBy(),
+                $user->getCompanyId()
+            );
+        }
+
+        if($user->getRole() == User::managerClient){
+            $result = $this->requestRepository->searchRequests(
+                $query->getTitle(),
+                $query->getInitialDate(),
+                $query->getFinalDate(),
+                $query->getStatusId(),
+                $query->getAssignedTo(),
+                $query->getRequestedBy(),
+                null
+            );
+        }
 
         if ($result == []) {
             return [];
