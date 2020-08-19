@@ -15,14 +15,13 @@ use App\User\Application\Command\ResetPasswordCommand;
 use App\User\Application\Command\UpdateUserCommand;
 use App\User\Application\Command\UpdateUserImageCommand;
 use App\User\Application\Exception\CreateUserException;
+use App\User\Application\Exception\DuplicateCpfException;
 use App\User\Application\Exception\DuplicateEmailException;
 use App\User\Application\Exception\FromIdException;
-use App\User\Application\Exception\UpdateUserException;
-use App\User\Application\Exception\DuplicateCpfException;
 use App\User\Application\Exception\InvalidCredentialsException;
-use App\User\Application\Exception\InvalidRegisterInMotherCompany;
-use App\User\Application\Exception\InvalidUserPrivileges;
 use App\User\Application\Exception\ResetPasswordExcpetion;
+use App\User\Application\Exception\UpdateImageException;
+use App\User\Application\Exception\UpdateUserException;
 use App\User\Application\Exception\UserNotFoundException;
 use App\User\Application\Query\FindUsersByRoleQuery;
 use App\User\Domain\Entity\User;
@@ -166,15 +165,15 @@ final class UserService
     {
         $company = $this->companyRepository->fromId($command->getCompanyId());
 
-        if(is_null($company)){
+        if (is_null($company)) {
             throw new CompanyNotFoundException();
         }
 
-        if(!is_null($this->userRepository->fromCpf($command->getCpf()))){
+        if (!is_null($this->userRepository->fromCpf($command->getCpf()))) {
             throw new DuplicateCpfException();
         }
 
-        if(!is_null($this->userRepository->fromEmail($command->getEmail()))){
+        if (!is_null($this->userRepository->fromEmail($command->getEmail()))) {
             throw new DuplicateEmailException();
         }
 
@@ -251,7 +250,7 @@ final class UserService
     {
         $user = $this->userRepository->fromId($command->getId());
 
-        if(is_null($user)){
+        if (is_null($user)) {
             throw new UserNotFoundException();
         }
 
@@ -274,20 +273,6 @@ final class UserService
         }
 
         return $this->userRepository->updateUser($user);
-    }
-
-    /**
-     * @param User|null $userEmail
-     * @param User $user
-     * @throws DuplicateEmailException
-     */
-    public function validateEmailUpdate(?User $userEmail, User $user): void
-    {
-        if (!is_null($userEmail)) {
-            if ($userEmail->getId() != $user->getId()) {
-                throw new DuplicateEmailException();
-            }
-        }
     }
 
     /**
@@ -391,6 +376,20 @@ final class UserService
     }
 
     /**
+     * @param User|null $userEmail
+     * @param User $user
+     * @throws DuplicateEmailException
+     */
+    public function validateEmailUpdate(?User $userEmail, User $user): void
+    {
+        if (!is_null($userEmail)) {
+            if ($userEmail->getId() != $user->getId()) {
+                throw new DuplicateEmailException();
+            }
+        }
+    }
+
+    /**
      * @param string $id
      * @param User $userSession
      * @return User|null
@@ -454,15 +453,20 @@ final class UserService
     }
 
     /**
+     * @param User $userSession
      * @param UpdateUserImageCommand $command
      * @return User
+     * @throws UpdateImageException
      * @throws Exception
      */
-    public function updateImage(UpdateUserImageCommand $command)
+    public function updateImage(User $userSession, UpdateUserImageCommand $command)
     {
         $uuid = Uuid::uuid4();
 
-        $user = $command->getUser();
+
+        if ($command->getId() != $userSession->getId()) {
+            throw new UpdateImageException();
+        }
 
         $uploadedFile = $command->getUploadFile();
 
@@ -472,9 +476,9 @@ final class UserService
 
         $url = $this->s3->sendFile('user', $uuid->serialize(), $path, $name, $contentType);
 
-        $user->setImage($url);
+        $userSession->setImage($url);
 
-        return $this->userRepository->updateUser($user);
+        return $this->userRepository->updateUser($userSession);
     }
 
     /**
@@ -488,7 +492,7 @@ final class UserService
     {
         $birthdate = new DateTime($command->getBirthdate());
         $user = $this->userRepository->fromCpf($command->getCpf());
-        if($user->getBirthdate() != $birthdate){
+        if ($user->getBirthdate() != $birthdate) {
             throw new ResetPasswordExcpetion();
         }
 
