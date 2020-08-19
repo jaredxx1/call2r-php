@@ -16,6 +16,7 @@ use App\User\Application\Command\UpdateUserCommand;
 use App\User\Application\Command\UpdateUserImageCommand;
 use App\User\Application\Exception\CreateUserException;
 use App\User\Application\Exception\DuplicateEmailException;
+use App\User\Application\Exception\FromIdException;
 use App\User\Application\Exception\UpdateUserException;
 use App\User\Application\Exception\DuplicateCpfException;
 use App\User\Application\Exception\InvalidCredentialsException;
@@ -248,7 +249,7 @@ final class UserService
      */
     public function updateUser(UpdateUserCommand $command, User $userSession): User
     {
-        $user = $this->fromId($command->getId());
+        $user = $this->userRepository->fromId($command->getId());
 
         if(is_null($user)){
             throw new UserNotFoundException();
@@ -391,10 +392,12 @@ final class UserService
 
     /**
      * @param string $id
+     * @param User $userSession
      * @return User|null
+     * @throws FromIdException
      * @throws UserNotFoundException
      */
-    public function fromId(string $id): ?User
+    public function fromId(string $id, User $userSession): ?User
     {
         $user = $this->userRepository->fromId($id);
 
@@ -402,7 +405,52 @@ final class UserService
             throw new UserNotFoundException();
         }
 
+        if ($user->getId() != $userSession->getId()) {
+            $this->validateAnotherUserFromId($user, $userSession);
+        }
+
         return $user;
+    }
+
+    /**
+     * @param User $user
+     * @param User $userSession
+     * @throws FromIdException
+     * @throws Exception
+     */
+    private function validateAnotherUserFromId(User $user, User $userSession)
+    {
+        switch ($userSession->getRole()) {
+            case User::client:
+                throw new FromIdException();
+            case User::support:
+                throw new FromIdException();
+            case User::managerSupport:
+                if (
+                !(($user->getCompanyId() == $userSession->getCompanyId()) &&
+                    ($user->getRole() == User::support))
+                ) {
+                    throw new FromIdException();
+                }
+                break;
+            case User::managerClient:
+                if (
+                !(($user->getCompanyId() == $userSession->getCompanyId()) &&
+                    ($user->getRole() == User::client))
+                ) {
+                    throw new FromIdException();
+                }
+                break;
+            case User::admin:
+                if (
+                !(($user->getRole() == User::managerSupport) || ($user->getRole() == User::managerClient))
+                ) {
+                    throw new FromIdException();
+                }
+                break;
+            default:
+                throw new Exception('Unexpected role');
+        }
     }
 
     /**
