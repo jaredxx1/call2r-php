@@ -40,6 +40,7 @@ security:
     - { path: '/api/v1/companies', roles: [ROLE_ADMIN], methods: [GET, POST] }
 
     # User
+    - { path: '/api/v1/users/reset-password', roles: [], methods: [POST] }
     - { path: '/api/v1/users/manager-client', roles: [ROLE_ADMIN], methods: [GET] }
     - { path: '/api/v1/users/manager-support', roles: [ROLE_ADMIN], methods: [GET] }
     - { path: '/api/v1/users/client', roles: [ROLE_MANAGER_CLIENT], methods: [GET] }
