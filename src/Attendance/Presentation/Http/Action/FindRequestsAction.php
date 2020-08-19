@@ -4,6 +4,7 @@
 namespace App\Attendance\Presentation\Http\Action;
 
 
+use App\Attendance\Application\Query\FindRequestsQuery;
 use App\Attendance\Application\Service\RequestService;
 use App\Core\Presentation\Http\AbstractAction;
 use App\User\Application\Service\UserService;
@@ -49,7 +50,9 @@ class FindRequestsAction extends AbstractAction
     public function __invoke(Request $request, UserInterface $user)
     {
         try {
-            $requests = $this->service->findAll($user);
+            $params = $request->query->all();
+            $query = FindRequestsQuery::fromArray($params);
+            $requests = $this->service->findAll($query, $user);
         } catch (Exception $exception) {
             return $this->errorResponse($exception->getMessage(), $exception->getCode() ? $exception->getCode() : Response::HTTP_BAD_REQUEST);
         } catch (Throwable $exception) {

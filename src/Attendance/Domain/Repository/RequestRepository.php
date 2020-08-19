@@ -33,29 +33,51 @@ interface RequestRepository
     public function update(Request $request): ?Request;
 
     /**
+     * @param bool|null $awaitingSupport
+     * @param bool|null $inAttendance
+     * @param bool|null $awaitingResponse
+     * @param bool|null $canceled
+     * @param bool|null $approved
+     * @param bool|null $active
      * @param User $user
      * @return array
      */
-    public function findRequestsToClient(User $user): array;
+    public function findRequestsClient(?bool $awaitingSupport, ?bool $inAttendance,?bool $awaitingResponse,?bool $canceled,?bool $approved,?bool $active,User $user): array;
 
     /**
+     * @param bool|null $awaitingSupport
+     * @param bool|null $inAttendance
+     * @param bool|null $awaitingResponse
+     * @param bool|null $canceled
+     * @param bool|null $approved
+     * @param bool|null $active
      * @param User $user
      * @return array
      */
-    public function findRequestsToSupport(User $user): array;
+    public function findRequestsSupport(?bool $awaitingSupport, ?bool $inAttendance,?bool $awaitingResponse,?bool $canceled,?bool $approved,?bool $active,User $user): array;
 
     /**
+     * @param bool|null $awaitingSupport
+     * @param bool|null $inAttendance
+     * @param bool|null $awaitingResponse
+     * @param bool|null $canceled
+     * @param bool|null $approved
+     * @param bool|null $active
      * @return array
-     *
-
      */
-    public function findRequestsToManagerClient(): array;
+    public function findRequestsManagerClient(?bool $awaitingSupport, ?bool $inAttendance,?bool $awaitingResponse,?bool $canceled,?bool $approved,?bool $active): array;
 
     /**
+     * @param bool|null $awaitingSupport
+     * @param bool|null $inAttendance
+     * @param bool|null $awaitingResponse
+     * @param bool|null $canceled
+     * @param bool|null $approved
+     * @param bool|null $active
      * @param User $user
      * @return array
      */
-    public function findRequestsToManagerSupport(User $user): array;
+    public function findRequestsManagerSupport(?bool $awaitingSupport, ?bool $inAttendance,?bool $awaitingResponse,?bool $canceled,?bool $approved,?bool $active,User $user): array;
 
     /**
      * @param string|null $title

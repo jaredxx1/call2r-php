@@ -5,6 +5,7 @@ namespace App\Attendance\Infrastructure\Persistence\Doctrine\Repository;
 
 
 use App\Attendance\Domain\Entity\Request;
+use App\Attendance\Domain\Entity\Status;
 use App\Attendance\Domain\Repository\RequestRepository;
 use App\User\Domain\Entity\User;
 use Doctrine\Common\Persistence\ObjectRepository;
@@ -72,64 +73,231 @@ class DoctrineRequestRepository implements RequestRepository
     }
 
     /**
+     * @param bool|null $awaitingSupport
+     * @param bool|null $inAttendance
+     * @param bool|null $awaitingResponse
+     * @param bool|null $canceled
+     * @param bool|null $approved
+     * @param bool|null $active
      * @param User $user
      * @return array
      */
-    public function findRequestsToClient(User $user): array
+    public function findRequestsClient(?bool $awaitingSupport, ?bool $inAttendance,?bool $awaitingResponse,?bool $canceled,?bool $approved,?bool $active,User $user): array
     {
-        return $this->entityManager
+        $query =  $this->entityManager
             ->createQueryBuilder()
             ->select('r')
-            ->from('Attendance:Request', 'r')
-            ->where('r.requestedBy = :userId')
-            ->setParameter('userId', $user->getId())
-            ->getQuery()
-            ->getResult();
+            ->from('Attendance:Request', 'r');
+
+        if (isset($awaitingSupport)) {
+            $query->orWhere('r.status = :status')
+                ->setParameter('status', Status::awaitingSupport);
+        }
+
+        if (isset($inAttendance)) {
+            $query->orWhere('r.status = :status')
+                ->setParameter('status', Status::inAttendance);
+        }
+
+        if (isset($awaitingResponse)) {
+            $query->orWhere('r.status = :status')
+                ->setParameter('status', Status::awaitingResponse);
+        }
+
+        if (isset($canceled)) {
+            $query->orWhere('r.status = :status')
+                ->setParameter('status', Status::canceled);
+        }
+
+        if (isset($approved)) {
+            $query->orWhere('r.status = :status')
+                ->setParameter('status', Status::approved);
+        }
+
+        if (isset($active)) {
+            $query->orWhere('r.status = :status1')
+                ->orWhere('r.status = :status2')
+                ->orWhere('r.status = :status3')
+                ->setParameter('status1', Status::awaitingSupport)
+                ->setParameter('status2', Status::inAttendance)
+                ->setParameter('status3', Status::awaitingResponse);
+        }
+        $query
+            ->andWhere('r.requestedBy = :userId')
+            ->setParameter('userId', $user->getId());
+
+        return $query->getQuery()->getResult();
     }
 
     /**
+     * @param bool|null $awaitingSupport
+     * @param bool|null $inAttendance
+     * @param bool|null $awaitingResponse
+     * @param bool|null $canceled
+     * @param bool|null $approved
+     * @param bool|null $active
      * @param User $user
      * @return array
      */
-    public function findRequestsToSupport(User $user): array
+    public function findRequestsSupport(?bool $awaitingSupport, ?bool $inAttendance,?bool $awaitingResponse,?bool $canceled,?bool $approved,?bool $active,User $user): array
     {
-        return $this->entityManager
+        $query =  $this->entityManager
             ->createQueryBuilder()
             ->select('r')
-            ->from('Attendance:Request', 'r')
-            ->where('r.assignedTo = :userId')
-            ->orWhere('r.companyId = :companyId AND r.assignedTo IS NULL')
+            ->from('Attendance:Request', 'r');
+
+        if (isset($awaitingSupport)) {
+            $query->orWhere('r.status = :status')
+                ->setParameter('status', Status::awaitingSupport);
+        }
+
+        if (isset($inAttendance)) {
+            $query->orWhere('r.status = :status')
+                ->setParameter('status', Status::inAttendance);
+        }
+
+        if (isset($awaitingResponse)) {
+            $query->orWhere('r.status = :status')
+                ->setParameter('status', Status::awaitingResponse);
+        }
+
+        if (isset($canceled)) {
+            $query->orWhere('r.status = :status')
+                ->setParameter('status', Status::canceled);
+        }
+
+        if (isset($approved)) {
+            $query->orWhere('r.status = :status')
+                ->setParameter('status', Status::approved);
+        }
+
+        if (isset($active)) {
+            $query->orWhere('r.status = :status1')
+                ->orWhere('r.status = :status2')
+                ->orWhere('r.status = :status3')
+                ->setParameter('status1', Status::awaitingSupport)
+                ->setParameter('status2', Status::inAttendance)
+                ->setParameter('status3', Status::awaitingResponse);
+        }
+
+        $query
+            ->andWhere('r.companyId = :companyId')
+            ->andWhere('r.assignedTo = :userId or r.assignedTo IS NULL')
             ->setParameter('companyId', $user->getCompanyId())
-            ->setParameter('userId', $user->getId())
-            ->getQuery()
-            ->getResult();
+            ->setParameter('userId', $user->getId());
+
+        return $query->getQuery()->getResult();
     }
 
-
-
-    public function findRequestsToManagerClient(): array
+    /**
+     * @param bool|null $awaitingSupport
+     * @param bool|null $inAttendance
+     * @param bool|null $awaitingResponse
+     * @param bool|null $canceled
+     * @param bool|null $approved
+     * @param bool|null $active
+     * @return array
+     */
+    public function findRequestsManagerClient(?bool $awaitingSupport, ?bool $inAttendance,?bool $awaitingResponse,?bool $canceled,?bool $approved,?bool $active): array
     {
-        return $this->entityManager
+        $query =  $this->entityManager
             ->createQueryBuilder()
             ->select('r')
-            ->from('Attendance:Request', 'r')
-            ->getQuery()
-            ->getResult();
+            ->from('Attendance:Request', 'r');
+
+        if (isset($awaitingSupport)) {
+            $query->orWhere('r.status = :status')
+                ->setParameter('status', Status::awaitingSupport);
+        }
+
+        if (isset($inAttendance)) {
+            $query->orWhere('r.status = :status')
+                ->setParameter('status', Status::inAttendance);
+        }
+
+        if (isset($awaitingResponse)) {
+            $query->orWhere('r.status = :status')
+                ->setParameter('status', Status::awaitingResponse);
+        }
+
+        if (isset($canceled)) {
+            $query->orWhere('r.status = :status')
+                ->setParameter('status', Status::canceled);
+        }
+
+        if (isset($approved)) {
+            $query->orWhere('r.status = :status')
+                ->setParameter('status', Status::approved);
+        }
+
+        if (isset($active)) {
+            $query->orWhere('r.status = :status1')
+                ->orWhere('r.status = :status2')
+                ->orWhere('r.status = :status3')
+                ->setParameter('status1', Status::awaitingSupport)
+                ->setParameter('status2', Status::inAttendance)
+                ->setParameter('status3', Status::awaitingResponse);
+        }
+
+        return $query->getQuery()->getResult();
     }
 
-    public function findRequestsToManagerSupport(User $user): array
+    /**
+     * @param bool|null $awaitingSupport
+     * @param bool|null $inAttendance
+     * @param bool|null $awaitingResponse
+     * @param bool|null $canceled
+     * @param bool|null $approved
+     * @param bool|null $active
+     * @param User $user
+     * @return array
+     */
+    public function findRequestsManagerSupport(?bool $awaitingSupport, ?bool $inAttendance,?bool $awaitingResponse,?bool $canceled,?bool $approved,?bool $active,User $user): array
     {
-        return $this->entityManager
+        $query =  $this->entityManager
             ->createQueryBuilder()
             ->select('r')
-            ->from('Attendance:Request', 'r')
-            ->where('r.requestedBy = :userId')
-            ->orWhere('r.assignedTo = :userId')
-            ->orWhere('r.companyId = :companyId')
-            ->setParameter('companyId', $user->getCompanyId())
-            ->setParameter('userId', $user->getId())
-            ->getQuery()
-            ->getResult();
+            ->from('Attendance:Request', 'r');
+
+        if (isset($awaitingSupport)) {
+            $query->orWhere('r.status = :status')
+                ->setParameter('status', Status::awaitingSupport);
+        }
+
+        if (isset($inAttendance)) {
+            $query->orWhere('r.status = :status')
+                ->setParameter('status', Status::inAttendance);
+        }
+
+        if (isset($awaitingResponse)) {
+            $query->orWhere('r.status = :status')
+                ->setParameter('status', Status::awaitingResponse);
+        }
+
+        if (isset($canceled)) {
+            $query->orWhere('r.status = :status')
+                ->setParameter('status', Status::canceled);
+        }
+
+        if (isset($approved)) {
+            $query->orWhere('r.status = :status')
+                ->setParameter('status', Status::approved);
+        }
+
+        if (isset($active)) {
+            $query->orWhere('r.status = :status1')
+                ->orWhere('r.status = :status2')
+                ->orWhere('r.status = :status3')
+                ->setParameter('status1', Status::awaitingSupport)
+                ->setParameter('status2', Status::inAttendance)
+                ->setParameter('status3', Status::awaitingResponse);
+        }
+
+        $query
+            ->andWhere('r.companyId = :companyId')
+            ->setParameter('companyId', $user->getCompanyId());
+
+        return $query->getQuery()->getResult();
     }
 
 
