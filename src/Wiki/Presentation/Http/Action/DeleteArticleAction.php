@@ -36,15 +36,14 @@ class DeleteArticleAction extends AbstractAction
 
     /**
      * @param Request $request
-     * @param int $idCompany
      * @param int $idArticle
      * @param UserInterface $user
      * @return JsonResponse
      */
-    public function __invoke(Request $request, int $idCompany, int $idArticle, UserInterface $user)
+    public function __invoke(Request $request, int $idArticle, UserInterface $user)
     {
         try {
-            $data['urlCompany'] = $idCompany;
+            $data['urlCompany'] = $user->getCompanyId();
             $data['urlArticle'] = $idArticle;
             $query = DeleteArticleCommand::fromArray($data);
             $this->service->delete($query, $user);

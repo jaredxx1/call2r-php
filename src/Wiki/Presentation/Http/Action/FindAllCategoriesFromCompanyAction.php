@@ -34,14 +34,13 @@ class FindAllCategoriesFromCompanyAction extends AbstractAction
     }
 
     /**
-     * @param int $id
      * @param UserInterface $user
      * @return JsonResponse
      */
-    public function __invoke(int $id, UserInterface $user)
+    public function __invoke(UserInterface $user)
     {
         try {
-            $data = ['idCompany' => $id];
+            $data = ['idCompany' => $user->getCompanyId()];
             $query = FindAllCategoriesFromCompanyQuery::fromArray($data);
             $categories = $this->service->fromCompany($query, $user);
         } catch (Exception $exception) {

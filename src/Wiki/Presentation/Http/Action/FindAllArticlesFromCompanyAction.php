@@ -36,14 +36,13 @@ class FindAllArticlesFromCompanyAction extends AbstractAction
 
     /**
      * @param Request $request
-     * @param int $idCompany
      * @param UserInterface $user
      * @return JsonResponse
      */
-    public function __invoke(Request $request, int $idCompany, UserInterface $user)
+    public function __invoke(Request $request, UserInterface $user)
     {
         try {
-            $data = ['idCompany' => $idCompany];
+            $data = ['idCompany' => $user->getCompanyId()];
             $query = FindAllArticlesFromCompanyQuery::fromArray($data);
             $articles = $this->service->fromCompany($query, $user);
         } catch (Exception $exception) {

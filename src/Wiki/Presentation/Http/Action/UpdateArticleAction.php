@@ -36,16 +36,15 @@ class UpdateArticleAction extends AbstractAction
 
     /**
      * @param Request $request
-     * @param int $idCompany
      * @param int $idArticle
      * @param UserInterface $user
      * @return JsonResponse
      */
-    public function __invoke(Request $request, int $idCompany, int $idArticle, UserInterface $user)
+    public function __invoke(Request $request, int $idArticle, UserInterface $user)
     {
         try {
             $data = json_decode($request->getContent(), true);
-            $data['urlCompany'] = $idCompany;
+            $data['urlCompany'] = $user->getCompanyId();
             $data['urlArticle'] = $idArticle;
             $data['idCompany'] = $user->getCompanyId();
             $command = UpdateArticleCommand::fromArray($data);
