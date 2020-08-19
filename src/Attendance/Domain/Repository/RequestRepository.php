@@ -42,13 +42,20 @@ interface RequestRepository
      * @param User $user
      * @return array
      */
-    public function findRequestsToManager(User $user): array;
+    public function findRequestsToSupport(User $user): array;
+
+    /**
+     * @return array
+     *
+
+     */
+    public function findRequestsToManagerClient(): array;
 
     /**
      * @param User $user
      * @return array
      */
-    public function findRequestsToSupport(User $user): array;
+    public function findRequestsToManagerSupport(User $user): array;
 
     /**
      * @param string|null $title

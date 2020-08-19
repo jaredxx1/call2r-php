@@ -91,25 +91,6 @@ class DoctrineRequestRepository implements RequestRepository
      * @param User $user
      * @return array
      */
-    public function findRequestsToManager(User $user): array
-    {
-        return $this->entityManager
-            ->createQueryBuilder()
-            ->select('r')
-            ->from('Attendance:Request', 'r')
-            ->where('r.requestedBy = :userId')
-            ->orWhere('r.assignedTo = :userId')
-            ->orWhere('r.companyId = :companyId')
-            ->setParameter('companyId', $user->getCompanyId())
-            ->setParameter('userId', $user->getId())
-            ->getQuery()
-            ->getResult();
-    }
-
-    /**
-     * @param User $user
-     * @return array
-     */
     public function findRequestsToSupport(User $user): array
     {
         return $this->entityManager
@@ -118,6 +99,33 @@ class DoctrineRequestRepository implements RequestRepository
             ->from('Attendance:Request', 'r')
             ->where('r.assignedTo = :userId')
             ->orWhere('r.companyId = :companyId AND r.assignedTo IS NULL')
+            ->setParameter('companyId', $user->getCompanyId())
+            ->setParameter('userId', $user->getId())
+            ->getQuery()
+            ->getResult();
+    }
+
+
+
+    public function findRequestsToManagerClient(): array
+    {
+        return $this->entityManager
+            ->createQueryBuilder()
+            ->select('r')
+            ->from('Attendance:Request', 'r')
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findRequestsToManagerSupport(User $user): array
+    {
+        return $this->entityManager
+            ->createQueryBuilder()
+            ->select('r')
+            ->from('Attendance:Request', 'r')
+            ->where('r.requestedBy = :userId')
+            ->orWhere('r.assignedTo = :userId')
+            ->orWhere('r.companyId = :companyId')
             ->setParameter('companyId', $user->getCompanyId())
             ->setParameter('userId', $user->getId())
             ->getQuery()

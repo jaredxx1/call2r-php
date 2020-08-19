@@ -254,14 +254,17 @@ class RequestService
     public function findAll(User $user)
     {
         switch ($user->getRole()) {
-            case 'ROLE_USER':
+            case User::client:
+                $requests = $this->requestRepository->findRequestsToClient($user);
+                break;
+            case User::support:
                 $requests = $this->requestRepository->findRequestsToSupport($user);
                 break;
-            case 'ROLE_MANAGER':
-                $requests = $this->requestRepository->findRequestsToManager($user);
+            case User::managerClient:
+                $requests = $this->requestRepository->findRequestsToManagerClient();
                 break;
-            case 'ROLE_CLIENT':
-                $requests = $this->requestRepository->findRequestsToClient($user);
+            case User::managerSupport:
+                $requests = $this->requestRepository->findRequestsToManagerSupport($user);
                 break;
             default:
                 $requests = [];
