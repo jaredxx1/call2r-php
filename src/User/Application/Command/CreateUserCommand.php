@@ -8,6 +8,7 @@ use App\Core\Infrastructure\Container\Application\Exception\InvalidDateFormatExc
 use App\Core\Infrastructure\Container\Application\Utils\Command\CommandInterface;
 use App\User\Application\Service\UserService;
 use Carbon\Carbon;
+use DateTime;
 use Exception;
 use Webmozart\Assert\Assert;
 
@@ -29,7 +30,7 @@ class CreateUserCommand implements CommandInterface
     private $name;
 
     /**
-     * @var string
+     * @var DateTime
      */
     private $birthdate;
 
@@ -62,14 +63,14 @@ class CreateUserCommand implements CommandInterface
      * CreateUserCommand constructor.
      * @param string $cpf
      * @param string $name
-     * @param string $birthdate
+     * @param DateTime $birthdate
      * @param string $email
      * @param string $password
      * @param int $companyId
      * @param bool $active
      * @param string $role
      */
-    public function __construct(string $cpf, string $name, string $birthdate, string $email, string $password, int $companyId, bool $active, string $role)
+    public function __construct(string $cpf, string $name, DateTime $birthdate, string $email, string $password, int $companyId, bool $active, string $role)
     {
         $this->cpf = $cpf;
         $this->name = $name;
@@ -100,6 +101,9 @@ class CreateUserCommand implements CommandInterface
 
         try {
             $birthdate = Carbon::createFromFormat('Y-m-d', $data['birthdate']);
+            $birthdate->hour = 0;
+            $birthdate->minute = 0;
+            $birthdate->second = 0;
             $data['birthdate'] = $birthdate;
         } catch (Exception $e) {
             throw new InvalidDateFormatException();
@@ -153,9 +157,9 @@ class CreateUserCommand implements CommandInterface
     }
 
     /**
-     * @return string
+     * @return DateTime
      */
-    public function getBirthdate(): string
+    public function getBirthdate(): DateTime
     {
         return $this->birthdate;
     }
@@ -199,6 +203,5 @@ class CreateUserCommand implements CommandInterface
     {
         return $this->role;
     }
-
 
 }
