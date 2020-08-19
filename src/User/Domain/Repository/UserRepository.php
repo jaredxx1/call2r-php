@@ -19,6 +19,13 @@ interface UserRepository
     public function fromId(int $id): ?User;
 
     /**
+     * @param string $email
+     * @return User|null
+     */
+    public function fromEmail(string $email): ?User;
+
+
+    /**
      * @param string $cpf
      * @return User|null
      */
