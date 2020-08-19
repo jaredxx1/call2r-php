@@ -7,6 +7,7 @@ namespace App\User\Application\Command;
 use App\Core\Infrastructure\Container\Application\Exception\InvalidDateFormatException;
 use App\Core\Infrastructure\Container\Application\Utils\Command\CommandInterface;
 use Carbon\Carbon;
+use Exception;
 use Webmozart\Assert\Assert;
 
 /**
@@ -40,6 +41,7 @@ class ResetPasswordCommand implements CommandInterface
     /**
      * @param array $data
      * @return ResetPasswordCommand
+     * @throws InvalidDateFormatException
      */
     public static function fromArray($data)
     {
@@ -48,6 +50,9 @@ class ResetPasswordCommand implements CommandInterface
 
         try {
             $birthdate = Carbon::createFromFormat('Y-m-d', $data['birthdate']);
+            $birthdate->hour = 0;
+            $birthdate->minute = 0;
+            $birthdate->second = 0;
             $data['birthdate'] = $birthdate;
         } catch (Exception $e) {
             throw new InvalidDateFormatException();
