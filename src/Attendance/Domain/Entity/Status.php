@@ -12,7 +12,6 @@ use JsonSerializable;
  */
 class Status implements JsonSerializable
 {
-
     const awaitingSupport = 1;
     const inAttendance = 2;
     const awaitingResponse = 3;
