@@ -41,10 +41,10 @@ class FindArticlesByIdAction extends AbstractAction
      * @param UserInterface $user
      * @return JsonResponse
      */
-    public function __invoke(Request $request, int $idCompany, int $idArticle, UserInterface $user)
+    public function __invoke(Request $request, int $idArticle, UserInterface $user)
     {
         try {
-            $data['urlCompany'] = $idCompany;
+            $data['urlCompany'] = $user->getCompanyId();
             $data['urlArticle'] = $idArticle;
             $query = FindArticlesByIdQuery::fromArray($data);
             $articles = $this->service->fromArticle($query, $user);

@@ -27,10 +27,10 @@ security:
   # Note: Only the *first* access control that matches will be used
   access_control:
     # Wiki
+    - { path: '/api/v1/companies/articles/\d+', roles: [ROLE_SUPPORT, ROLE_MANAGER_SUPPORT], methods: [GET, PUT, DELETE ] }
+    - { path: '/api/v1/companies/articles', roles: [ROLE_SUPPORT, ROLE_MANAGER_SUPPORT], methods: [GET] }
+    - { path: '/api/v1/companies/categories', roles: [ROLE_SUPPORT,ROLE_MANAGER_SUPPORT], methods: [GET] }
     - { path: '/api/v1/articles', roles: [ROLE_SUPPORT, ROLE_MANAGER_SUPPORT], methods: [POST] }
-    - { path: '/api/v1/companies/\d+/articles', roles: [ROLE_SUPPORT, ROLE_MANAGER_SUPPORT], methods: [GET] }
-    - { path: '/api/v1/companies/\d+/articles/\d+', roles: [ROLE_SUPPORT, ROLE_MANAGER_SUPPORT], methods: [GET, PUT, DELETE ] }
-    - { path: '/api/v1/companies/\d+/categories', roles: [ROLE_SUPPORT,ROLE_MANAGER_SUPPORT], methods: [GET] }
 
     # Company
     - { path: '/api/v1/sections', roles: [ROLE_CLIENT, ROLE_MANAGER_CLIENT,ROLE_ADMIN], methods: [GET] }
