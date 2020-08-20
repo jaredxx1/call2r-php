@@ -10,6 +10,7 @@ use App\Attendance\Domain\Repository\RequestRepository;
 use App\User\Domain\Entity\User;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\QueryBuilder;
 
 /**
  * Class DoctrineRequestRepository
@@ -89,39 +90,8 @@ class DoctrineRequestRepository implements RequestRepository
             ->select('r')
             ->from('Attendance:Request', 'r');
 
-        if (isset($awaitingSupport)) {
-            $query->orWhere('r.status = :status')
-                ->setParameter('status', Status::awaitingSupport);
-        }
+        $query = $this->listRequestsParameters($awaitingSupport, $query, $inAttendance, $awaitingResponse, $canceled, $approved, $active);
 
-        if (isset($inAttendance)) {
-            $query->orWhere('r.status = :status')
-                ->setParameter('status', Status::inAttendance);
-        }
-
-        if (isset($awaitingResponse)) {
-            $query->orWhere('r.status = :status')
-                ->setParameter('status', Status::awaitingResponse);
-        }
-
-        if (isset($canceled)) {
-            $query->orWhere('r.status = :status')
-                ->setParameter('status', Status::canceled);
-        }
-
-        if (isset($approved)) {
-            $query->orWhere('r.status = :status')
-                ->setParameter('status', Status::approved);
-        }
-
-        if (isset($active)) {
-            $query->orWhere('r.status = :status1')
-                ->orWhere('r.status = :status2')
-                ->orWhere('r.status = :status3')
-                ->setParameter('status1', Status::awaitingSupport)
-                ->setParameter('status2', Status::inAttendance)
-                ->setParameter('status3', Status::awaitingResponse);
-        }
         $query
             ->andWhere('r.requestedBy = :userId')
             ->setParameter('userId', $user->getId());
@@ -146,39 +116,7 @@ class DoctrineRequestRepository implements RequestRepository
             ->select('r')
             ->from('Attendance:Request', 'r');
 
-        if (isset($awaitingSupport)) {
-            $query->orWhere('r.status = :status')
-                ->setParameter('status', Status::awaitingSupport);
-        }
-
-        if (isset($inAttendance)) {
-            $query->orWhere('r.status = :status')
-                ->setParameter('status', Status::inAttendance);
-        }
-
-        if (isset($awaitingResponse)) {
-            $query->orWhere('r.status = :status')
-                ->setParameter('status', Status::awaitingResponse);
-        }
-
-        if (isset($canceled)) {
-            $query->orWhere('r.status = :status')
-                ->setParameter('status', Status::canceled);
-        }
-
-        if (isset($approved)) {
-            $query->orWhere('r.status = :status')
-                ->setParameter('status', Status::approved);
-        }
-
-        if (isset($active)) {
-            $query->orWhere('r.status = :status1')
-                ->orWhere('r.status = :status2')
-                ->orWhere('r.status = :status3')
-                ->setParameter('status1', Status::awaitingSupport)
-                ->setParameter('status2', Status::inAttendance)
-                ->setParameter('status3', Status::awaitingResponse);
-        }
+        $query = $this->listRequestsParameters($awaitingSupport, $query, $inAttendance, $awaitingResponse, $canceled, $approved, $active);
 
         $query
             ->andWhere('r.companyId = :companyId')
@@ -205,39 +143,7 @@ class DoctrineRequestRepository implements RequestRepository
             ->select('r')
             ->from('Attendance:Request', 'r');
 
-        if (isset($awaitingSupport)) {
-            $query->orWhere('r.status = :status')
-                ->setParameter('status', Status::awaitingSupport);
-        }
-
-        if (isset($inAttendance)) {
-            $query->orWhere('r.status = :status')
-                ->setParameter('status', Status::inAttendance);
-        }
-
-        if (isset($awaitingResponse)) {
-            $query->orWhere('r.status = :status')
-                ->setParameter('status', Status::awaitingResponse);
-        }
-
-        if (isset($canceled)) {
-            $query->orWhere('r.status = :status')
-                ->setParameter('status', Status::canceled);
-        }
-
-        if (isset($approved)) {
-            $query->orWhere('r.status = :status')
-                ->setParameter('status', Status::approved);
-        }
-
-        if (isset($active)) {
-            $query->orWhere('r.status = :status1')
-                ->orWhere('r.status = :status2')
-                ->orWhere('r.status = :status3')
-                ->setParameter('status1', Status::awaitingSupport)
-                ->setParameter('status2', Status::inAttendance)
-                ->setParameter('status3', Status::awaitingResponse);
-        }
+        $query = $this->listRequestsParameters($awaitingSupport, $query, $inAttendance, $awaitingResponse, $canceled, $approved, $active);
 
         return $query->getQuery()->getResult();
     }
@@ -259,39 +165,7 @@ class DoctrineRequestRepository implements RequestRepository
             ->select('r')
             ->from('Attendance:Request', 'r');
 
-        if (isset($awaitingSupport)) {
-            $query->orWhere('r.status = :status')
-                ->setParameter('status', Status::awaitingSupport);
-        }
-
-        if (isset($inAttendance)) {
-            $query->orWhere('r.status = :status')
-                ->setParameter('status', Status::inAttendance);
-        }
-
-        if (isset($awaitingResponse)) {
-            $query->orWhere('r.status = :status')
-                ->setParameter('status', Status::awaitingResponse);
-        }
-
-        if (isset($canceled)) {
-            $query->orWhere('r.status = :status')
-                ->setParameter('status', Status::canceled);
-        }
-
-        if (isset($approved)) {
-            $query->orWhere('r.status = :status')
-                ->setParameter('status', Status::approved);
-        }
-
-        if (isset($active)) {
-            $query->orWhere('r.status = :status1')
-                ->orWhere('r.status = :status2')
-                ->orWhere('r.status = :status3')
-                ->setParameter('status1', Status::awaitingSupport)
-                ->setParameter('status2', Status::inAttendance)
-                ->setParameter('status3', Status::awaitingResponse);
-        }
+        $query = $this->listRequestsParameters($awaitingSupport, $query, $inAttendance, $awaitingResponse, $canceled, $approved, $active);
 
         $query
             ->andWhere('r.companyId = :companyId')
@@ -351,5 +225,46 @@ class DoctrineRequestRepository implements RequestRepository
 
         return $query->getQuery()->getResult();
 
+    }
+
+    /**
+     * @param bool|null $awaitingSupport
+     * @param QueryBuilder $query
+     * @param bool|null $inAttendance
+     * @param bool|null $awaitingResponse
+     * @param bool|null $canceled
+     * @param bool|null $approved
+     * @param bool|null $active
+     * @return QueryBuilder
+     */
+    public function listRequestsParameters(?bool $awaitingSupport, QueryBuilder $query, ?bool $inAttendance, ?bool $awaitingResponse, ?bool $canceled, ?bool $approved, ?bool $active): QueryBuilder
+    {
+        if (isset($awaitingSupport)) {
+            $query->orWhere('r.status = 1');
+        }
+
+        if (isset($inAttendance)) {
+            $query->orWhere('r.status = 2');
+        }
+
+        if (isset($awaitingResponse)) {
+            $query->orWhere('r.status = 3');
+        }
+
+        if (isset($canceled)) {
+            $query->orWhere('r.status = 5');
+        }
+
+        if (isset($approved)) {
+            $query->orWhere('r.status = 4');
+        }
+
+        if (isset($active)) {
+            $query->orWhere('r.status = 1')
+                ->orWhere('r.status = 2')
+                ->orWhere('r.status = 3');
+        }
+
+        return $query;
     }
 }

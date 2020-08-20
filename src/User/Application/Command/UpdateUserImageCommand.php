@@ -18,9 +18,9 @@ class UpdateUserImageCommand implements CommandInterface
 {
 
     /**
-     * @var User
+     * @var integer
      */
-    private $user;
+    private $id;
 
     /**
      * @var UploadedFile
@@ -29,14 +29,15 @@ class UpdateUserImageCommand implements CommandInterface
 
     /**
      * UpdateUserImageCommand constructor.
-     * @param User $user
+     * @param int $id
      * @param UploadedFile $uploadFile
      */
-    public function __construct(User $user, UploadedFile $uploadFile)
+    public function __construct(int $id, UploadedFile $uploadFile)
     {
-        $this->user = $user;
+        $this->id = $id;
         $this->uploadFile = $uploadFile;
     }
+
 
     /**
      * @param array $data
@@ -55,7 +56,7 @@ class UpdateUserImageCommand implements CommandInterface
         }
 
         return new self(
-            $data['user'],
+            $data['id'],
             $data['uploadFile']
         );
     }
@@ -69,11 +70,11 @@ class UpdateUserImageCommand implements CommandInterface
     }
 
     /**
-     * @return User
+     * @return int
      */
-    public function getUser(): User
+    public function getId(): int
     {
-        return $this->user;
+        return $this->id;
     }
 
     /**
@@ -83,5 +84,4 @@ class UpdateUserImageCommand implements CommandInterface
     {
         return $this->uploadFile;
     }
-
 }

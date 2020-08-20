@@ -185,4 +185,21 @@ class DoctrineUserRepository implements UserRepository
             ->getQuery()
             ->getResult();
     }
+
+    /**
+     * @param string $email
+     * @return User|null
+     * @throws NonUniqueResultException
+     */
+    public function fromEmail(string  $email): ?User
+    {
+        return $this->entityManager
+            ->createQueryBuilder()
+            ->select('u')
+            ->from('App\User\Domain\Entity\User', 'u')
+            ->where('u.email = :email')
+            ->setParameter('email', $email)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
 }

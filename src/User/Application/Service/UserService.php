@@ -14,11 +14,14 @@ use App\User\Application\Command\LoginCommand;
 use App\User\Application\Command\ResetPasswordCommand;
 use App\User\Application\Command\UpdateUserCommand;
 use App\User\Application\Command\UpdateUserImageCommand;
+use App\User\Application\Exception\CreateUserException;
 use App\User\Application\Exception\DuplicateCpfException;
+use App\User\Application\Exception\DuplicateEmailException;
+use App\User\Application\Exception\FromIdException;
 use App\User\Application\Exception\InvalidCredentialsException;
-use App\User\Application\Exception\InvalidRegisterInMotherCompany;
-use App\User\Application\Exception\InvalidUserPrivileges;
 use App\User\Application\Exception\ResetPasswordExcpetion;
+use App\User\Application\Exception\UpdateImageException;
+use App\User\Application\Exception\UpdateUserException;
 use App\User\Application\Exception\UserNotFoundException;
 use App\User\Application\Query\FindUsersByRoleQuery;
 use App\User\Domain\Entity\User;
@@ -162,13 +165,19 @@ final class UserService
     {
         $company = $this->companyRepository->fromId($command->getCompanyId());
 
-        if(is_null($company)){
+        if (is_null($company)) {
             throw new CompanyNotFoundException();
         }
 
-        if(!is_null($this->userRepository->fromCpf($command->getCpf()))){
+        if (!is_null($this->userRepository->fromCpf($command->getCpf()))) {
             throw new DuplicateCpfException();
         }
+
+        if (!is_null($this->userRepository->fromEmail($command->getEmail()))) {
+            throw new DuplicateEmailException();
+        }
+
+        $this->validateCreateUser($command, $user);
 
         $hashedPassword = password_hash($command->getPassword(), PASSWORD_BCRYPT);
 
@@ -189,20 +198,68 @@ final class UserService
     }
 
     /**
-     * @param UpdateUserCommand $command
+     * @param CreateUserCommand $command
      * @param User $user
-     * @return User
-     * @throws UserNotFoundException
+     * @throws CreateUserException
+     * @throws Exception
      */
-    public function updateUser(UpdateUserCommand $command, User $user): User
+    private function validateCreateUser(CreateUserCommand $command, User $user)
     {
-        $user = $this->fromId($command->getId());
+        switch ($user->getRole()) {
+            case User::client:
+                throw new CreateUserException();
+            case User::support:
+                throw new CreateUserException();
+            case User::managerSupport:
+                if (
+                !(($user->getCompanyId() == $command->getCompanyId()) &&
+                    ($command->getRole() == User::support))
+                ) {
+                    throw new CreateUserException();
+                }
+                break;
+            case User::managerClient:
+                if (
+                !(($user->getCompanyId() == $command->getCompanyId()) &&
+                    ($command->getRole() == User::client))
+                ) {
+                    throw new CreateUserException();
+                }
+                break;
+            case User::admin:
+                if (
+                !(($command->getRole() == User::managerSupport) || ($command->getRole() == User::managerClient))
+                ) {
+                    throw new CreateUserException();
+                }
+                break;
+            default:
+                throw new Exception('Unexpected role');
+        }
+    }
 
-        if (!is_null($command->getNewPassword())
-            && !is_null($command->getOldPassword())
-            && password_verify($command->getOldPassword(), $user->getPassword())) {
-            $newHashedPassword = password_hash($command->getNewPassword(), PASSWORD_BCRYPT);
-            $user->setPassword($newHashedPassword);
+    /**
+     * @param UpdateUserCommand $command
+     * @param User $userSession
+     * @return User
+     * @throws UpdateUserException
+     * @throws UserNotFoundException
+     * @throws Exception
+     */
+    public function updateUser(UpdateUserCommand $command, User $userSession): User
+    {
+        $user = $this->userRepository->fromId($command->getId());
+
+        if (is_null($user)) {
+            throw new UserNotFoundException();
+        }
+
+        if ($user->getId() == $userSession->getId()) {
+            $user = $this->validateSelfUpdate($command, $user);
+        }
+
+        if ($user->getId() != $userSession->getId()) {
+            $user = $this->validateAnotherUserUpdate($command, $user, $userSession);
         }
 
         if (!is_null($command->getName())) {
@@ -210,26 +267,136 @@ final class UserService
         }
 
         if (!is_null($command->getEmail())) {
+            $userEmail = $this->userRepository->fromEmail($command->getEmail());
+            $this->validateEmailUpdate($userEmail, $user);
             $user->setEmail($command->getEmail());
-        }
-
-        if (!is_null($command->getRole())) {
-            $user->setRole($command->getRole());
-        }
-
-        if (!is_null($command->getActive())) {
-            $user->setActive($command->getActive());
         }
 
         return $this->userRepository->updateUser($user);
     }
 
     /**
+     * @param UpdateUserCommand $command
+     * @param User $user
+     * @return User
+     */
+    private function validateSelfUpdate(UpdateUserCommand $command, User $user)
+    {
+        if (!is_null($command->getNewPassword())
+            && !is_null($command->getOldPassword())
+            && password_verify($command->getOldPassword(), $user->getPassword())) {
+            $newHashedPassword = password_hash($command->getNewPassword(), PASSWORD_BCRYPT);
+            $user->setPassword($newHashedPassword);
+        }
+
+        return $user;
+    }
+
+    /**
+     * @param UpdateUserCommand $command
+     * @param User $user
+     * @param User $userSession
+     * @return User
+     * @throws UpdateUserException
+     * @throws Exception
+     */
+    private function validateAnotherUserUpdate(UpdateUserCommand $command, User $user, User $userSession)
+    {
+        if (!is_null($command->getActive())) {
+            $user->setActive($command->getActive());
+            switch ($userSession->getRole()) {
+                case User::client:
+                    throw new UpdateUserException();
+                case User::support:
+                    throw new UpdateUserException();
+                case User::managerSupport:
+                    if (
+                    !(($user->getCompanyId() == $userSession->getCompanyId()) &&
+                        ($user->getRole() == User::support))
+                    ) {
+                        throw new UpdateUserException();
+                    }
+                    break;
+                case User::managerClient:
+                    if (
+                    !(($user->getCompanyId() == $userSession->getCompanyId()) &&
+                        ($user->getRole() == User::client))
+                    ) {
+                        throw new UpdateUserException();
+                    }
+                    break;
+                case User::admin:
+                    if (
+                    !(($user->getRole() == User::managerSupport) || ($user->getRole() == User::managerClient))
+                    ) {
+                        throw new UpdateUserException();
+                    }
+                    break;
+                default:
+                    throw new Exception('Unexpected role');
+            }
+        }
+
+        if (!is_null($command->getRole())) {
+            $user->setRole($command->getRole());
+            switch ($userSession->getRole()) {
+                case User::client:
+                    throw new UpdateUserException();
+                case User::support:
+                    throw new UpdateUserException();
+                case User::managerSupport:
+                    if (
+                    !(($user->getCompanyId() == $userSession->getCompanyId()) &&
+                        ($user->getRole() == User::managerSupport))
+                    ) {
+                        throw new UpdateUserException();
+                    }
+                    break;
+                case User::managerClient:
+                    if (
+                    !(($user->getCompanyId() == $userSession->getCompanyId()) &&
+                        ($user->getRole() == User::managerClient))
+                    ) {
+                        throw new UpdateUserException();
+                    }
+                    break;
+                case User::admin:
+                    if (
+                    !(($user->getRole() == User::support) || ($user->getRole() == User::client))
+                    ) {
+                        throw new UpdateUserException();
+                    }
+                    break;
+                default:
+                    throw new Exception('Unexpected role');
+            }
+        }
+
+        return $user;
+    }
+
+    /**
+     * @param User|null $userEmail
+     * @param User $user
+     * @throws DuplicateEmailException
+     */
+    public function validateEmailUpdate(?User $userEmail, User $user): void
+    {
+        if (!is_null($userEmail)) {
+            if ($userEmail->getId() != $user->getId()) {
+                throw new DuplicateEmailException();
+            }
+        }
+    }
+
+    /**
      * @param string $id
+     * @param User $userSession
      * @return User|null
+     * @throws FromIdException
      * @throws UserNotFoundException
      */
-    public function fromId(string $id): ?User
+    public function fromId(string $id, User $userSession): ?User
     {
         $user = $this->userRepository->fromId($id);
 
@@ -237,19 +404,69 @@ final class UserService
             throw new UserNotFoundException();
         }
 
+        if ($user->getId() != $userSession->getId()) {
+            $this->validateAnotherUserFromId($user, $userSession);
+        }
+
         return $user;
     }
 
     /**
-     * @param UpdateUserImageCommand $command
-     * @return User
+     * @param User $user
+     * @param User $userSession
+     * @throws FromIdException
      * @throws Exception
      */
-    public function updateImage(UpdateUserImageCommand $command)
+    private function validateAnotherUserFromId(User $user, User $userSession)
+    {
+        switch ($userSession->getRole()) {
+            case User::client:
+                throw new FromIdException();
+            case User::support:
+                throw new FromIdException();
+            case User::managerSupport:
+                if (
+                !(($user->getCompanyId() == $userSession->getCompanyId()) &&
+                    ($user->getRole() == User::support))
+                ) {
+                    throw new FromIdException();
+                }
+                break;
+            case User::managerClient:
+                if (
+                !(($user->getCompanyId() == $userSession->getCompanyId()) &&
+                    ($user->getRole() == User::client))
+                ) {
+                    throw new FromIdException();
+                }
+                break;
+            case User::admin:
+                if (
+                !(($user->getRole() == User::managerSupport) || ($user->getRole() == User::managerClient))
+                ) {
+                    throw new FromIdException();
+                }
+                break;
+            default:
+                throw new Exception('Unexpected role');
+        }
+    }
+
+    /**
+     * @param User $userSession
+     * @param UpdateUserImageCommand $command
+     * @return User
+     * @throws UpdateImageException
+     * @throws Exception
+     */
+    public function updateImage(User $userSession, UpdateUserImageCommand $command)
     {
         $uuid = Uuid::uuid4();
 
-        $user = $command->getUser();
+
+        if ($command->getId() != $userSession->getId()) {
+            throw new UpdateImageException();
+        }
 
         $uploadedFile = $command->getUploadFile();
 
@@ -259,9 +476,9 @@ final class UserService
 
         $url = $this->s3->sendFile('user', $uuid->serialize(), $path, $name, $contentType);
 
-        $user->setImage($url);
+        $userSession->setImage($url);
 
-        return $this->userRepository->updateUser($user);
+        return $this->userRepository->updateUser($userSession);
     }
 
     /**
@@ -275,7 +492,7 @@ final class UserService
     {
         $birthdate = new DateTime($command->getBirthdate());
         $user = $this->userRepository->fromCpf($command->getCpf());
-        if($user->getBirthdate() != $birthdate){
+        if ($user->getBirthdate() != $birthdate) {
             throw new ResetPasswordExcpetion();
         }
 
