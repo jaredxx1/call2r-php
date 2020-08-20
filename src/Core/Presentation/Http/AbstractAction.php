@@ -5,7 +5,12 @@ namespace App\Core\Presentation\Http;
 
 
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * Class AbstractAction
+ * @package App\Core\Presentation\Http
+ */
 class AbstractAction
 {
 
@@ -14,7 +19,7 @@ class AbstractAction
      * @param int $code
      * @return JsonResponse
      */
-    public function errorResponse(string $message, int $code = 400)
+    public function errorResponse(string $message, int $code = Response::HTTP_BAD_REQUEST)
     {
         return new JsonResponse([
             'error' => $message,

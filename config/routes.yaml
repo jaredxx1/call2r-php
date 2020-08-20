@@ -1,17 +1,36 @@
+## =============== Core routes
 alive:
   path: /alive
   controller: App\Core\Presentation\Http\Action\AliveAction
   methods:    GET
 
-list_companies:
+login:
+  path: /login
+  controller: App\User\Presentation\Http\Action\LoginAction
+  methods:    POST
+
+test:
+  path: /test
+  controller: App\Core\Presentation\Http\Action\TestAction
+  methods:    GET
+
+## =============== Company routes
+get_all_companies:
   path: /api/v1/companies
-  controller: App\Company\Presentation\Http\Action\ListCompaniesAction
+  controller: App\Company\Presentation\Http\Action\FindAllCompaniesAction
   methods:    GET
 
 get_company_by_id:
   path: /api/v1/companies/{id}
   controller: App\Company\Presentation\Http\Action\FindCompanyByIdAction
-  methods:    GET|HEAD
+  methods:    GET
+  requirements:
+    id: '\d+'
+
+get_companies_by_section_id:
+  path: /api/v1/companies/{sectionId}/section
+  controller: App\Company\Presentation\Http\Action\FindCompaniesBySectionIdAction
+  methods:    GET
   requirements:
     id: '\d+'
 
@@ -31,3 +50,179 @@ get_mother_company:
   path: /api/v1/companies/mother
   controller: App\Company\Presentation\Http\Action\FindMotherCompanyAction
   methods:    GET
+
+get_all_sections:
+  path: /api/v1/sections
+  controller: App\Company\Presentation\Http\Action\FindAllSectionsAction
+  methods:    GET
+
+## =============== Wiki routes
+get_all_articles_from_company:
+  path: /api/v1/companies/articles
+  controller: App\Wiki\Presentation\Http\Action\FindAllArticlesFromCompanyAction
+  methods:    GET
+  requirements:
+    id: '\d+'
+
+get_article_by_id:
+  path: /api/v1/companies/articles/{idArticle}
+  controller: App\Wiki\Presentation\Http\Action\FindArticlesByIdAction
+  methods:    GET
+  requirements:
+    idCompany: '\d+'
+    idArticle: '\d+'
+
+create_article:
+  path: /api/v1/articles
+  controller: App\Wiki\Presentation\Http\Action\CreateArticleAction
+  methods:    POST
+
+update_article:
+  path: /api/v1/companies/articles/{idArticle}
+  controller: App\Wiki\Presentation\Http\Action\UpdateArticleAction
+  methods:    PUT
+  requirements:
+    idCompany: '\d+'
+    idArticle: '\d+'
+
+delete_article:
+  path: /api/v1/companies/articles/{idArticle}
+  controller: App\Wiki\Presentation\Http\Action\DeleteArticleAction
+  methods:    DELETE
+  requirements:
+    idCompany: '\d+'
+    idArticle: '\d+'
+
+get_all_categories:
+  path: /api/v1/companies/categories/
+  controller: App\Wiki\Presentation\Http\Action\FindAllCategoriesFromCompanyAction
+  methods:    GET
+  requirements:
+    id: '\d+'
+
+## =============== User routes
+get_user_by_id:
+  path: /api/v1/users/{id}
+  controller: App\User\Presentation\Http\Action\FindUserByIdAction
+  methods:    GET
+  requirements:
+    id: '\d+'
+
+get_users_by_role:
+  path: /api/v1/users/{role}
+  controller: App\User\Presentation\Http\Action\FindUsersByRoleAction
+  methods:    GET
+  requirements:
+    role: '^(manager-client|manager-support|client|support)$'
+
+create_user:
+  path: /api/v1/users
+  controller: App\User\Presentation\Http\Action\CreateUserAction
+  methods:    POST
+
+update_user:
+  path: /api/v1/users/{id}
+  controller: App\User\Presentation\Http\Action\UpdateUserAction
+  methods:    PUT
+  requirements:
+    id: '\d+'
+
+update_image:
+  path: /api/v1/users/{idUser}/image
+  controller: App\User\Presentation\Http\Action\UpdateUserImageAction
+  methods:    POST
+  requirements:
+    idUser: '\d+'
+
+reset_password:
+  path: /api/v1/users/reset-password
+  controller: App\User\Presentation\Http\Action\ResetPasswordAction
+  methods:    POST
+
+## =============== Attendance Routes
+create_request:
+  path: /api/v1/requests
+  controller: App\Attendance\Presentation\Http\Action\CreateRequestAction
+  methods:    POST
+
+get_request_by_id:
+  path: /api/v1/requests/{id}
+  controller: App\Attendance\Presentation\Http\Action\FindRequestByIdAction
+  methods:    GET
+  requirements:
+    id: '\d+'
+
+update_request:
+  path: /api/v1/requests/{id}
+  controller: App\Attendance\Presentation\Http\Action\UpdateRequestAction
+  methods:    PUT
+  requirements:
+    id: '\d+'
+
+find_requests:
+  path: /api/v1/requests
+  controller: App\Attendance\Presentation\Http\Action\FindRequestsAction
+  methods:    GET
+
+move_request_to_awaiting_response:
+  path: /api/v1/requests/move/{requestId}/awaiting-response
+  controller: App\Attendance\Presentation\Http\Action\MoveToAwaitingResponseAction
+  methods:    POST
+  requirements:
+    requestId: '\d+'
+
+move_request_to_in_attendance:
+  path: /api/v1/requests/move/{requestId}/in-attendance
+  controller: App\Attendance\Presentation\Http\Action\MoveToInAttendanceAction
+  methods:    POST
+  requirements:
+    requestId: '\d+'
+
+move_request_to_canceled:
+  path: /api/v1/requests/move/{requestId}/canceled
+  controller: App\Attendance\Presentation\Http\Action\MoveToCanceledAction
+  methods:    POST
+  requirements:
+    requestId: '\d+'
+
+approve_request:
+  path: /api/v1/requests/{requestId}/approve
+  controller: App\Attendance\Presentation\Http\Action\ApproveRequestAction
+  methods:    POST
+  requirements:
+    requestId: '\d+'
+
+disapprove_request:
+  path: /api/v1/requests/{requestId}/disapprove
+  controller: App\Attendance\Presentation\Http\Action\DisapproveRequestAction
+  methods:    POST
+  requirements:
+    requestId: '\d+'
+
+create_pdf:
+  path: /api/v1/requests/export-requests-to-pdf
+  controller: App\Attendance\Presentation\Http\Action\ExportRequestsToPdfAction
+  methods:    GET
+  requirements:
+    requestId: '\d+'
+
+transfer_company:
+  path: /api/v1/requests/{requestId}/transfer-company
+  controller: App\Attendance\Presentation\Http\Action\TransferCompanyAction
+  methods:    POST
+  requirements:
+    requestId: '\d+'
+
+answered_request:
+  path: /api/v1/requests/{requestId}/answered-request
+  controller: App\Attendance\Presentation\Http\Action\AnsweredRequestAction
+  methods:    POST
+  requirements:
+    requestId: '\d+'
+
+submit_for_approval:
+  path: /api/v1/requests/{requestId}/submit-for-approval
+  controller: App\Attendance\Presentation\Http\Action\SubmitForApprovalAction
+  methods:    POST
+  requirements:
+    requestId: '\d+'

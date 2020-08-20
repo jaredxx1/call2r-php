@@ -11,6 +11,10 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\Persistence\ObjectRepository;
 
+/**
+ * Class DoctrineCompanyRepository
+ * @package App\Company\Infrastructure\Persistence\Doctrine\Repository
+ */
 class DoctrineCompanyRepository implements CompanyRepository
 {
 
@@ -24,6 +28,10 @@ class DoctrineCompanyRepository implements CompanyRepository
      */
     private $entityManager;
 
+    /**
+     * DoctrineCompanyRepository constructor.
+     * @param EntityManagerInterface $entityManager
+     */
     public function __construct(
         EntityManagerInterface $entityManager
     )
@@ -32,18 +40,27 @@ class DoctrineCompanyRepository implements CompanyRepository
         $this->entityManager = $entityManager;
     }
 
+    /**
+     * @param int $id
+     * @return Company|null
+     */
     public function fromId(int $id): ?Company
     {
-        $company = $this->repository->find($id);
-
-        return $company;
+        return $this->repository->find($id);
     }
 
+    /**
+     * @return object[]
+     */
     public function getAll()
     {
         return $this->repository->findAll();
     }
 
+    /**
+     * @return Company|null
+     * @throws NonUniqueMotherCompanyException
+     */
     public function getMother(): ?Company
     {
         $query = $this->entityManager->createQuery('SELECT c FROM App\Company\Domain\Entity\Company c WHERE c.mother = TRUE');
@@ -57,6 +74,11 @@ class DoctrineCompanyRepository implements CompanyRepository
         return $company;
     }
 
+    /**
+     * @param Company $company
+     * @return Company|null
+     * @throws DuplicatedCompanyException
+     */
     public function create(Company $company): ?Company
     {
         try {
@@ -69,10 +91,31 @@ class DoctrineCompanyRepository implements CompanyRepository
         return $company;
     }
 
+    /**
+     * @param Company $company
+     * @return Company|null
+     */
     public function update(Company $company): ?Company
     {
         $this->entityManager->flush();
 
         return $company;
+    }
+
+    /**
+     * @param int $sectionId
+     * @return array|null
+     */
+    public function findCompaniesBySection(int $sectionId): ?array
+    {
+        return $this->entityManager
+            ->createQueryBuilder()
+            ->select('c')
+            ->from('Company:Company', 'c')
+            ->leftJoin('c.sections', 'section')
+            ->where('section.id = :id')
+            ->setParameter('id', $sectionId)
+            ->getQuery()
+            ->getResult();
     }
 }
