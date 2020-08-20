@@ -108,7 +108,8 @@ class TransferCompanyCommand implements CommandInterface
     {
         if (!(
             ($request->getCompanyId() == $user->getCompanyId()) &&
-            ($request->getAssignedTo() == $user->getId()))) {
+            ($request->getAssignedTo() == $user->getId())
+        )) {
             throw new UnauthorizedTransferCompanyException();
         }
     }
