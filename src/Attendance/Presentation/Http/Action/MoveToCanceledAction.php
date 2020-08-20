@@ -46,6 +46,8 @@ class MoveToCanceledAction extends AbstractAction
         try {
             $data = json_decode($request->getContent(), true);
             $request = $this->service->findById($requestId);
+            $data['request'] = $request;
+            $data['user'] = $user;
             $command = MoveToCanceledCommand::fromArray($data);
             $request = $this->service->moveToCanceled($command, $request, $user);
         } catch (Exception $exception) {

@@ -4,15 +4,13 @@
 namespace App\Attendance\Application\Command;
 
 
-use App\Attendance\Application\Exception\AnsweredResponseException;
-use App\Attendance\Application\Exception\AwaitingResponseException;
-use App\Attendance\Application\Exception\CanceledRequestException;
-use App\Attendance\Domain\Entity\Request;
-use App\Company\Application\Service\CompanyService;
 use App\Core\Infrastructure\Container\Application\Utils\Command\CommandInterface;
-use App\User\Domain\Entity\User;
 use Webmozart\Assert\Assert;
 
+/**
+ * Class AnsweredRequestActionCommand
+ * @package App\Attendance\Application\Command
+ */
 class AnsweredRequestActionCommand implements CommandInterface
 {
     /**
@@ -44,6 +42,9 @@ class AnsweredRequestActionCommand implements CommandInterface
         );
     }
 
+    /**
+     * @return array
+     */
     public function toArray(): array
     {
         return [];

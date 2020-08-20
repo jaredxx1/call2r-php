@@ -13,7 +13,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
-class FindCompaniesBySectionIdAction  extends AbstractAction
+class FindCompaniesBySectionIdAction extends AbstractAction
 {
     /**
      * @var CompanyService

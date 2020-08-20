@@ -30,7 +30,7 @@ class Category implements JsonSerializable
 
     /**
      * Category constructor.
-     * @param int $id
+     * @param int|null $id
      * @param int $idCompany
      * @param string $title
      */

@@ -7,7 +7,6 @@ namespace App\Attendance\Presentation\Http\Action;
 use App\Attendance\Application\Query\ExportRequestsToPdfQuery;
 use App\Attendance\Application\Service\RequestService;
 use App\Core\Presentation\Http\AbstractAction;
-use App\User\Application\Service\UserService;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;

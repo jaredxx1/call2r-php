@@ -6,7 +6,6 @@ namespace App\User\Application\Command;
 
 use App\Core\Infrastructure\Container\Application\Utils\Command\CommandInterface;
 use App\User\Application\Exception\InvalidFileException;
-use App\User\Domain\Entity\User;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Webmozart\Assert\Assert;
 

@@ -11,6 +11,10 @@ use App\Wiki\Application\Query\FindAllCategoriesFromCompanyQuery;
 use App\Wiki\Domain\Entity\Category;
 use App\Wiki\Domain\Repository\CategoryRepository;
 
+/**
+ * Class CategoryService
+ * @package App\Wiki\Application\Service
+ */
 class CategoryService
 {
     /**

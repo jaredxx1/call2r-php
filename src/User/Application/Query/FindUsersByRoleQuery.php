@@ -35,7 +35,7 @@ class FindUsersByRoleQuery implements QueryInterface
     public static function fromArray($data)
     {
         Assert::keyExists($data, 'role', "Parameter role is required.");
-        Assert::oneOf($data['role'], ['manager-client', 'manager-support','client','support'], "Role is not valid.");
+        Assert::oneOf($data['role'], ['manager-client', 'manager-support', 'client', 'support'], "Role is not valid.");
 
         return new self(
             $data['role']

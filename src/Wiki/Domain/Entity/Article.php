@@ -42,7 +42,7 @@ class Article implements JsonSerializable
 
     /**
      * Article constructor.
-     * @param int $id
+     * @param int|null $id
      * @param int $idCompany
      * @param string $title
      * @param string $description

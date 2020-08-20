@@ -252,7 +252,7 @@ class CompanyService
     {
         $section = $this->sectionRepository->fromId($query->getSectionId());
 
-        if(is_null($section)){
+        if (is_null($section)) {
             throw new SectionNotFoundException();
         }
 

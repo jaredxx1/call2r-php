@@ -16,7 +16,7 @@ class DuplicatedCategoryException extends Exception
 {
 
     /**
-     * DuplicatedCompanyException constructor.
+     * DuplicatedCategoryException constructor.
      * @param string $message
      * @param int $code
      * @param Throwable|null $previous

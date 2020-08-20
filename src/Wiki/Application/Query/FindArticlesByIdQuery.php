@@ -34,7 +34,6 @@ class FindArticlesByIdQuery implements QueryInterface
         $this->idArticle = $idArticle;
     }
 
-
     /**
      * @param array $data
      * @return FindArticlesByIdQuery

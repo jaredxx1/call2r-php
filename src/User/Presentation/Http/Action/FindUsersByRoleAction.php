@@ -45,7 +45,7 @@ class FindUsersByRoleAction extends AbstractAction
         try {
             $data = ['role' => $role];
             $query = FindUsersByRoleQuery::fromArray($data);
-            $users = $this->userService->findUsersByRole($user,$query);
+            $users = $this->userService->findUsersByRole($user, $query);
         } catch (Exception $exception) {
             return $this->errorResponse($exception->getMessage(), $exception->getCode() ? $exception->getCode() : Response::HTTP_BAD_REQUEST);
         } catch (Throwable $exception) {

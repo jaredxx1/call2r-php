@@ -14,11 +14,11 @@ use App\Attendance\Application\Command\TransferCompanyCommand;
 use App\Attendance\Application\Command\UpdateRequestCommand;
 use App\Attendance\Application\Exception\RequestNotFoundException;
 use App\Attendance\Application\Exception\SectionNotFromCompanyException;
+use App\Attendance\Application\Exception\UnauthorizedTransferCompanyException;
 use App\Attendance\Application\Exception\UnauthorizedRequestException;
 use App\Attendance\Application\Exception\UnauthorizedRequestUpdateException;
 use App\Attendance\Application\Exception\UnauthorizedStatusChangeException;
 use App\Attendance\Application\Exception\UnauthorizedStatusUpdateException;
-use App\Attendance\Application\Exception\UnauthorizedTransferCompanyException;
 use App\Attendance\Application\Query\ExportRequestsToPdfQuery;
 use App\Attendance\Application\Query\FindRequestByIdQuery;
 use App\Attendance\Application\Query\FindRequestsQuery;
@@ -33,8 +33,6 @@ use App\Company\Domain\Entity\Company;
 use App\Company\Domain\Repository\CompanyRepository;
 use App\Company\Domain\Repository\SectionRepository;
 use App\Core\Infrastructure\Storaged\AWS\S3;
-use App\User\Application\Exception\InvalidUserPrivileges;
-use App\User\Application\Service\UserService;
 use App\User\Domain\Entity\User;
 use App\User\Domain\Repository\UserRepository;
 use Carbon\Carbon;
@@ -726,7 +724,7 @@ class RequestService
     {
         $result = [];
 
-        if($user->getRole() == User::managerSupport){
+        if ($user->getRole() == User::managerSupport) {
             $result = $this->requestRepository->searchRequests(
                 $query->getTitle(),
                 $query->getInitialDate(),
@@ -738,7 +736,7 @@ class RequestService
             );
         }
 
-        if($user->getRole() == User::managerClient){
+        if ($user->getRole() == User::managerClient) {
             $result = $this->requestRepository->searchRequests(
                 $query->getTitle(),
                 $query->getInitialDate(),
@@ -791,20 +789,20 @@ class RequestService
 
         switch ($user->getRole()) {
             case User::client:
-                if(!($request->getRequestedBy() == $user->getId())){
+                if (!($request->getRequestedBy() == $user->getId())) {
                     throw new UnauthorizedRequestException();
                 }
                 break;
             case User::support:
-                if(!(
+                if (!(
                     ($request->getCompanyId() == $user->getCompanyId()) &&
                     (($request->getAssignedTo() == $user->getId()) || ($request->getAssignedTo() == null))
-                )){
+                )) {
                     throw new UnauthorizedRequestException();
                 }
                 break;
             case User::managerSupport:
-                if(!($request->getCompanyId() == $user->getCompanyId())){
+                if (!($request->getCompanyId() == $user->getCompanyId())) {
                     throw new UnauthorizedRequestException();
                 }
                 break;

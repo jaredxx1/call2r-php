@@ -9,7 +9,6 @@ use App\Company\Application\Exception\SectionNotFoundException;
 use App\Company\Domain\Entity\Section;
 use App\Company\Domain\Repository\CompanyRepository;
 use App\Company\Domain\Repository\SectionRepository;
-use App\User\Application\Exception\InvalidUserPrivileges;
 use App\User\Domain\Entity\User;
 
 /**

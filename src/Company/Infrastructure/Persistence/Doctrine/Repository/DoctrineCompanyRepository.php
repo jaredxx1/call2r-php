@@ -109,13 +109,13 @@ class DoctrineCompanyRepository implements CompanyRepository
     public function findCompaniesBySection(int $sectionId): ?array
     {
         return $this->entityManager
-                ->createQueryBuilder()
-                ->select('c')
-                ->from('Company:Company', 'c')
-                ->leftJoin('c.sections','section')
-                ->where('section.id = :id')
-                ->setParameter('id', $sectionId)
-                ->getQuery()
-                ->getResult();
+            ->createQueryBuilder()
+            ->select('c')
+            ->from('Company:Company', 'c')
+            ->leftJoin('c.sections', 'section')
+            ->where('section.id = :id')
+            ->setParameter('id', $sectionId)
+            ->getQuery()
+            ->getResult();
     }
 }

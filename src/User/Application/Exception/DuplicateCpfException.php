@@ -8,11 +8,15 @@ use Exception;
 use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
-class DuplicateCpfException  extends Exception
+/**
+ * Class DuplicateCpfException
+ * @package App\User\Application\Exception
+ */
+class DuplicateCpfException extends Exception
 {
 
     /**
-     * DuplicatedCompanyException constructor.
+     * DuplicateCpfException constructor.
      * @param string $message
      * @param int $code
      * @param Throwable|null $previous

@@ -15,7 +15,7 @@ use Throwable;
 class CategoryNotFoundException extends Exception
 {
     /**
-     * CompanyNotFoundException constructor.
+     * CategoryNotFoundException constructor.
      * @param string $message
      * @param int $code
      * @param Throwable|null $previous
