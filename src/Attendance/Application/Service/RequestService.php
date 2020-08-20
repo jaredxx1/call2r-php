@@ -29,6 +29,7 @@ use App\Attendance\Domain\Repository\RequestRepository;
 use App\Attendance\Domain\Repository\StatusRepository;
 use App\Company\Application\Exception\CompanyNotFoundException;
 use App\Company\Application\Exception\SectionNotFoundException;
+use App\Company\Domain\Entity\Company;
 use App\Company\Domain\Repository\CompanyRepository;
 use App\Company\Domain\Repository\SectionRepository;
 use App\Core\Infrastructure\Storaged\AWS\S3;
@@ -494,7 +495,6 @@ class RequestService
         if (is_null($companyUser)) {
             throw new CompanyNotFoundException();
         }
-
         $message = "";
 
         if (!is_null($command)) {
@@ -825,6 +825,7 @@ class RequestService
      */
     public function AnsweredRequest(AnsweredRequestActionCommand $command, Request $request, User $user)
     {
+//        dd('teste');
         if (!($request->getStatus()->getId() == Status::awaitingResponse)
         ) {
             throw new UnauthorizedStatusChangeException();
@@ -847,7 +848,30 @@ class RequestService
         $request->setStatus($status);
         $request->setUpdatedAt(Carbon::now()->timezone('America/Sao_Paulo'));
 
-        $request = $this->moveToInAttendance(null, $request, $user);
+        return $this->moveToInAttendanceWithoutValidation($command->getMessage(), $user, $companyUser, $request);
+    }
+
+    /**
+     * @param string $message
+     * @param User $user
+     * @param Company $companyUser
+     * @param Request $request
+     * @return Request
+     */
+    public function moveToInAttendanceWithoutValidation(string $message, User $user, Company $companyUser, Request $request): Request
+    {
+
+        $log = new Log(null, 'Chamado em atendimento'
+            . ' <br> Por : ' . $user->getName()
+            . ' <br> Trabalha em : ' . $companyUser->getName()
+            . ' <br> Mensagem : ' . $message
+            , Carbon::now()->timezone('America/Sao_Paulo'), 'inAttendance');
+        $status = $this->statusRepository->fromId(Status::inAttendance);
+
+        $request->getLogs()->add($log);
+        $request->setStatus($status);
+        $request->setUpdatedAt(Carbon::now()->timezone('America/Sao_Paulo'));
+        $request->setAssignedTo($user->getId());
 
         return $this->requestRepository->update($request);
     }
