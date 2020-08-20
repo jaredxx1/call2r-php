@@ -8,7 +8,11 @@ use Exception;
 use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
-class DuplicateEmailException  extends Exception
+/**
+ * Class DuplicateEmailException
+ * @package App\User\Application\Exception
+ */
+class DuplicateEmailException extends Exception
 {
 
     /**

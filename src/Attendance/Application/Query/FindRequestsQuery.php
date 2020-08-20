@@ -7,6 +7,10 @@ namespace App\Attendance\Application\Query;
 use App\Core\Infrastructure\Container\Application\Utils\Query\QueryInterface;
 use Webmozart\Assert\Assert;
 
+/**
+ * Class FindRequestsQuery
+ * @package App\Attendance\Application\Query
+ */
 class FindRequestsQuery implements QueryInterface
 {
 
@@ -62,42 +66,42 @@ class FindRequestsQuery implements QueryInterface
     public static function fromArray($data)
     {
         if (key_exists('awaitingSupport', $data)) {
-            if(!self::validateBoolean($data['awaitingSupport'])){
+            if (!self::validateBoolean($data['awaitingSupport'])) {
                 Assert::boolean($data['awaitingSupport'], "awaitingSupport must be a boolean");
             }
             $data['awaitingSupport'] = self::transformToBoolean($data['awaitingSupport']);
         }
 
         if (key_exists('inAttendance', $data)) {
-            if(!self::validateBoolean($data['inAttendance'])){
+            if (!self::validateBoolean($data['inAttendance'])) {
                 Assert::boolean($data['inAttendance'], "inAttendance must be a boolean");
             }
             $data['inAttendance'] = self::transformToBoolean($data['inAttendance']);
         }
 
         if (key_exists('awaitingResponse', $data)) {
-            if(!self::validateBoolean($data['awaitingResponse'])){
+            if (!self::validateBoolean($data['awaitingResponse'])) {
                 Assert::boolean($data['awaitingResponse'], "awaitingResponse must be a boolean");
             }
             $data['awaitingResponse'] = self::transformToBoolean($data['awaitingResponse']);
         }
 
         if (key_exists('canceled', $data)) {
-            if(!self::validateBoolean($data['canceled'])){
+            if (!self::validateBoolean($data['canceled'])) {
                 Assert::boolean($data['canceled'], "canceled must be a boolean");
             }
             $data['canceled'] = self::transformToBoolean($data['canceled']);
         }
 
         if (key_exists('approved', $data)) {
-            if(!self::validateBoolean($data['approved'])){
+            if (!self::validateBoolean($data['approved'])) {
                 Assert::boolean($data['approved'], "approved must be a boolean");
             }
             $data['approved'] = self::transformToBoolean($data['approved']);
         }
 
         if (key_exists('active', $data)) {
-            if(!self::validateBoolean($data['active'])){
+            if (!self::validateBoolean($data['active'])) {
                 Assert::boolean($data['active'], "active must be a boolean");
             }
             $data['active'] = self::transformToBoolean($data['active']);
@@ -119,11 +123,11 @@ class FindRequestsQuery implements QueryInterface
      */
     public static function validateBoolean($param): bool
     {
-        if($param == 'false' || $param == '0'){
+        if ($param == 'false' || $param == '0') {
             return true;
         }
 
-        if($param == 'true' || $param == '1'){
+        if ($param == 'true' || $param == '1') {
             return true;
         }
 
@@ -137,11 +141,11 @@ class FindRequestsQuery implements QueryInterface
      */
     private static function transformToBoolean($param)
     {
-        if($param == 'false' || $param == '0'){
+        if ($param == 'false' || $param == '0') {
             $param = null;
         }
 
-        if($param == 'true' || $param == '1'){
+        if ($param == 'true' || $param == '1') {
             $param = true;
         }
 

@@ -8,10 +8,14 @@ use Exception;
 use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
-class SectionNotFromCompanyException  extends Exception
+/**
+ * Class SectionNotFromCompanyException
+ * @package App\Attendance\Application\Exception
+ */
+class SectionNotFromCompanyException extends Exception
 {
     /**
-     * CompanyNotFoundException constructor.
+     * SectionNotFromCompanyException constructor.
      * @param string $message
      * @param int $code
      * @param Throwable|null $previous

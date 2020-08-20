@@ -19,7 +19,7 @@ use App\User\Application\Exception\DuplicateCpfException;
 use App\User\Application\Exception\DuplicateEmailException;
 use App\User\Application\Exception\FromIdException;
 use App\User\Application\Exception\InvalidCredentialsException;
-use App\User\Application\Exception\ResetPasswordExcpetion;
+use App\User\Application\Exception\ResetPasswordException;
 use App\User\Application\Exception\UpdateImageException;
 use App\User\Application\Exception\UpdateUserException;
 use App\User\Application\Exception\UserNotFoundException;
@@ -484,7 +484,7 @@ final class UserService
     /**
      * @param ResetPasswordCommand $command
      * @throws EmailSendException
-     * @throws ResetPasswordExcpetion
+     * @throws ResetPasswordException
      * @throws \PHPMailer\PHPMailer\Exception
      * @throws Exception
      */
@@ -493,7 +493,7 @@ final class UserService
         $birthdate = new DateTime($command->getBirthdate());
         $user = $this->userRepository->fromCpf($command->getCpf());
         if ($user->getBirthdate() != $birthdate) {
-            throw new ResetPasswordExcpetion();
+            throw new ResetPasswordException();
         }
 
         $newPassword = substr(sha1(time()), 0, 6);

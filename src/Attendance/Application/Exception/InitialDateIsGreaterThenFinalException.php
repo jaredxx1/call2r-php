@@ -8,10 +8,14 @@ use Exception;
 use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
+/**
+ * Class InitialDateIsGreaterThenFinalException
+ * @package App\Attendance\Application\Exception
+ */
 class InitialDateIsGreaterThenFinalException extends Exception
 {
     /**
-     * UnauthorizedStatusChangeException constructor.
+     * InitialDateIsGreaterThenFinalException constructor.
      * @param string $message
      * @param int $code
      * @param Throwable|null $previous

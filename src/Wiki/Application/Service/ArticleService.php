@@ -6,7 +6,6 @@ namespace App\Wiki\Application\Service;
 
 use App\Company\Application\Exception\CompanyNotFoundException;
 use App\Company\Domain\Repository\CompanyRepository;
-use App\User\Application\Exception\InvalidUserPrivileges;
 use App\User\Domain\Entity\User;
 use App\Wiki\Application\Command\CreateArticleCommand;
 use App\Wiki\Application\Command\DeleteArticleCommand;
@@ -84,7 +83,7 @@ class ArticleService
             throw new CompanyNotFoundException();
         }
 
-        $categories = $this->createCategoriesObject($command,$command->getIdCompany());
+        $categories = $this->createCategoriesObject($command, $command->getIdCompany());
 
         $article = new Article(
             null,

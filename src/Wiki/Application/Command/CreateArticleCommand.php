@@ -5,7 +5,6 @@ namespace App\Wiki\Application\Command;
 
 
 use App\Core\Infrastructure\Container\Application\Utils\Command\CommandInterface;
-use App\User\Domain\Entity\User;
 use Webmozart\Assert\Assert;
 
 /**

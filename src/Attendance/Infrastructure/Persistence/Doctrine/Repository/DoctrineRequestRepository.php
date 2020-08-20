@@ -5,7 +5,6 @@ namespace App\Attendance\Infrastructure\Persistence\Doctrine\Repository;
 
 
 use App\Attendance\Domain\Entity\Request;
-use App\Attendance\Domain\Entity\Status;
 use App\Attendance\Domain\Repository\RequestRepository;
 use App\User\Domain\Entity\User;
 use Doctrine\Common\Persistence\ObjectRepository;
@@ -83,9 +82,9 @@ class DoctrineRequestRepository implements RequestRepository
      * @param User $user
      * @return array
      */
-    public function findRequestsClient(?bool $awaitingSupport, ?bool $inAttendance,?bool $awaitingResponse,?bool $canceled,?bool $approved,?bool $active,User $user): array
+    public function findRequestsClient(?bool $awaitingSupport, ?bool $inAttendance, ?bool $awaitingResponse, ?bool $canceled, ?bool $approved, ?bool $active, User $user): array
     {
-        $query =  $this->entityManager
+        $query = $this->entityManager
             ->createQueryBuilder()
             ->select('r')
             ->from('Attendance:Request', 'r');
@@ -101,6 +100,47 @@ class DoctrineRequestRepository implements RequestRepository
 
     /**
      * @param bool|null $awaitingSupport
+     * @param QueryBuilder $query
+     * @param bool|null $inAttendance
+     * @param bool|null $awaitingResponse
+     * @param bool|null $canceled
+     * @param bool|null $approved
+     * @param bool|null $active
+     * @return QueryBuilder
+     */
+    public function listRequestsParameters(?bool $awaitingSupport, QueryBuilder $query, ?bool $inAttendance, ?bool $awaitingResponse, ?bool $canceled, ?bool $approved, ?bool $active): QueryBuilder
+    {
+        if (isset($awaitingSupport)) {
+            $query->orWhere('r.status = 1');
+        }
+
+        if (isset($inAttendance)) {
+            $query->orWhere('r.status = 2');
+        }
+
+        if (isset($awaitingResponse)) {
+            $query->orWhere('r.status = 3');
+        }
+
+        if (isset($canceled)) {
+            $query->orWhere('r.status = 5');
+        }
+
+        if (isset($approved)) {
+            $query->orWhere('r.status = 4');
+        }
+
+        if (isset($active)) {
+            $query->orWhere('r.status = 1')
+                ->orWhere('r.status = 2')
+                ->orWhere('r.status = 3');
+        }
+
+        return $query;
+    }
+
+    /**
+     * @param bool|null $awaitingSupport
      * @param bool|null $inAttendance
      * @param bool|null $awaitingResponse
      * @param bool|null $canceled
@@ -109,9 +149,9 @@ class DoctrineRequestRepository implements RequestRepository
      * @param User $user
      * @return array
      */
-    public function findRequestsSupport(?bool $awaitingSupport, ?bool $inAttendance,?bool $awaitingResponse,?bool $canceled,?bool $approved,?bool $active,User $user): array
+    public function findRequestsSupport(?bool $awaitingSupport, ?bool $inAttendance, ?bool $awaitingResponse, ?bool $canceled, ?bool $approved, ?bool $active, User $user): array
     {
-        $query =  $this->entityManager
+        $query = $this->entityManager
             ->createQueryBuilder()
             ->select('r')
             ->from('Attendance:Request', 'r');
@@ -136,9 +176,9 @@ class DoctrineRequestRepository implements RequestRepository
      * @param bool|null $active
      * @return array
      */
-    public function findRequestsManagerClient(?bool $awaitingSupport, ?bool $inAttendance,?bool $awaitingResponse,?bool $canceled,?bool $approved,?bool $active): array
+    public function findRequestsManagerClient(?bool $awaitingSupport, ?bool $inAttendance, ?bool $awaitingResponse, ?bool $canceled, ?bool $approved, ?bool $active): array
     {
-        $query =  $this->entityManager
+        $query = $this->entityManager
             ->createQueryBuilder()
             ->select('r')
             ->from('Attendance:Request', 'r');
@@ -158,9 +198,9 @@ class DoctrineRequestRepository implements RequestRepository
      * @param User $user
      * @return array
      */
-    public function findRequestsManagerSupport(?bool $awaitingSupport, ?bool $inAttendance,?bool $awaitingResponse,?bool $canceled,?bool $approved,?bool $active,User $user): array
+    public function findRequestsManagerSupport(?bool $awaitingSupport, ?bool $inAttendance, ?bool $awaitingResponse, ?bool $canceled, ?bool $approved, ?bool $active, User $user): array
     {
-        $query =  $this->entityManager
+        $query = $this->entityManager
             ->createQueryBuilder()
             ->select('r')
             ->from('Attendance:Request', 'r');
@@ -173,7 +213,6 @@ class DoctrineRequestRepository implements RequestRepository
 
         return $query->getQuery()->getResult();
     }
-
 
     /**
      * @param string|null $title
@@ -218,53 +257,12 @@ class DoctrineRequestRepository implements RequestRepository
                 ->setParameter(':requestedBy', $requestedBy);
         }
 
-        if(isset($companyId)){
+        if (isset($companyId)) {
             $query->andWhere('r.companyId = :companyId')
                 ->setParameter('companyId', $companyId);
         }
 
         return $query->getQuery()->getResult();
 
-    }
-
-    /**
-     * @param bool|null $awaitingSupport
-     * @param QueryBuilder $query
-     * @param bool|null $inAttendance
-     * @param bool|null $awaitingResponse
-     * @param bool|null $canceled
-     * @param bool|null $approved
-     * @param bool|null $active
-     * @return QueryBuilder
-     */
-    public function listRequestsParameters(?bool $awaitingSupport, QueryBuilder $query, ?bool $inAttendance, ?bool $awaitingResponse, ?bool $canceled, ?bool $approved, ?bool $active): QueryBuilder
-    {
-        if (isset($awaitingSupport)) {
-            $query->orWhere('r.status = 1');
-        }
-
-        if (isset($inAttendance)) {
-            $query->orWhere('r.status = 2');
-        }
-
-        if (isset($awaitingResponse)) {
-            $query->orWhere('r.status = 3');
-        }
-
-        if (isset($canceled)) {
-            $query->orWhere('r.status = 5');
-        }
-
-        if (isset($approved)) {
-            $query->orWhere('r.status = 4');
-        }
-
-        if (isset($active)) {
-            $query->orWhere('r.status = 1')
-                ->orWhere('r.status = 2')
-                ->orWhere('r.status = 3');
-        }
-
-        return $query;
     }
 }

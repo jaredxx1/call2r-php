@@ -4,7 +4,6 @@
 namespace App\User\Infrastructure\Persistence\Doctrine\Repository;
 
 
-use App\User\Application\Service\UserService;
 use App\User\Domain\Entity\User;
 use App\User\Domain\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -191,7 +190,7 @@ class DoctrineUserRepository implements UserRepository
      * @return User|null
      * @throws NonUniqueResultException
      */
-    public function fromEmail(string  $email): ?User
+    public function fromEmail(string $email): ?User
     {
         return $this->entityManager
             ->createQueryBuilder()

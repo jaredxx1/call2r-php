@@ -14,11 +14,11 @@ use App\Attendance\Application\Command\TransferCompanyCommand;
 use App\Attendance\Application\Command\UpdateRequestCommand;
 use App\Attendance\Application\Exception\RequestNotFoundException;
 use App\Attendance\Application\Exception\SectionNotFromCompanyException;
+use App\Attendance\Application\Exception\UnauthorizedTransferCompanyException;
 use App\Attendance\Application\Exception\UnauthorizedRequestException;
 use App\Attendance\Application\Exception\UnauthorizedRequestUpdateException;
 use App\Attendance\Application\Exception\UnauthorizedStatusChangeException;
 use App\Attendance\Application\Exception\UnauthorizedStatusUpdateException;
-use App\Attendance\Application\Exception\UnauthorizedTransferCompanyException;
 use App\Attendance\Application\Query\ExportRequestsToPdfQuery;
 use App\Attendance\Application\Query\FindRequestByIdQuery;
 use App\Attendance\Application\Query\FindRequestsQuery;
@@ -29,11 +29,10 @@ use App\Attendance\Domain\Repository\RequestRepository;
 use App\Attendance\Domain\Repository\StatusRepository;
 use App\Company\Application\Exception\CompanyNotFoundException;
 use App\Company\Application\Exception\SectionNotFoundException;
+use App\Company\Domain\Entity\Company;
 use App\Company\Domain\Repository\CompanyRepository;
 use App\Company\Domain\Repository\SectionRepository;
 use App\Core\Infrastructure\Storaged\AWS\S3;
-use App\User\Application\Exception\InvalidUserPrivileges;
-use App\User\Application\Service\UserService;
 use App\User\Domain\Entity\User;
 use App\User\Domain\Repository\UserRepository;
 use Carbon\Carbon;
@@ -494,7 +493,6 @@ class RequestService
         if (is_null($companyUser)) {
             throw new CompanyNotFoundException();
         }
-
         $message = "";
 
         if (!is_null($command)) {
@@ -726,7 +724,7 @@ class RequestService
     {
         $result = [];
 
-        if($user->getRole() == User::managerSupport){
+        if ($user->getRole() == User::managerSupport) {
             $result = $this->requestRepository->searchRequests(
                 $query->getTitle(),
                 $query->getInitialDate(),
@@ -738,7 +736,7 @@ class RequestService
             );
         }
 
-        if($user->getRole() == User::managerClient){
+        if ($user->getRole() == User::managerClient) {
             $result = $this->requestRepository->searchRequests(
                 $query->getTitle(),
                 $query->getInitialDate(),
@@ -791,20 +789,20 @@ class RequestService
 
         switch ($user->getRole()) {
             case User::client:
-                if(!($request->getRequestedBy() == $user->getId())){
+                if (!($request->getRequestedBy() == $user->getId())) {
                     throw new UnauthorizedRequestException();
                 }
                 break;
             case User::support:
-                if(!(
+                if (!(
                     ($request->getCompanyId() == $user->getCompanyId()) &&
                     (($request->getAssignedTo() == $user->getId()) || ($request->getAssignedTo() == null))
-                )){
+                )) {
                     throw new UnauthorizedRequestException();
                 }
                 break;
             case User::managerSupport:
-                if(!($request->getCompanyId() == $user->getCompanyId())){
+                if (!($request->getCompanyId() == $user->getCompanyId())) {
                     throw new UnauthorizedRequestException();
                 }
                 break;
@@ -825,6 +823,7 @@ class RequestService
      */
     public function AnsweredRequest(AnsweredRequestActionCommand $command, Request $request, User $user)
     {
+//        dd('teste');
         if (!($request->getStatus()->getId() == Status::awaitingResponse)
         ) {
             throw new UnauthorizedStatusChangeException();
@@ -847,7 +846,30 @@ class RequestService
         $request->setStatus($status);
         $request->setUpdatedAt(Carbon::now()->timezone('America/Sao_Paulo'));
 
-        $request = $this->moveToInAttendance(null, $request, $user);
+        return $this->moveToInAttendanceWithoutValidation($command->getMessage(), $user, $companyUser, $request);
+    }
+
+    /**
+     * @param string $message
+     * @param User $user
+     * @param Company $companyUser
+     * @param Request $request
+     * @return Request
+     */
+    public function moveToInAttendanceWithoutValidation(string $message, User $user, Company $companyUser, Request $request): Request
+    {
+
+        $log = new Log(null, 'Chamado em atendimento'
+            . ' <br> Por : ' . $user->getName()
+            . ' <br> Trabalha em : ' . $companyUser->getName()
+            . ' <br> Mensagem : ' . $message
+            , Carbon::now()->timezone('America/Sao_Paulo'), 'inAttendance');
+        $status = $this->statusRepository->fromId(Status::inAttendance);
+
+        $request->getLogs()->add($log);
+        $request->setStatus($status);
+        $request->setUpdatedAt(Carbon::now()->timezone('America/Sao_Paulo'));
+        $request->setAssignedTo($user->getId());
 
         return $this->requestRepository->update($request);
     }

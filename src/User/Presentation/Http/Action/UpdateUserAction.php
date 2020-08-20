@@ -46,7 +46,7 @@ class UpdateUserAction extends AbstractAction
             $data = json_decode($request->getContent(), true);
             $data['id'] = $id;
             $command = UpdateUserCommand::fromArray($data);
-            $user = $this->userService->updateUser($command,$user);
+            $user = $this->userService->updateUser($command, $user);
         } catch (Exception $exception) {
             return $this->errorResponse($exception->getMessage(), $exception->getCode() ? $exception->getCode() : Response::HTTP_BAD_REQUEST);
         } catch (Throwable $exception) {

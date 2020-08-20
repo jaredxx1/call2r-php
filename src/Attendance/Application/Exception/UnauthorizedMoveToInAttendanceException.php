@@ -9,18 +9,18 @@ use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
 /**
- * Class StatusNotFoundException
+ * Class UnauthorizedMoveToInAttendanceException
  * @package App\Attendance\Application\Exception
  */
-class StatusNotFoundException extends Exception
+class UnauthorizedMoveToInAttendanceException extends Exception
 {
     /**
-     * StatusNotFoundException constructor.
+     * UnauthorizedMoveToInAttendanceException constructor.
      * @param string $message
      * @param int $code
      * @param Throwable|null $previous
      */
-    public function __construct($message = "Status not found", $code = Response::HTTP_NOT_FOUND, Throwable $previous = null)
+    public function __construct($message = "You don't have permissions to move this request to attendance", $code = Response::HTTP_FORBIDDEN, Throwable $previous = null)
     {
         parent::__construct($message, $code, $previous);
     }

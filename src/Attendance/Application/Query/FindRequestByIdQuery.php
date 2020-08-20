@@ -7,6 +7,10 @@ namespace App\Attendance\Application\Query;
 use App\Core\Infrastructure\Container\Application\Utils\Query\QueryInterface;
 use Webmozart\Assert\Assert;
 
+/**
+ * Class FindRequestByIdQuery
+ * @package App\Attendance\Application\Query
+ */
 class FindRequestByIdQuery implements QueryInterface
 {
 
@@ -24,7 +28,10 @@ class FindRequestByIdQuery implements QueryInterface
         $this->id = $id;
     }
 
-
+    /**
+     * @param array $data
+     * @return FindRequestByIdQuery
+     */
     public static function fromArray($data)
     {
         Assert::keyExists($data, 'id', "Id must be a integer");
@@ -35,6 +42,9 @@ class FindRequestByIdQuery implements QueryInterface
         );
     }
 
+    /**
+     * @return array
+     */
     public function toArray(): array
     {
         return [];

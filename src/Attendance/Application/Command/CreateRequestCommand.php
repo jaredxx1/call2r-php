@@ -7,6 +7,10 @@ namespace App\Attendance\Application\Command;
 use App\Core\Infrastructure\Container\Application\Utils\Command\CommandInterface;
 use Webmozart\Assert\Assert;
 
+/**
+ * Class CreateRequestCommand
+ * @package App\Attendance\Application\Command
+ */
 class CreateRequestCommand implements CommandInterface
 {
     /**

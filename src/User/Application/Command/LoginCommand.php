@@ -7,6 +7,10 @@ namespace App\User\Application\Command;
 use App\Core\Infrastructure\Container\Application\Utils\Command\CommandInterface;
 use Webmozart\Assert\Assert;
 
+/**
+ * Class LoginCommand
+ * @package App\User\Application\Command
+ */
 class LoginCommand implements CommandInterface
 {
 
@@ -31,7 +35,10 @@ class LoginCommand implements CommandInterface
         $this->password = $password;
     }
 
-
+    /**
+     * @param array $data
+     * @return LoginCommand
+     */
     public static function fromArray($data)
     {
         Assert::keyExists($data, 'cpf', 'Field cpf is required');

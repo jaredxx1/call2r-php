@@ -8,6 +8,10 @@ use Aws\S3\Exception\S3Exception;
 use Aws\S3\S3Client;
 use Exception;
 
+/**
+ * Class S3
+ * @package App\Core\Infrastructure\Storaged\AWS
+ */
 class S3
 {
     const bucket = "call2r";
@@ -46,9 +50,6 @@ class S3
     public function sendFile(string $directory, string $key, string $path, string $name, string $contentType)
     {
         try {
-            /*
-             * Send image to amazon S3 and return a URL to this image
-             */
             $url = $this->s3Client->putObject(array(
                 'Bucket' => self::bucket,
                 'Key' => $directory . '/' . $key . '/' . $name,

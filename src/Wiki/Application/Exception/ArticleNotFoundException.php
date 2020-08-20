@@ -15,7 +15,7 @@ use Throwable;
 class ArticleNotFoundException extends Exception
 {
     /**
-     * CompanyNotFoundException constructor.
+     * ArticleNotFoundException constructor.
      * @param string $message
      * @param int $code
      * @param Throwable|null $previous

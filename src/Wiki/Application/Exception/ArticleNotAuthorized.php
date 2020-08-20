@@ -8,10 +8,14 @@ use Exception;
 use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
+/**
+ * Class ArticleNotAuthorized
+ * @package App\Wiki\Application\Exception
+ */
 class ArticleNotAuthorized extends Exception
 {
     /**
-     * CompanyNotFoundException constructor.
+     * ArticleNotAuthorized constructor.
      * @param string $message
      * @param int $code
      * @param Throwable|null $previous

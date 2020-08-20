@@ -3,12 +3,13 @@
 
 namespace App\Attendance\Application\Command;
 
-use App\Attendance\Application\Exception\AwaitingResponseException;
-use App\Attendance\Domain\Entity\Request;
 use App\Core\Infrastructure\Container\Application\Utils\Command\CommandInterface;
-use App\User\Domain\Entity\User;
 use Webmozart\Assert\Assert;
 
+/**
+ * Class MoveToAwaitingResponseCommand
+ * @package App\Attendance\Application\Command
+ */
 class MoveToAwaitingResponseCommand implements CommandInterface
 {
     /**
@@ -25,6 +26,10 @@ class MoveToAwaitingResponseCommand implements CommandInterface
         $this->message = $message;
     }
 
+    /**
+     * @param array $data
+     * @return MoveToAwaitingResponseCommand
+     */
     public static function fromArray($data)
     {
         if (key_exists('message', $data)) {
@@ -36,6 +41,9 @@ class MoveToAwaitingResponseCommand implements CommandInterface
         );
     }
 
+    /**
+     * @return array
+     */
     public function toArray(): array
     {
         return [];

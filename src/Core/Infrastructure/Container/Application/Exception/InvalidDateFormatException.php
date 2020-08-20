@@ -8,6 +8,10 @@ use Exception;
 use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
+/**
+ * Class InvalidDateFormatException
+ * @package App\Core\Infrastructure\Container\Application\Exception
+ */
 class InvalidDateFormatException extends Exception
 {
     /**
