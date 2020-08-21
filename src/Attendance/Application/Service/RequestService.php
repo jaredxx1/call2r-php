@@ -806,6 +806,8 @@ class RequestService
                     throw new UnauthorizedRequestException();
                 }
                 break;
+            case User::managerClient:
+                break;
             default:
                 $request = [];
         }
