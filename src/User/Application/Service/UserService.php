@@ -500,12 +500,11 @@ final class UserService
 
         $hashedPassword = password_hash($newPassword, PASSWORD_BCRYPT);
 
+        $this->emailService->sendEmail($user->getEmail(), 'nome', 'Reset Password', '<H1>Your new password is ->' . $newPassword . '</H1>');
+
         $user->setPassword($hashedPassword);
 
         $this->userRepository->updateUser($user);
-
-        $this->emailService->sendEmail($user->getEmail(), 'nome', 'Reset Password', '<H1>Your new password is ->' . $newPassword . '</H1>');
-
     }
 }
 
