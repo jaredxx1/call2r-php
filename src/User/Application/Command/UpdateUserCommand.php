@@ -5,6 +5,8 @@ namespace App\User\Application\Command;
 
 
 use App\Core\Infrastructure\Container\Application\Utils\Command\CommandInterface;
+use App\User\Application\Exception\InvalidEmailException;
+use PHPMailer\PHPMailer\PHPMailer;
 use Webmozart\Assert\Assert;
 
 /**
@@ -73,6 +75,7 @@ class UpdateUserCommand implements CommandInterface
     /**
      * @param array $data
      * @return UpdateUserCommand
+     * @throws InvalidEmailException
      */
     public static function fromArray($data)
     {
@@ -84,6 +87,9 @@ class UpdateUserCommand implements CommandInterface
         }
 
         if (key_exists('email', $data)) {
+            if (!PHPMailer::validateAddress($data['email'])) {
+                throw new InvalidEmailException();
+            }
             Assert::stringNotEmpty($data['email'], 'Field email cannot be empty');
         }
 

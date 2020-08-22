@@ -87,15 +87,17 @@ class TransferCompanyCommand implements CommandInterface
             Assert::stringNotEmpty($data['message'], 'Field message cannot be empty.');
         }
 
-        self::validateRequest($data['request'], $data['user']);
+        if(key_exists('request', $data) && (key_exists('user', $data))){
+            self::validateRequest($data['request'], $data['user']);
+        }
 
         return new self(
             $data['section'],
             $data['companyId'],
             $data['requestId'],
             $data['message'] ?? null,
-            $data[],
-            $data[]
+            $data['request'],
+            $data['user']
         );
     }
 

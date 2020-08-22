@@ -67,13 +67,15 @@ class DisapproveRequestCommand implements CommandInterface
         Assert::string($data['message'], 'Field message is not a string.');
         Assert::integer($data['requestId'], 'Field requestId not an integer.');
 
-        self::validateRequest($data['request'], $data['user']);
+        if(key_exists('request', $data) && (key_exists('user', $data))){
+            self::validateRequest($data['request'], $data['user']);
+        }
 
         return new self(
             $data['requestId'],
             $data['message'],
-            $data[],
-            $data[]
+            $data['request'],
+            $data['user']
         );
     }
 

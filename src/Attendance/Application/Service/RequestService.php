@@ -14,6 +14,8 @@ use App\Attendance\Application\Command\TransferCompanyCommand;
 use App\Attendance\Application\Command\UpdateRequestCommand;
 use App\Attendance\Application\Exception\RequestNotFoundException;
 use App\Attendance\Application\Exception\SectionNotFromCompanyException;
+use App\Attendance\Application\Exception\UnauthorizedDisapproveRequestException;
+use App\Attendance\Application\Exception\UnauthorizedMoveToInAttendanceException;
 use App\Attendance\Application\Exception\UnauthorizedTransferCompanyException;
 use App\Attendance\Application\Exception\UnauthorizedRequestException;
 use App\Attendance\Application\Exception\UnauthorizedRequestUpdateException;
@@ -436,6 +438,7 @@ class RequestService
      * @throws CompanyNotFoundException
      * @throws RequestNotFoundException
      * @throws UnauthorizedStatusChangeException
+     * @throws UnauthorizedDisapproveRequestException
      */
     public function disapproveRequest(?DisapproveRequestCommand $command, User $user): Request
     {
@@ -555,6 +558,7 @@ class RequestService
      * @return Request
      * @throws CompanyNotFoundException
      * @throws UnauthorizedStatusChangeException
+     * @throws UnauthorizedMoveToInAttendanceException
      */
     public function moveToCanceled(?MoveToCanceledCommand $command, Request $request, User $user): Request
     {
@@ -653,6 +657,7 @@ class RequestService
      * @throws CompanyNotFoundException
      * @throws RequestNotFoundException
      * @throws SectionNotFoundException
+     * @throws SectionNotFromCompanyException
      * @throws UnauthorizedStatusChangeException
      * @throws UnauthorizedTransferCompanyException
      */
@@ -680,7 +685,7 @@ class RequestService
         }
 
         if (!($company->getSections()->contains($section))) {
-            throw new UnauthorizedTransferCompanyException();
+            throw new SectionNotFromCompanyException();
         }
 
         $request->setSection($section->getName());
@@ -708,6 +713,7 @@ class RequestService
         $request->setUpdatedAt(Carbon::now()->timezone('America/Sao_Paulo'));
         $request->setAssignedTo(null);
 
+
         $request = $this->requestRepository->update($request);
         $request = $this->moveToAwaitingSupport($request, $user);
 
@@ -719,6 +725,7 @@ class RequestService
      * @param User $user
      * @return array
      * @throws MpdfException
+     * @throws Exception
      */
     public function ExportsRequestsToPdf(ExportRequestsToPdfQuery $query, User $user)
     {
@@ -805,6 +812,8 @@ class RequestService
                 if (!($request->getCompanyId() == $user->getCompanyId())) {
                     throw new UnauthorizedRequestException();
                 }
+                break;
+            case User::managerClient:
                 break;
             default:
                 $request = [];

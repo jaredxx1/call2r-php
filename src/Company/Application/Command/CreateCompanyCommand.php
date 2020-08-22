@@ -4,7 +4,9 @@
 namespace App\Company\Application\Command;
 
 
+use App\Company\Application\Exception\InvalidCnpjException;
 use App\Core\Infrastructure\Container\Application\Utils\Command\CommandInterface;
+use App\Core\Infrastructure\Container\Application\Utils\Validations\CNPJ;
 use Webmozart\Assert\Assert;
 
 /**
@@ -75,6 +77,7 @@ class CreateCompanyCommand implements CommandInterface
     /**
      * @param array $data
      * @return CreateCompanyCommand
+     * @throws InvalidCnpjException
      */
     public static function fromArray($data)
     {
@@ -96,6 +99,11 @@ class CreateCompanyCommand implements CommandInterface
 
         Assert::stringNotEmpty($data['name'], 'Field name is empty');
         Assert::stringNotEmpty($data['cnpj'], 'Field CNPJ is empty');
+
+        if(!CNPJ::validate($data['cnpj'])){
+            throw new InvalidCnpjException();
+        }
+
         Assert::stringNotEmpty($data['description'], 'Field description is empty');
 
         Assert::length($data['cnpj'], 13, "Field CNPJ don't have 14 digits");
