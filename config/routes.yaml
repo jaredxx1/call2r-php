@@ -226,3 +226,10 @@ submit_for_approval:
   methods:    POST
   requirements:
     requestId: '\d+'
+
+request_log:
+  path: /api/v1/requests/{requestId}/log
+  controller: App\Attendance\Presentation\Http\Action\RequestLogAction
+  methods:    POST
+  requirements:
+    requestId: '\d+'

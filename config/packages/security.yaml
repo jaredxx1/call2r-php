@@ -55,6 +55,7 @@ security:
     - { path: '/api/v1/requests/move/\d+/canceled', roles: [ROLE_MANAGER_SUPPORT], methods: [POST] }
     - { path: '/api/v1/requests/move/\d+/awaiting-response', roles: [ROLE_SUPPORT, ROLE_MANAGER_SUPPORT], methods: [POST] }
     - { path: '/api/v1/requests/\d+/transfer-company', roles: [ROLE_SUPPORT, ROLE_MANAGER_SUPPORT], methods: [POST] }
+    - { path: '/api/v1/requests/\d+/log', roles: [ROLE_SUPPORT, ROLE_CLIENT, ROLE_MANAGER_CLIENT,ROLE_MANAGER_SUPPORT], methods: [POST] }
     - { path: '/api/v1/requests/\d+/submit-for-approval', roles: [ROLE_SUPPORT, ROLE_MANAGER_SUPPORT], methods: [POST] }
     - { path: '/api/v1/requests/\d+/approve', roles: [ROLE_CLIENT, ROLE_MANAGER_CLIENT], methods: [POST] }
     - { path: '/api/v1/requests/\d+/answered-request', roles: [ROLE_CLIENT, ROLE_MANAGER_CLIENT], methods: [POST] }
