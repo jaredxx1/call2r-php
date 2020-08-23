@@ -9,6 +9,7 @@ use App\Attendance\Application\Command\DisapproveRequestCommand;
 use App\Attendance\Application\Command\MoveToAwaitingResponseCommand;
 use App\Attendance\Application\Command\MoveToCanceledCommand;
 use App\Attendance\Application\Command\MoveToInAttendanceCommand;
+use App\Attendance\Application\Command\RequestLogCommand;
 use App\Attendance\Application\Command\SubmitForApprovalCommand;
 use App\Attendance\Application\Command\TransferCompanyCommand;
 use App\Attendance\Application\Command\UpdateRequestCommand;
@@ -45,6 +46,7 @@ use Mpdf\Mpdf;
 use Mpdf\MpdfException;
 use Mpdf\Output\Destination;
 use Ramsey\Uuid\Uuid;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * Class RequestService
@@ -955,6 +957,47 @@ class RequestService
         $request->setStatus($status);
         $request->setUpdatedAt(Carbon::now()->timezone('America/Sao_Paulo'));
 
+        return $this->requestRepository->update($request);
+    }
+
+    /**
+     * @param RequestLogCommand $command
+     * @param Request $request
+     * @param UserInterface $user
+     * @return Request|null
+     * @throws CompanyNotFoundException
+     * @throws UnauthorizedStatusChangeException
+     */
+    public function addLogToRequest(RequestLogCommand $command, Request $request, UserInterface $user)
+    {
+        if (
+            !($request->getStatus()->getId() == Status::awaitingResponse) &&
+            !($request->getStatus()->getId() == Status::awaitingSupport) &&
+            !($request->getStatus()->getId() == Status::inAttendance)
+        ) {
+            throw new UnauthorizedStatusChangeException();
+        }
+        $companyUser = $this->companyRepository->fromId($user->getCompanyId());
+
+        if (is_null($companyUser)) {
+            throw new CompanyNotFoundException();
+        }
+
+        $message = "";
+
+        if (!is_null($command)) {
+            $message = $command->getMessage();
+        }
+
+        $log = new Log(null, $message
+            . ' <br> Por : ' . $user->getName()
+            . ' <br> Trabalha em : ' . $companyUser->getName()
+            , Carbon::now()->timezone('America/Sao_Paulo'), 'addLog');
+        $status = $this->statusRepository->fromId($request->getStatus()->getId());
+
+        $request->getLogs()->add($log);
+        $request->setStatus($status);
+        $request->setUpdatedAt(Carbon::now()->timezone('America/Sao_Paulo'));
         return $this->requestRepository->update($request);
     }
 }
