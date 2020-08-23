@@ -116,7 +116,7 @@ final class UserService
 
         $payload = [
             "iat" => $now_seconds,
-            "exp" => $now_seconds + (120 * 60),
+            "exp" => $now_seconds + (8 * 60 * 60),
             "user_id" => $user->getId(),
             'name' => $user->getName(),
             'user_company' => $user->getCompanyId(),
