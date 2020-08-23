@@ -141,7 +141,7 @@ class RequestService
         $logs = new ArrayCollection();
 
         $logs->add(new Log(null, 'O chamado foi criado'
-            . ' <br> Por : ' . $user->getName()
+            . ' <br><br> Por : ' . $user->getName()
             . ' <br> Trabalha em: ' . $companyUser->getName()
             , Carbon::now()->timezone('America/Sao_Paulo'), 'init'));
 
@@ -190,8 +190,8 @@ class RequestService
         }
 
         $log = new Log(null, 'Chamado esta em aguardando atendimento'
-            . ' <br> por : ' . $user->getName()
-            . ' <br> trabalha em: ' . $companyUser->getName()
+            . ' <br><br> Por : ' . $user->getName()
+            . ' <br> Trabalha em: ' . $companyUser->getName()
             , Carbon::now()->timezone('America/Sao_Paulo'), 'awaitingSupport');
         $status = $this->statusRepository->fromId(Status::awaitingSupport);
 
@@ -227,7 +227,7 @@ class RequestService
         }
 
         $log = new Log(null, $command->getMessage()
-            . ' <br> Por : ' . $user->getName()
+            . ' <br><br> Por : ' . $user->getName()
             . ' <br> Trabalha em : ' . $companyUser->getName()
             , Carbon::now()->timezone('America/Sao_Paulo'), 'message');
         $request->getLogs()->add($log);
@@ -276,7 +276,7 @@ class RequestService
         }
 
         $log = new Log(null, 'Chamado aprovado'
-            . ' <br> Por : ' . $user->getName()
+            . ' <br><br> Por : ' . $user->getName()
             . ' <br> Trabalha em : ' . $companyUser->getName()
             , Carbon::now()->timezone('America/Sao_Paulo'), 'approve');
         $status = $this->statusRepository->fromId(Status::approved);
@@ -464,7 +464,7 @@ class RequestService
         }
 
         $log = new Log(null, $command->getMessage()
-            . ' <br> Por : ' . $user->getName()
+            . ' <br><br> Por : ' . $user->getName()
             . ' <br> Trabalha em : ' . $companyUser->getName()
             , Carbon::now()->timezone('America/Sao_Paulo'), 'message');
         $status = $this->statusRepository->fromId(Status::inAttendance);
@@ -505,7 +505,7 @@ class RequestService
         }
 
         $log = new Log(null, 'Chamado em atendimento'
-            . ' <br> Por : ' . $user->getName()
+            . ' <br><br> Por : ' . $user->getName()
             . ' <br> Trabalha em : ' . $companyUser->getName()
             . ' <br> Mensagem : ' . $message
             , Carbon::now()->timezone('America/Sao_Paulo'), 'inAttendance');
@@ -541,7 +541,7 @@ class RequestService
         }
 
         $log = new Log(null, 'Chamado finalizado'
-            . ' <br> Por : ' . $user->getName()
+            . ' <br><br> Por : ' . $user->getName()
             . ' <br> Trabalha em: ' . $companyUser->getName()
             , Carbon::now()->timezone('America/Sao_Paulo'), 'finish');
         $status = $this->statusRepository->fromId(Status::finished);
@@ -584,7 +584,7 @@ class RequestService
         }
 
         $log = new Log(null, 'Chamado cancelado'
-            . ' <br> Por : ' . $user->getName()
+            . ' <br><br> Por : ' . $user->getName()
             . ' <br> Trabalha em : ' . $companyUser->getName()
             . ' <br> Mensagem : ' . $command->getMessage()
             , Carbon::now()->timezone('America/Sao_Paulo'), 'cancel');
@@ -642,7 +642,7 @@ class RequestService
         }
 
         $log = new Log(null, 'Chamado alterado'
-            . ' <br> Por : ' . $user->getName()
+            . ' <br><br> Por : ' . $user->getName()
             . ' <br> Trabalha em: ' . $companyUser->getName()
             , Carbon::now()->timezone('America/Sao_Paulo'), $statusName);
 
@@ -706,7 +706,7 @@ class RequestService
         }
 
         $log = new Log(null, 'Chamado transferido'
-            . ' <br> Por : ' . $user->getName()
+            . ' <br><br> Por : ' . $user->getName()
             . ' <br> Trabalha em : ' . $companyUser->getName()
             . ' <br> Mensagem : ' . $command->getMessage()
             , Carbon::now()->timezone('America/Sao_Paulo'), 'transfer');
@@ -847,7 +847,7 @@ class RequestService
         }
 
         $log = new Log(null, 'Chamado respondido'
-            . ' <br> Por : ' . $user->getName()
+            . ' <br><br> Por : ' . $user->getName()
             . ' <br> Trabalha em : ' . $companyUser->getName()
             . ' <br> Mensagem : ' . $command->getMessage()
             , Carbon::now()->timezone('America/Sao_Paulo'), 'inAttendance');
@@ -871,7 +871,7 @@ class RequestService
     {
 
         $log = new Log(null, 'Chamado em atendimento'
-            . ' <br> Por : ' . $user->getName()
+            . ' <br><br> Por : ' . $user->getName()
             . ' <br> Trabalha em : ' . $companyUser->getName()
             . ' <br> Mensagem : ' . $message
             , Carbon::now()->timezone('America/Sao_Paulo'), 'inAttendance');
@@ -907,7 +907,7 @@ class RequestService
         }
 
         $log = new Log(null, 'Chamado aprovado pelo suporte'
-            . ' <br> Por : ' . $user->getName()
+            . ' <br><br> Por : ' . $user->getName()
             . ' <br> Trabalha em: ' . $companyUser->getName()
             . ' <br> Mensagem: ' . $command->getMessage()
             , Carbon::now()->timezone('America/Sao_Paulo'), 'inAttendance');
@@ -947,7 +947,7 @@ class RequestService
         }
 
         $log = new Log(null, 'Chamado aguardando resposta'
-            . ' <br> Por : ' . $user->getName()
+            . ' <br><br> Por : ' . $user->getName()
             . ' <br> Trabalha em : ' . $companyUser->getName()
             . ' <br> Mensagem : ' . $message
             , Carbon::now()->timezone('America/Sao_Paulo'), 'awaitingResponse');
@@ -990,7 +990,7 @@ class RequestService
         }
 
         $log = new Log(null, $message
-            . ' <br> Por : ' . $user->getName()
+            . ' <br><br> Por : ' . $user->getName()
             . ' <br> Trabalha em : ' . $companyUser->getName()
             , Carbon::now()->timezone('America/Sao_Paulo'), 'addLog');
         $status = $this->statusRepository->fromId($request->getStatus()->getId());
