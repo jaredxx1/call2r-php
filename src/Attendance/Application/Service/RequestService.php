@@ -40,6 +40,7 @@ use App\User\Domain\Entity\User;
 use App\User\Domain\Repository\UserRepository;
 use Carbon\Carbon;
 use Carbon\CarbonInterval;
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Exception;
 use Mpdf\Mpdf;
@@ -378,10 +379,9 @@ class RequestService
 
         $start = new Carbon($pairs[0]['datetime']);
         $stop = new Carbon($pairs[1]['datetime']);
+        $interval = ($start->addHour($request->getPriority()))->diff($stop);
 
-        $interval = new CarbonInterval(($start->addHour($request->getPriority()))->diff($stop));
-
-        return $interval->format('%dd %hh %im');
+        return $interval->format('%R %dd %hh %im');
     }
 
     /**
