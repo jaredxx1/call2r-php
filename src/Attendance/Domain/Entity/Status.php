@@ -13,10 +13,10 @@ use JsonSerializable;
 class Status implements JsonSerializable
 {
     const awaitingSupport = 1;
-    const inAttendance = 2;
-    const awaitingResponse = 3;
-    const approved = 4;
-    const canceled = 5;
+    const approved = 2;
+    const canceled = 3;
+    const inAttendance = 4;
+    const awaitingResponse = 5;
     const finished = 6;
     /**
      * @var int
