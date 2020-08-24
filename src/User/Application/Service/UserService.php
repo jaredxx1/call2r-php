@@ -116,7 +116,7 @@ final class UserService
 
         $payload = [
             "iat" => $now_seconds,
-            "exp" => $now_seconds + (120 * 60),
+            "exp" => $now_seconds + (8 * 60 * 60),
             "user_id" => $user->getId(),
             'name' => $user->getName(),
             'user_company' => $user->getCompanyId(),
@@ -500,12 +500,11 @@ final class UserService
 
         $hashedPassword = password_hash($newPassword, PASSWORD_BCRYPT);
 
+        $this->emailService->sendEmail($user->getEmail(), 'nome', 'Reset Password', '<H1>Your new password is ->' . $newPassword . '</H1>');
+
         $user->setPassword($hashedPassword);
 
         $this->userRepository->updateUser($user);
-
-        $this->emailService->sendEmail($user->getEmail(), 'nome', 'Reset Password', '<H1>Your new password is ->' . $newPassword . '</H1>');
-
     }
 }
 

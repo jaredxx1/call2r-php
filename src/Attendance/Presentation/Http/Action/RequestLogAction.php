@@ -4,7 +4,7 @@
 namespace App\Attendance\Presentation\Http\Action;
 
 
-use App\Attendance\Application\Command\DisapproveRequestCommand;
+use App\Attendance\Application\Command\RequestLogCommand;
 use App\Attendance\Application\Service\RequestService;
 use App\Core\Presentation\Http\AbstractAction;
 use Exception;
@@ -15,19 +15,18 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Throwable;
 
 /**
- * Class DisapproveRequestAction
+ * Class RequestLogAction
  * @package App\Attendance\Presentation\Http\Action
  */
-class DisapproveRequestAction extends AbstractAction
+class RequestLogAction extends AbstractAction
 {
-
     /**
      * @var RequestService
      */
     private $service;
 
     /**
-     * DisapproveRequestAction constructor.
+     * ApproveRequestAction constructor.
      * @param RequestService $service
      */
     public function __construct(RequestService $service)
@@ -35,22 +34,13 @@ class DisapproveRequestAction extends AbstractAction
         $this->service = $service;
     }
 
-    /**
-     * @param Request $request
-     * @param int $requestId
-     * @param UserInterface $user
-     * @return JsonResponse
-     */
     public function __invoke(Request $request, int $requestId, UserInterface $user)
     {
         try {
             $data = json_decode($request->getContent(), true);
             $request = $this->service->findById($requestId);
-            $data['requestId'] = $requestId;
-            $data['request'] = $request;
-            $data['user'] = $user;
-            $command = DisapproveRequestCommand::fromArray($data);
-            $request = $this->service->disapproveRequest($command, $user);
+            $command = RequestLogCommand::fromArray($data);
+            $request = $this->service->addLogToRequest($command, $request, $user);
         } catch (Exception $exception) {
             return $this->errorResponse($exception->getMessage(), $exception->getCode() ? $exception->getCode() : Response::HTTP_BAD_REQUEST);
         } catch (Throwable $exception) {

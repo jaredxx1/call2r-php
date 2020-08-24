@@ -33,9 +33,9 @@ security:
     - { path: '/api/v1/articles', roles: [ROLE_SUPPORT, ROLE_MANAGER_SUPPORT], methods: [POST] }
 
     # Company
-    - { path: '/api/v1/sections', roles: [ROLE_CLIENT, ROLE_MANAGER_CLIENT,ROLE_ADMIN], methods: [GET] }
+    - { path: '/api/v1/sections', roles: [ROLE_SUPPORT, ROLE_CLIENT, ROLE_MANAGER_CLIENT,ROLE_MANAGER_SUPPORT], methods: [GET] }
     - { path: '/api/v1/companies/mother', roles: [ROLE_ADMIN], methods: [GET] }
-    - { path: '/api/v1/companies/\d+/section', roles: [ROLE_CLIENT, ROLE_MANAGER_CLIENT], methods: [GET] }
+    - { path: '/api/v1/companies/\d+/section', roles: [ROLE_SUPPORT, ROLE_CLIENT, ROLE_MANAGER_CLIENT,ROLE_MANAGER_SUPPORT], methods: [GET] }
     - { path: '/api/v1/companies/\d+', roles: [ROLE_ADMIN], methods: [GET, PUT] }
     - { path: '/api/v1/companies', roles: [ROLE_ADMIN], methods: [GET, POST] }
 
@@ -55,6 +55,7 @@ security:
     - { path: '/api/v1/requests/move/\d+/canceled', roles: [ROLE_MANAGER_SUPPORT], methods: [POST] }
     - { path: '/api/v1/requests/move/\d+/awaiting-response', roles: [ROLE_SUPPORT, ROLE_MANAGER_SUPPORT], methods: [POST] }
     - { path: '/api/v1/requests/\d+/transfer-company', roles: [ROLE_SUPPORT, ROLE_MANAGER_SUPPORT], methods: [POST] }
+    - { path: '/api/v1/requests/\d+/log', roles: [ROLE_SUPPORT, ROLE_CLIENT, ROLE_MANAGER_CLIENT,ROLE_MANAGER_SUPPORT], methods: [POST] }
     - { path: '/api/v1/requests/\d+/submit-for-approval', roles: [ROLE_SUPPORT, ROLE_MANAGER_SUPPORT], methods: [POST] }
     - { path: '/api/v1/requests/\d+/approve', roles: [ROLE_CLIENT, ROLE_MANAGER_CLIENT], methods: [POST] }
     - { path: '/api/v1/requests/\d+/answered-request', roles: [ROLE_CLIENT, ROLE_MANAGER_CLIENT], methods: [POST] }

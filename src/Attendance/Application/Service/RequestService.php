@@ -9,11 +9,14 @@ use App\Attendance\Application\Command\DisapproveRequestCommand;
 use App\Attendance\Application\Command\MoveToAwaitingResponseCommand;
 use App\Attendance\Application\Command\MoveToCanceledCommand;
 use App\Attendance\Application\Command\MoveToInAttendanceCommand;
+use App\Attendance\Application\Command\RequestLogCommand;
 use App\Attendance\Application\Command\SubmitForApprovalCommand;
 use App\Attendance\Application\Command\TransferCompanyCommand;
 use App\Attendance\Application\Command\UpdateRequestCommand;
 use App\Attendance\Application\Exception\RequestNotFoundException;
 use App\Attendance\Application\Exception\SectionNotFromCompanyException;
+use App\Attendance\Application\Exception\UnauthorizedDisapproveRequestException;
+use App\Attendance\Application\Exception\UnauthorizedMoveToInAttendanceException;
 use App\Attendance\Application\Exception\UnauthorizedTransferCompanyException;
 use App\Attendance\Application\Exception\UnauthorizedRequestException;
 use App\Attendance\Application\Exception\UnauthorizedRequestUpdateException;
@@ -43,6 +46,7 @@ use Mpdf\Mpdf;
 use Mpdf\MpdfException;
 use Mpdf\Output\Destination;
 use Ramsey\Uuid\Uuid;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * Class RequestService
@@ -137,7 +141,7 @@ class RequestService
         $logs = new ArrayCollection();
 
         $logs->add(new Log(null, 'O chamado foi criado'
-            . ' <br> Por : ' . $user->getName()
+            . ' <br><br> Por : ' . $user->getName()
             . ' <br> Trabalha em: ' . $companyUser->getName()
             , Carbon::now()->timezone('America/Sao_Paulo'), 'init'));
 
@@ -186,8 +190,8 @@ class RequestService
         }
 
         $log = new Log(null, 'Chamado esta em aguardando atendimento'
-            . ' <br> por : ' . $user->getName()
-            . ' <br> trabalha em: ' . $companyUser->getName()
+            . ' <br><br> Por : ' . $user->getName()
+            . ' <br> Trabalha em: ' . $companyUser->getName()
             , Carbon::now()->timezone('America/Sao_Paulo'), 'awaitingSupport');
         $status = $this->statusRepository->fromId(Status::awaitingSupport);
 
@@ -223,7 +227,7 @@ class RequestService
         }
 
         $log = new Log(null, $command->getMessage()
-            . ' <br> Por : ' . $user->getName()
+            . ' <br><br> Por : ' . $user->getName()
             . ' <br> Trabalha em : ' . $companyUser->getName()
             , Carbon::now()->timezone('America/Sao_Paulo'), 'message');
         $request->getLogs()->add($log);
@@ -272,7 +276,7 @@ class RequestService
         }
 
         $log = new Log(null, 'Chamado aprovado'
-            . ' <br> Por : ' . $user->getName()
+            . ' <br><br> Por : ' . $user->getName()
             . ' <br> Trabalha em : ' . $companyUser->getName()
             , Carbon::now()->timezone('America/Sao_Paulo'), 'approve');
         $status = $this->statusRepository->fromId(Status::approved);
@@ -436,6 +440,7 @@ class RequestService
      * @throws CompanyNotFoundException
      * @throws RequestNotFoundException
      * @throws UnauthorizedStatusChangeException
+     * @throws UnauthorizedDisapproveRequestException
      */
     public function disapproveRequest(?DisapproveRequestCommand $command, User $user): Request
     {
@@ -459,14 +464,14 @@ class RequestService
         }
 
         $log = new Log(null, $command->getMessage()
-            . ' <br> Por : ' . $user->getName()
+            . ' <br><br> Por : ' . $user->getName()
             . ' <br> Trabalha em : ' . $companyUser->getName()
             , Carbon::now()->timezone('America/Sao_Paulo'), 'message');
         $status = $this->statusRepository->fromId(Status::inAttendance);
         $request->getLogs()->add($log);
         $request->setStatus($status);
         $request->setUpdatedAt(Carbon::now()->timezone('America/Sao_Paulo'));
-        $request = $this->moveToInAttendance(null, $request, $user);
+        $request = $this->moveToInAttendanceWithoutValidation($user, $companyUser, $request);
 
         return $this->requestRepository->update($request);
     }
@@ -500,7 +505,7 @@ class RequestService
         }
 
         $log = new Log(null, 'Chamado em atendimento'
-            . ' <br> Por : ' . $user->getName()
+            . ' <br><br> Por : ' . $user->getName()
             . ' <br> Trabalha em : ' . $companyUser->getName()
             . ' <br> Mensagem : ' . $message
             , Carbon::now()->timezone('America/Sao_Paulo'), 'inAttendance');
@@ -536,7 +541,7 @@ class RequestService
         }
 
         $log = new Log(null, 'Chamado finalizado'
-            . ' <br> Por : ' . $user->getName()
+            . ' <br><br> Por : ' . $user->getName()
             . ' <br> Trabalha em: ' . $companyUser->getName()
             , Carbon::now()->timezone('America/Sao_Paulo'), 'finish');
         $status = $this->statusRepository->fromId(Status::finished);
@@ -555,6 +560,7 @@ class RequestService
      * @return Request
      * @throws CompanyNotFoundException
      * @throws UnauthorizedStatusChangeException
+     * @throws UnauthorizedMoveToInAttendanceException
      */
     public function moveToCanceled(?MoveToCanceledCommand $command, Request $request, User $user): Request
     {
@@ -578,7 +584,7 @@ class RequestService
         }
 
         $log = new Log(null, 'Chamado cancelado'
-            . ' <br> Por : ' . $user->getName()
+            . ' <br><br> Por : ' . $user->getName()
             . ' <br> Trabalha em : ' . $companyUser->getName()
             . ' <br> Mensagem : ' . $command->getMessage()
             , Carbon::now()->timezone('America/Sao_Paulo'), 'cancel');
@@ -636,7 +642,7 @@ class RequestService
         }
 
         $log = new Log(null, 'Chamado alterado'
-            . ' <br> Por : ' . $user->getName()
+            . ' <br><br> Por : ' . $user->getName()
             . ' <br> Trabalha em: ' . $companyUser->getName()
             , Carbon::now()->timezone('America/Sao_Paulo'), $statusName);
 
@@ -653,6 +659,7 @@ class RequestService
      * @throws CompanyNotFoundException
      * @throws RequestNotFoundException
      * @throws SectionNotFoundException
+     * @throws SectionNotFromCompanyException
      * @throws UnauthorizedStatusChangeException
      * @throws UnauthorizedTransferCompanyException
      */
@@ -673,14 +680,14 @@ class RequestService
             throw new CompanyNotFoundException();
         }
 
-        $section = $this->sectionRepository->fromName($command->getSection());
+        $section = $this->sectionRepository->fromId($command->getSectionId());
 
         if (is_null($section)) {
             throw new SectionNotFoundException();
         }
 
         if (!($company->getSections()->contains($section))) {
-            throw new UnauthorizedTransferCompanyException();
+            throw new SectionNotFromCompanyException();
         }
 
         $request->setSection($section->getName());
@@ -699,7 +706,7 @@ class RequestService
         }
 
         $log = new Log(null, 'Chamado transferido'
-            . ' <br> Por : ' . $user->getName()
+            . ' <br><br> Por : ' . $user->getName()
             . ' <br> Trabalha em : ' . $companyUser->getName()
             . ' <br> Mensagem : ' . $command->getMessage()
             , Carbon::now()->timezone('America/Sao_Paulo'), 'transfer');
@@ -707,6 +714,7 @@ class RequestService
         $request->getLogs()->add($log);
         $request->setUpdatedAt(Carbon::now()->timezone('America/Sao_Paulo'));
         $request->setAssignedTo(null);
+
 
         $request = $this->requestRepository->update($request);
         $request = $this->moveToAwaitingSupport($request, $user);
@@ -719,6 +727,7 @@ class RequestService
      * @param User $user
      * @return array
      * @throws MpdfException
+     * @throws Exception
      */
     public function ExportsRequestsToPdf(ExportRequestsToPdfQuery $query, User $user)
     {
@@ -806,6 +815,8 @@ class RequestService
                     throw new UnauthorizedRequestException();
                 }
                 break;
+            case User::managerClient:
+                break;
             default:
                 $request = [];
         }
@@ -836,7 +847,7 @@ class RequestService
         }
 
         $log = new Log(null, 'Chamado respondido'
-            . ' <br> Por : ' . $user->getName()
+            . ' <br><br> Por : ' . $user->getName()
             . ' <br> Trabalha em : ' . $companyUser->getName()
             . ' <br> Mensagem : ' . $command->getMessage()
             , Carbon::now()->timezone('America/Sao_Paulo'), 'inAttendance');
@@ -846,23 +857,21 @@ class RequestService
         $request->setStatus($status);
         $request->setUpdatedAt(Carbon::now()->timezone('America/Sao_Paulo'));
 
-        return $this->moveToInAttendanceWithoutValidation($command->getMessage(), $user, $companyUser, $request);
+        return $this->moveToInAttendanceWithoutValidation($user, $companyUser, $request);
     }
 
     /**
-     * @param string $message
      * @param User $user
      * @param Company $companyUser
      * @param Request $request
      * @return Request
      */
-    public function moveToInAttendanceWithoutValidation(string $message, User $user, Company $companyUser, Request $request): Request
+    public function moveToInAttendanceWithoutValidation(User $user, Company $companyUser, Request $request): Request
     {
 
         $log = new Log(null, 'Chamado em atendimento'
-            . ' <br> Por : ' . $user->getName()
+            . ' <br><br> Por : ' . $user->getName()
             . ' <br> Trabalha em : ' . $companyUser->getName()
-            . ' <br> Mensagem : ' . $message
             , Carbon::now()->timezone('America/Sao_Paulo'), 'inAttendance');
         $status = $this->statusRepository->fromId(Status::inAttendance);
 
@@ -896,7 +905,7 @@ class RequestService
         }
 
         $log = new Log(null, 'Chamado aprovado pelo suporte'
-            . ' <br> Por : ' . $user->getName()
+            . ' <br><br> Por : ' . $user->getName()
             . ' <br> Trabalha em: ' . $companyUser->getName()
             . ' <br> Mensagem: ' . $command->getMessage()
             , Carbon::now()->timezone('America/Sao_Paulo'), 'inAttendance');
@@ -936,7 +945,7 @@ class RequestService
         }
 
         $log = new Log(null, 'Chamado aguardando resposta'
-            . ' <br> Por : ' . $user->getName()
+            . ' <br><br> Por : ' . $user->getName()
             . ' <br> Trabalha em : ' . $companyUser->getName()
             . ' <br> Mensagem : ' . $message
             , Carbon::now()->timezone('America/Sao_Paulo'), 'awaitingResponse');
@@ -946,6 +955,47 @@ class RequestService
         $request->setStatus($status);
         $request->setUpdatedAt(Carbon::now()->timezone('America/Sao_Paulo'));
 
+        return $this->requestRepository->update($request);
+    }
+
+    /**
+     * @param RequestLogCommand $command
+     * @param Request $request
+     * @param UserInterface $user
+     * @return Request|null
+     * @throws CompanyNotFoundException
+     * @throws UnauthorizedStatusChangeException
+     */
+    public function addLogToRequest(RequestLogCommand $command, Request $request, UserInterface $user)
+    {
+        if (
+            !($request->getStatus()->getId() == Status::awaitingResponse) &&
+            !($request->getStatus()->getId() == Status::awaitingSupport) &&
+            !($request->getStatus()->getId() == Status::inAttendance)
+        ) {
+            throw new UnauthorizedStatusChangeException();
+        }
+        $companyUser = $this->companyRepository->fromId($user->getCompanyId());
+
+        if (is_null($companyUser)) {
+            throw new CompanyNotFoundException();
+        }
+
+        $message = "";
+
+        if (!is_null($command)) {
+            $message = $command->getMessage();
+        }
+
+        $log = new Log(null, $message
+            . ' <br><br> Por : ' . $user->getName()
+            . ' <br> Trabalha em : ' . $companyUser->getName()
+            , Carbon::now()->timezone('America/Sao_Paulo'), 'addLog');
+        $status = $this->statusRepository->fromId($request->getStatus()->getId());
+
+        $request->getLogs()->add($log);
+        $request->setStatus($status);
+        $request->setUpdatedAt(Carbon::now()->timezone('America/Sao_Paulo'));
         return $this->requestRepository->update($request);
     }
 }

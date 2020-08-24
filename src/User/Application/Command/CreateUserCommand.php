@@ -6,9 +6,13 @@ namespace App\User\Application\Command;
 
 use App\Core\Infrastructure\Container\Application\Exception\InvalidDateFormatException;
 use App\Core\Infrastructure\Container\Application\Utils\Command\CommandInterface;
+use App\Core\Infrastructure\Container\Application\Utils\Validations\CPF;
+use App\User\Application\Exception\InvalidCpfException;
+use App\User\Application\Exception\InvalidEmailException;
 use Carbon\Carbon;
 use DateTime;
 use Exception;
+use PHPMailer\PHPMailer\PHPMailer;
 use Webmozart\Assert\Assert;
 
 /**
@@ -85,7 +89,9 @@ class CreateUserCommand implements CommandInterface
     /**
      * @param array $data
      * @return CreateUserCommand
+     * @throws InvalidCpfException
      * @throws InvalidDateFormatException
+     * @throws InvalidEmailException
      */
     public static function fromArray($data)
     {
@@ -109,8 +115,18 @@ class CreateUserCommand implements CommandInterface
         }
 
         Assert::stringNotEmpty($data['cpf'], 'Field cpf cannot be empty');
+
+        if (!CPF::validate($data['cpf'])) {
+            throw new InvalidCpfException();
+        }
+
         Assert::stringNotEmpty($data['name'], 'Field name cannot be empty');
         Assert::stringNotEmpty($data['email'], 'Field email cannot be empty');
+
+        if (!PHPMailer::validateAddress($data['email'])) {
+            throw new InvalidEmailException();
+        }
+
         Assert::stringNotEmpty($data['password'], 'Field password cannot be empty');
         Assert::integer($data['companyId'], 'Field companyId is not an integer');
         Assert::boolean($data['isActive'], 'Field isActive is not a boolean');

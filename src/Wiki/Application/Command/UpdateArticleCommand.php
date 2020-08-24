@@ -81,8 +81,8 @@ class UpdateArticleCommand implements CommandInterface
         return new self(
             $data['id'],
             $data['idCompany'],
-            $data['description'] ?? null,
             $data['title'] ?? null,
+            $data['description'] ?? null,
             $data['categories'] ?? null
         );
     }

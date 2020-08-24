@@ -18,9 +18,9 @@ class TransferCompanyCommand implements CommandInterface
 {
 
     /**
-     * @var string
+     * @var integer
      */
-    private $section;
+    private $sectionId;
 
     /**
      * @var integer
@@ -49,16 +49,16 @@ class TransferCompanyCommand implements CommandInterface
 
     /**
      * TransferCompanyCommand constructor.
-     * @param string $section
+     * @param int $sectionId
      * @param int $companyId
      * @param int $requestId
      * @param string|null $message
      * @param Request $request
      * @param User $user
      */
-    public function __construct(string $section, int $companyId, int $requestId, ?string $message, Request $request, User $user)
+    public function __construct(int $sectionId, int $companyId, int $requestId, ?string $message, Request $request, User $user)
     {
-        $this->section = $section;
+        $this->sectionId = $sectionId;
         $this->companyId = $companyId;
         $this->requestId = $requestId;
         $this->message = $message;
@@ -73,13 +73,11 @@ class TransferCompanyCommand implements CommandInterface
      */
     public static function fromArray($data)
     {
-        Assert::keyExists($data, 'section', 'Field section is required.');
+        Assert::keyExists($data, 'sectionId', 'Field sectionId is required.');
         Assert::keyExists($data, 'companyId', 'Field companyId is required.');
         Assert::keyExists($data, 'requestId', 'Field requestId is required.');
 
-        Assert::stringNotEmpty($data['section'], 'Field section cannot be empty.');
-
-        Assert::string($data['section'], 'Field section is not a string.');
+        Assert::integer($data['sectionId'], 'Field sectionId is not a string.');
         Assert::integer($data['companyId'], 'Field companyId not an integer.');
         Assert::integer($data['requestId'], 'Field requestId not an integer.');
 
@@ -87,15 +85,17 @@ class TransferCompanyCommand implements CommandInterface
             Assert::stringNotEmpty($data['message'], 'Field message cannot be empty.');
         }
 
-        self::validateRequest($data['request'], $data['user']);
+        if(key_exists('request', $data) && (key_exists('user', $data))){
+            self::validateRequest($data['request'], $data['user']);
+        }
 
         return new self(
-            $data['section'],
+            $data['sectionId'],
             $data['companyId'],
             $data['requestId'],
             $data['message'] ?? null,
-            $data[],
-            $data[]
+            $data['request'],
+            $data['user']
         );
     }
 
@@ -123,11 +123,11 @@ class TransferCompanyCommand implements CommandInterface
     }
 
     /**
-     * @return string
+     * @return int
      */
-    public function getSection(): string
+    public function getSectionId(): int
     {
-        return $this->section;
+        return $this->sectionId;
     }
 
     /**
@@ -155,10 +155,27 @@ class TransferCompanyCommand implements CommandInterface
     }
 
     /**
+     * @return Request
+     */
+    public function getRequest(): Request
+    {
+        return $this->request;
+    }
+
+    /**
+     * @return User
+     */
+    public function getUser(): User
+    {
+        return $this->user;
+    }
+
+    /**
      * @param string|null $message
      */
     public function setMessage(?string $message): void
     {
         $this->message = $message;
     }
+
 }
