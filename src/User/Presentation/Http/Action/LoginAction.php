@@ -51,7 +51,8 @@ class LoginAction extends AbstractAction
                 'token' => $token,
                 'roles' => $user->getRoles(),
                 'name' => $user->getName(),
-                'companyId' => $user->getCompanyId()
+                'companyId' => $user->getCompanyId(),
+                'image_url' => $user->getImage()
             ];
         } catch (Exception $exception) {
             return $this->errorResponse($exception->getMessage(), $exception->getCode() ? $exception->getCode() : Response::HTTP_BAD_REQUEST);
