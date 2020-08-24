@@ -115,25 +115,25 @@ class DoctrineRequestRepository implements RequestRepository
         }
 
         if (isset($inAttendance)) {
-            $query->orWhere('r.status = 2');
+            $query->orWhere('r.status = 4');
         }
 
         if (isset($awaitingResponse)) {
-            $query->orWhere('r.status = 3');
-        }
-
-        if (isset($canceled)) {
             $query->orWhere('r.status = 5');
         }
 
+        if (isset($canceled)) {
+            $query->orWhere('r.status = 3');
+        }
+
         if (isset($approved)) {
-            $query->orWhere('r.status = 4');
+            $query->orWhere('r.status = 2');
         }
 
         if (isset($active)) {
             $query->orWhere('r.status = 1')
-                ->orWhere('r.status = 2')
-                ->orWhere('r.status = 3');
+                ->orWhere('r.status = 4')
+                ->orWhere('r.status = 5');
         }
 
         return $query;
