@@ -680,7 +680,7 @@ class RequestService
             throw new CompanyNotFoundException();
         }
 
-        $section = $this->sectionRepository->fromName($command->getSection());
+        $section = $this->sectionRepository->fromId($command->getSectionId());
 
         if (is_null($section)) {
             throw new SectionNotFoundException();
