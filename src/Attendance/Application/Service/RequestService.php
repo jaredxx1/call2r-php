@@ -396,17 +396,15 @@ class RequestService
             if ($log['command'] == $lastCommand) {
                 break;
             }
-
             $pairs->add($log);
             $lastCommand = $log['command'];
         }
-
 
         // Creates a stop if it is still counting
         $lastLog = $pairs->last();
 
         if ($lastLog['command'] == 'start') {
-            $now = Carbon::now()->timezone('America/Sao_Paulo')->toDateTime();
+            $now = Carbon::now();
             $pairs->add(['command' => 'stop', 'datetime' => $now]);
         }
 
@@ -418,10 +416,8 @@ class RequestService
         for ($i = 0; $i <= $totalOfIntervals; $i += 2) {
             $start = new Carbon($pairs[$i]['datetime']);
             $stop = new Carbon($pairs[$i + 1]['datetime']);
-
-            $intervals->add($start->diff($stop));
+            $intervals->add(($start->addHour(3))->diff($stop));
         }
-
         // Loop the intervals
         $sla = CarbonInterval::hours(0);
 
@@ -430,7 +426,7 @@ class RequestService
             $sla->add($interval);
         }
 
-        return $sla->format('%hh %im');
+        return $sla->format('%dd %hh %im');
     }
 
     /**
