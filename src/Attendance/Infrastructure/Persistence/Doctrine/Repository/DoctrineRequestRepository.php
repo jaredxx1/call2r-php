@@ -232,8 +232,8 @@ class DoctrineRequestRepository implements RequestRepository
             ->from('Attendance:Request', 'r');
 
         if (isset($title)) {
-            $query->andWhere('r.title = :title')
-                ->setParameter(':title', $title);
+            $query->andWhere('r.title LIKE :title')
+            ->setParameter(':title','%'. $title.'%');
         }
 
         if ((isset($finalDate)) && (isset($initialDate))) {
