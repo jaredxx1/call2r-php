@@ -143,7 +143,7 @@ class RequestService
         $logs->add(new Log(null, 'O chamado foi criado'
             . ' <br><br> Por : ' . $user->getName()
             . ' <br> Trabalha em: ' . $companyUser->getName()
-            , Carbon::now()->timezone('America/Sao_Paulo'), 'init'));
+            , Carbon::now()->timezone('America/Sao_Paulo'), Log::init));
 
         $request = new Request(
             null,
@@ -192,7 +192,7 @@ class RequestService
         $log = new Log(null, 'Chamado esta em aguardando atendimento'
             . ' <br><br> Por : ' . $user->getName()
             . ' <br> Trabalha em: ' . $companyUser->getName()
-            , Carbon::now()->timezone('America/Sao_Paulo'), 'awaitingSupport');
+            , Carbon::now()->timezone('America/Sao_Paulo'), Log::awaitingSupport);
         $status = $this->statusRepository->fromId(Status::awaitingSupport);
 
         $request->getLogs()->add($log);
@@ -250,9 +250,8 @@ class RequestService
             . ' <br><br> Por : ' . $user->getName()
             . ' <br> Trabalha em : ' . $companyUser->getName()
             . ' <br> Mensagem : ' . $command->getMessage()
-            , Carbon::now()->timezone('America/Sao_Paulo'), 'approve');
+            , Carbon::now()->timezone('America/Sao_Paulo'), Log::approve);
         $status = $this->statusRepository->fromId(Status::approved);
-
         $request->getLogs()->add($log);
         $request->setStatus($status);
         $request->setUpdatedAt(Carbon::now()->timezone('America/Sao_Paulo'));
@@ -343,24 +342,20 @@ class RequestService
 
         foreach ($request->getLogs()->getValues() as $log) {
             switch ($log->getCommand()) {
-                case 'awaitingSupport':
-                case 'init':
+                case Log::cancel:
+                case Log::approve:
+                    return '0';
+                case Log::init:
                     $importantLogs->add(['command' => 'start', 'datetime' => $log->getCreatedAt()]);
                     break;
-
-                case 'cancel':
-                case 'finish':
-                case 'approve':
-                case 'awaitingResponse':
+                case Log::awaitingResponse:
                     $importantLogs->add(['command' => 'stop', 'datetime' => $log->getCreatedAt()]);
                     break;
-
                 default:
                     break;
             }
         }
 
-        // Separate logs into intervals
         $pairs = new ArrayCollection();
         $lastCommand = null;
 
@@ -372,33 +367,21 @@ class RequestService
             $lastCommand = $log['command'];
         }
 
-        // Creates a stop if it is still counting
         $lastLog = $pairs->last();
 
         if ($lastLog['command'] == 'start') {
-            $now = Carbon::now();
-            $pairs->add(['command' => 'stop', 'datetime' => $now]);
+            $now = Carbon::now()->timezone('America/Sao_Paulo');
+            $pairs->add(['command' => 'stop', 'datetime' => (new \DateTime($now))]);
         }
 
-        // Create datetime intervals
-        $intervals = new ArrayCollection();
-        $totalOfIntervals = $pairs->count() / 2;
         $pairs = $pairs->toArray();
 
-        for ($i = 0; $i <= $totalOfIntervals; $i += 2) {
-            $start = new Carbon($pairs[$i]['datetime']);
-            $stop = new Carbon($pairs[$i + 1]['datetime']);
-            $intervals->add(($start->addHour(3))->diff($stop));
-        }
-        // Loop the intervals
-        $sla = CarbonInterval::hours(0);
+        $start = new Carbon($pairs[0]['datetime']);
+        $stop = new Carbon($pairs[1]['datetime']);
 
-        foreach ($intervals as $interval) {
-            $interval = new CarbonInterval($interval);
-            $sla->add($interval);
-        }
+        $interval = new CarbonInterval(($start->addHour($request->getPriority()))->diff($stop));
 
-        return $sla->format('%dd %hh %im');
+        return $interval->format('%dd %hh %im');
     }
 
     /**
@@ -431,15 +414,15 @@ class RequestService
             $command->setMessage("");
         }
 
-        $log = new Log(null, $command->getMessage()
+        $log = new Log(null, 'Chamado reprovado'
             . ' <br><br> Por : ' . $user->getName()
             . ' <br> Trabalha em : ' . $companyUser->getName()
-            , Carbon::now()->timezone('America/Sao_Paulo'), 'message');
+            . ' <br> Mensagem : ' . $command->getMessage()
+            , Carbon::now()->timezone('America/Sao_Paulo'), Log::disapprove);
         $status = $this->statusRepository->fromId(Status::inAttendance);
         $request->getLogs()->add($log);
         $request->setStatus($status);
         $request->setUpdatedAt(Carbon::now()->timezone('America/Sao_Paulo'));
-        $request = $this->moveToInAttendanceWithoutValidation($user, $companyUser, $request);
 
         return $this->requestRepository->update($request);
     }
@@ -476,7 +459,7 @@ class RequestService
             . ' <br><br> Por : ' . $user->getName()
             . ' <br> Trabalha em : ' . $companyUser->getName()
             . ' <br> Mensagem : ' . $message
-            , Carbon::now()->timezone('America/Sao_Paulo'), 'inAttendance');
+            , Carbon::now()->timezone('America/Sao_Paulo'), Log::inAttendance);
         $status = $this->statusRepository->fromId(Status::inAttendance);
 
         $request->getLogs()->add($log);
@@ -555,7 +538,7 @@ class RequestService
             . ' <br><br> Por : ' . $user->getName()
             . ' <br> Trabalha em : ' . $companyUser->getName()
             . ' <br> Mensagem : ' . $command->getMessage()
-            , Carbon::now()->timezone('America/Sao_Paulo'), 'cancel');
+            , Carbon::now()->timezone('America/Sao_Paulo'), Log::cancel);
         $status = $this->statusRepository->fromId(Status::canceled);
 
         $request->getLogs()->add($log);
@@ -677,17 +660,13 @@ class RequestService
             . ' <br><br> Por : ' . $user->getName()
             . ' <br> Trabalha em : ' . $companyUser->getName()
             . ' <br> Mensagem : ' . $command->getMessage()
-            , Carbon::now()->timezone('America/Sao_Paulo'), 'transfer');
-
+            , Carbon::now()->timezone('America/Sao_Paulo'), Log::awaitingResponse);
+        $status = $this->statusRepository->fromId(Status::awaitingResponse);
         $request->getLogs()->add($log);
+        $request->setStatus($status);
         $request->setUpdatedAt(Carbon::now()->timezone('America/Sao_Paulo'));
-        $request->setAssignedTo(null);
 
-
-        $request = $this->requestRepository->update($request);
-        $request = $this->moveToAwaitingSupport($request, $user);
-
-        return $request;
+        return $this->requestRepository->update($request);
     }
 
     /**
@@ -802,7 +781,6 @@ class RequestService
      */
     public function AnsweredRequest(AnsweredRequestActionCommand $command, Request $request, User $user)
     {
-//        dd('teste');
         if (!($request->getStatus()->getId() == Status::awaitingResponse)
         ) {
             throw new UnauthorizedStatusChangeException();
@@ -818,14 +796,13 @@ class RequestService
             . ' <br><br> Por : ' . $user->getName()
             . ' <br> Trabalha em : ' . $companyUser->getName()
             . ' <br> Mensagem : ' . $command->getMessage()
-            , Carbon::now()->timezone('America/Sao_Paulo'), 'inAttendance');
+            , Carbon::now()->timezone('America/Sao_Paulo'), Log::inAttendance);
         $status = $this->statusRepository->fromId(Status::inAttendance);
-
         $request->getLogs()->add($log);
         $request->setStatus($status);
         $request->setUpdatedAt(Carbon::now()->timezone('America/Sao_Paulo'));
 
-        return $this->moveToInAttendanceWithoutValidation($user, $companyUser, $request);
+        return $this->requestRepository->update($request);
     }
 
     /**
@@ -876,12 +853,12 @@ class RequestService
             . ' <br><br> Por : ' . $user->getName()
             . ' <br> Trabalha em: ' . $companyUser->getName()
             . ' <br> Mensagem: ' . $command->getMessage()
-            , Carbon::now()->timezone('America/Sao_Paulo'), 'inAttendance');
+            , Carbon::now()->timezone('America/Sao_Paulo'), Log::awaitingResponse);
 
+        $status = $this->statusRepository->fromId(Status::awaitingResponse);
         $request->getLogs()->add($log);
+        $request->setStatus($status);
         $request->setUpdatedAt(Carbon::now()->timezone('America/Sao_Paulo'));
-
-        $request = $this->moveToAwaitingResponse(null, $request, $user);
 
         return $this->requestRepository->update($request);
     }
@@ -916,7 +893,7 @@ class RequestService
             . ' <br><br> Por : ' . $user->getName()
             . ' <br> Trabalha em : ' . $companyUser->getName()
             . ' <br> Mensagem : ' . $message
-            , Carbon::now()->timezone('America/Sao_Paulo'), 'awaitingResponse');
+            , Carbon::now()->timezone('America/Sao_Paulo'), Log::awaitingResponse);
         $status = $this->statusRepository->fromId(Status::awaitingResponse);
 
         $request->getLogs()->add($log);
