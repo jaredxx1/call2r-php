@@ -202,40 +202,6 @@ class RequestService
         return $this->requestRepository->update($request);
     }
 
-    /**
-     * @param ApproveRequestCommand $command
-     * @param User $user
-     * @return Request
-     * @throws CompanyNotFoundException
-     * @throws RequestNotFoundException
-     * @throws UnauthorizedStatusChangeException
-     */
-    public function approveRequest(ApproveRequestCommand $command, User $user): Request
-    {
-        $request = $this->findById($command->getRequestId());
-
-        if (
-        !($request->getStatus()->getId() == Status::awaitingResponse)
-        ) {
-            throw new UnauthorizedStatusChangeException();
-        }
-
-        $companyUser = $this->companyRepository->fromId($user->getCompanyId());
-
-        if (is_null($companyUser)) {
-            throw new CompanyNotFoundException();
-        }
-
-        $log = new Log(null, $command->getMessage()
-            . ' <br><br> Por : ' . $user->getName()
-            . ' <br> Trabalha em : ' . $companyUser->getName()
-            , Carbon::now()->timezone('America/Sao_Paulo'), 'message');
-        $request->getLogs()->add($log);
-        $this->requestRepository->update($request);
-        $request = $this->moveToApproved($request, $user);
-
-        return $request;
-    }
 
     /**
      * @param int $id
@@ -254,16 +220,16 @@ class RequestService
     }
 
     /**
+     * @param ApproveRequestCommand $command
      * @param Request $request
      * @param User $user
      * @return Request
      * @throws CompanyNotFoundException
      * @throws UnauthorizedStatusChangeException
      */
-    public function moveToApproved(Request $request, User $user): Request
+    public function moveToApproved(ApproveRequestCommand $command, Request $request, User $user): Request
     {
         if (
-            !($request->getStatus()->getId() == Status::inAttendance) &&
             !($request->getStatus()->getId() == Status::awaitingResponse)
         ) {
             throw new UnauthorizedStatusChangeException();
@@ -275,9 +241,15 @@ class RequestService
             throw new CompanyNotFoundException();
         }
 
+        if (is_null($command)) {
+            $command = ApproveRequestCommand::fromArray([]);
+            $command->setMessage("");
+        }
+
         $log = new Log(null, 'Chamado aprovado'
             . ' <br><br> Por : ' . $user->getName()
             . ' <br> Trabalha em : ' . $companyUser->getName()
+            . ' <br> Mensagem : ' . $command->getMessage()
             , Carbon::now()->timezone('America/Sao_Paulo'), 'approve');
         $status = $this->statusRepository->fromId(Status::approved);
 
