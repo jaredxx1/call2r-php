@@ -45,6 +45,7 @@ class DisapproveRequestAction extends AbstractAction
     {
         try {
             $data = json_decode($request->getContent(), true);
+            $request = $this->service->findById($requestId);
             $data['requestId'] = $requestId;
             $data['request'] = $request;
             $data['user'] = $user;

@@ -471,7 +471,7 @@ class RequestService
         $request->getLogs()->add($log);
         $request->setStatus($status);
         $request->setUpdatedAt(Carbon::now()->timezone('America/Sao_Paulo'));
-        $request = $this->moveToInAttendance(null, $request, $user);
+        $request = $this->moveToInAttendanceWithoutValidation($user, $companyUser, $request);
 
         return $this->requestRepository->update($request);
     }
@@ -857,23 +857,21 @@ class RequestService
         $request->setStatus($status);
         $request->setUpdatedAt(Carbon::now()->timezone('America/Sao_Paulo'));
 
-        return $this->moveToInAttendanceWithoutValidation($command->getMessage(), $user, $companyUser, $request);
+        return $this->moveToInAttendanceWithoutValidation($user, $companyUser, $request);
     }
 
     /**
-     * @param string $message
      * @param User $user
      * @param Company $companyUser
      * @param Request $request
      * @return Request
      */
-    public function moveToInAttendanceWithoutValidation(string $message, User $user, Company $companyUser, Request $request): Request
+    public function moveToInAttendanceWithoutValidation(User $user, Company $companyUser, Request $request): Request
     {
 
         $log = new Log(null, 'Chamado em atendimento'
             . ' <br><br> Por : ' . $user->getName()
             . ' <br> Trabalha em : ' . $companyUser->getName()
-            . ' <br> Mensagem : ' . $message
             , Carbon::now()->timezone('America/Sao_Paulo'), 'inAttendance');
         $status = $this->statusRepository->fromId(Status::inAttendance);
 
