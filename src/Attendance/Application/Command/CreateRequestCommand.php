@@ -65,7 +65,7 @@ class CreateRequestCommand implements CommandInterface
         Assert::keyExists($data, 'title', 'Field title is required');
         Assert::keyExists($data, 'description', 'Field description is required');
         Assert::keyExists($data, 'priority', 'Field priority is required');
-        Assert::keyExists($data, 'sectionId', 'Field section is required');
+        Assert::keyExists($data, 'sectionId', 'Field sectionId is required');
 
         Assert::integer($data['companyId'], ' Field company id is not an integer');
         Assert::string($data['title'], ' Field title is not a string');

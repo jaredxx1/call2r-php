@@ -153,7 +153,7 @@ class RequestService
             $command->getTitle(),
             $command->getDescription(),
             $command->getPriority(),
-            $command->getSection(),
+            $section->getName(),
             null,
             $user->getId(),
             Carbon::now()->timezone('America/Sao_Paulo'),
