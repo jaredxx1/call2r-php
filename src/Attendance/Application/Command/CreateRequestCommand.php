@@ -34,9 +34,9 @@ class CreateRequestCommand implements CommandInterface
     private $priority;
 
     /**
-     * @var string
+     * @var integer
      */
-    private $section;
+    private $sectionId;
 
     /**
      * CreateRequestCommand constructor.
@@ -44,15 +44,15 @@ class CreateRequestCommand implements CommandInterface
      * @param string $title
      * @param string $description
      * @param int $priority
-     * @param string $section
+     * @param int $sectionId
      */
-    public function __construct(int $companyId, string $title, string $description, int $priority, string $section)
+    public function __construct(int $companyId, string $title, string $description, int $priority, int $sectionId)
     {
         $this->companyId = $companyId;
         $this->title = $title;
         $this->description = $description;
         $this->priority = $priority;
-        $this->section = $section;
+        $this->sectionId = $sectionId;
     }
 
     /**
@@ -65,14 +65,15 @@ class CreateRequestCommand implements CommandInterface
         Assert::keyExists($data, 'title', 'Field title is required');
         Assert::keyExists($data, 'description', 'Field description is required');
         Assert::keyExists($data, 'priority', 'Field priority is required');
-        Assert::keyExists($data, 'section', 'Field section is required');
+        Assert::keyExists($data, 'sectionId', 'Field section is required');
 
         Assert::integer($data['companyId'], ' Field company id is not an integer');
         Assert::string($data['title'], ' Field title is not a string');
         Assert::string($data['description'], ' Field description is not a string');
         Assert::integer($data['priority'], ' Field priority is not an integer');
-        Assert::string($data['section'], ' Field section is not a string');
+        Assert::integer($data['sectionId'], ' Field sectionId is not a string');
 
+        Assert::stringNotEmpty($data['sectionId'], 'Field sectionId is empty');
         Assert::stringNotEmpty($data['title'], 'Field title is empty');
         Assert::stringNotEmpty($data['description'], 'Field description is empty');
         Assert::stringNotEmpty($data['section'], 'Field section is empty');
@@ -82,7 +83,7 @@ class CreateRequestCommand implements CommandInterface
             $data['title'],
             $data['description'],
             $data['priority'],
-            $data['section']
+            $data['sectionId']
         );
     }
 
@@ -127,10 +128,10 @@ class CreateRequestCommand implements CommandInterface
     }
 
     /**
-     * @return string
+     * @return int
      */
-    public function getSection(): string
+    public function getSectionId(): int
     {
-        return $this->section;
+        return $this->sectionId;
     }
 }
