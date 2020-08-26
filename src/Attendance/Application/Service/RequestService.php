@@ -145,7 +145,6 @@ class RequestService
             . ' <br><br> Por : ' . $user->getName()
             . ' <br> Trabalha em: ' . $companyUser->getName()
             , Carbon::now()->timezone('America/Sao_Paulo'), Log::init));
-
         $request = new Request(
             null,
             $status,
@@ -195,7 +194,6 @@ class RequestService
             . ' <br> Trabalha em: ' . $companyUser->getName()
             , Carbon::now()->timezone('America/Sao_Paulo'), Log::awaitingSupport);
         $status = $this->statusRepository->fromId(Status::awaitingSupport);
-
         $request->getLogs()->add($log);
         $request->setStatus($status);
         $request->setUpdatedAt(Carbon::now()->timezone('America/Sao_Paulo'));
@@ -379,6 +377,7 @@ class RequestService
 
         $start = new Carbon($pairs[0]['datetime']);
         $stop = new Carbon($pairs[1]['datetime']);
+
         $interval = ($start->addHour($request->getPriority()))->diff($stop);
 
         return $interval->format('%R %dd %hh %im');
@@ -734,6 +733,7 @@ class RequestService
      * @return Request|array
      * @throws RequestNotFoundException
      * @throws UnauthorizedRequestException
+     * @throws Exception
      */
     public function fromId(FindRequestByIdQuery $query, User $user)
     {
@@ -767,7 +767,7 @@ class RequestService
             default:
                 $request = [];
         }
-
+        $request->setSla(self::calculateSla($request));
         return $request;
     }
 
