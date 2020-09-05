@@ -112,7 +112,7 @@ class User implements UserInterface, JsonSerializable
             'id' => $this->getId(),
             'name' => $this->getName(),
             'cpf' => $this->getCpf(),
-            'birthdate' => $this->getBirthdate(),
+            'birthdate' => $this->getBirthdate()->format('Y-m-d'),
             'email' => $this->getEmail(),
             'image' => $this->getImage(),
             'companyId' => $this->getCompanyId(),
