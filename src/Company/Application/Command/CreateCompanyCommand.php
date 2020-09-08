@@ -106,7 +106,7 @@ class CreateCompanyCommand implements CommandInterface
 
         Assert::stringNotEmpty($data['description'], 'Field description is empty');
 
-        Assert::length($data['cnpj'], 13, "Field CNPJ don't have 14 digits");
+        Assert::length($data['cnpj'], 14, "Field CNPJ don't have 14 digits");
 
         //SLA object validation
         $sla = $data['sla'];
