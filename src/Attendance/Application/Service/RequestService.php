@@ -659,8 +659,8 @@ class RequestService
             . ' <br><br> Por : ' . $user->getName()
             . ' <br> Trabalha em : ' . $companyUser->getName()
             . ' <br> Mensagem : ' . $command->getMessage()
-            , Carbon::now()->timezone('America/Sao_Paulo'), Log::awaitingResponse);
-        $status = $this->statusRepository->fromId(Status::awaitingResponse);
+            , Carbon::now()->timezone('America/Sao_Paulo'), Log::awaitingSupport);
+        $status = $this->statusRepository->fromId(Status::awaitingSupport);
         $request->getLogs()->add($log);
         $request->setStatus($status);
         $request->setUpdatedAt(Carbon::now()->timezone('America/Sao_Paulo'));
