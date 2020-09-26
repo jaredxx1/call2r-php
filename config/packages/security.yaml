@@ -38,6 +38,7 @@ security:
     - { path: '/api/v1/companies/\d+/section', roles: [ROLE_SUPPORT, ROLE_CLIENT, ROLE_MANAGER_CLIENT,ROLE_MANAGER_SUPPORT], methods: [GET] }
     - { path: '/api/v1/companies/\d+', roles: [ROLE_ADMIN], methods: [GET, PUT] }
     - { path: '/api/v1/companies', roles: [ROLE_ADMIN], methods: [GET, POST] }
+    - { path: '/api/v1/companies', roles: [ROLE_ADMIN], methods: [GET, POST] }
 
     # User
     - { path: '/api/v1/users/reset-password', roles: [], methods: [POST] }
