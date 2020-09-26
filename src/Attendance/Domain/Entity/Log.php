@@ -80,7 +80,7 @@ class Log implements JsonSerializable
             'id' => $this->getId(),
             'message' => $this->getMessage(),
             'command' => $this->getCommand(),
-            'createdAt' => (new Carbon($this->getCreatedAt()))
+            'createdAt' => (new Carbon($this->getCreatedAt()))->timezone('America/Sao_Paulo')
         ];
     }
 

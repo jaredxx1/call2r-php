@@ -87,7 +87,7 @@ class ExportRequestsToPdfQuery implements CommandInterface
                 throw new InvalidDateFormatException();
             }
 
-            if ($initialDate->gte($finalDate)) {
+            if ($initialDate->gt($finalDate)) {
                 throw new InitialDateIsGreaterThenFinalException();
             }
 

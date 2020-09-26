@@ -143,9 +143,9 @@ class Request implements JsonSerializable
             'section' => $this->getSection(),
             'assignedTo' => $this->getAssignedTo(),
             'requestedBy' => $this->getRequestedBy(),
-            'createdAt' => $this->getCreatedAt() ? (new Carbon($this->getCreatedAt())) : null,
-            'updatedAt' => $this->getUpdatedAt() ? (new Carbon($this->getUpdatedAt())) : null,
-            'finishedAt' => $this->getFinishedAt() ? (new Carbon($this->getFinishedAt())) : null,
+            'createdAt' => $this->getCreatedAt() ? (new Carbon($this->getCreatedAt()))->timezone('America/Sao_Paulo') : null,
+            'updatedAt' => $this->getUpdatedAt() ? (new Carbon($this->getUpdatedAt()))->timezone('America/Sao_Paulo') : null,
+            'finishedAt' => $this->getFinishedAt() ? (new Carbon($this->getFinishedAt()))->timezone('America/Sao_Paulo') : null,
             'companyId' => $this->getCompanyId(),
             'status' => $this->getStatus()->getName(),
             'logs' => $this->getLogs()->getValues()
