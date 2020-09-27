@@ -106,7 +106,7 @@ class UpdateUserCommand implements CommandInterface
         }
 
         if (key_exists('role', $data)) {
-            Assert::oneOf($data['role'], ['ROLE_SUPPORT', 'ROLE_CLIENT', 'ROLE_MANAGER_CLIENT', 'ROLE_MANAGER_SUPPORT', 'ROLE_ADMIN'], 'Field role is neither admin neither manager neither user');
+            Assert::oneOf($data['role'], ['ROLE_SUPPORT', 'ROLE_CLIENT', 'ROLE_MANAGER_CLIENT', 'ROLE_MANAGER_SUPPORT', 'ROLE_ADMIN'], 'Field role is neither ROLE_SUPPORT neither ROLE_CLIENT neither ROLE_MANAGER_CLIENT neither ROLE_MANAGER_SUPPORT neither ROLE_ADMIN');
         }
         return new self(
             $data['id'],
