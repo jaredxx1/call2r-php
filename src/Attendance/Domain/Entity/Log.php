@@ -16,6 +16,16 @@ use JsonSerializable;
 class Log implements JsonSerializable
 {
 
+    const init = "init";
+    const awaitingSupport = "awaitingSupport";
+    const inAttendance = "inAttendance";
+    const transfer = "transfer";
+    const awaitingResponse = "awaitingResponse";
+    const cancel = "cancel";
+    const disapprove = "disapprove";
+    const approve = "approve";
+    const finished = "finished";
+
     /**
      * @var int
      */
@@ -70,7 +80,7 @@ class Log implements JsonSerializable
             'id' => $this->getId(),
             'message' => $this->getMessage(),
             'command' => $this->getCommand(),
-            'createdAt' => (new Carbon($this->getCreatedAt()))
+            'createdAt' => (new Carbon($this->getCreatedAt()))->timezone('America/Sao_Paulo')
         ];
     }
 

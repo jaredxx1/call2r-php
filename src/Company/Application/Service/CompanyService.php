@@ -99,20 +99,7 @@ class CompanyService
         );
 
         if ($company->isMother()) {
-            $motherCompany = $this->companyRepository->getMother();
-
-            if (!is_null($motherCompany)) {
-                throw new NonUniqueMotherCompanyException();
-            }
-
-            $sla->setP1(0);
-            $sla->setP2(0);
-            $sla->setP3(0);
-            $sla->setP4(0);
-            $sla->setP5(0);
-
-            $company->setSla($sla);
-
+            throw new NonUniqueMotherCompanyException();
         }
 
         $company = $this->companyRepository->create($company);

@@ -50,6 +50,7 @@ class LoginAction extends AbstractAction
             $response = [
                 'token' => $token,
                 'roles' => $user->getRoles(),
+                'id' => $user->getId(),
                 'name' => $user->getName(),
                 'companyId' => $user->getCompanyId(),
                 'image_url' => $user->getImage()

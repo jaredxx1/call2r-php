@@ -23,6 +23,7 @@ use App\User\Application\Exception\ResetPasswordException;
 use App\User\Application\Exception\UpdateImageException;
 use App\User\Application\Exception\UpdateUserException;
 use App\User\Application\Exception\UserNotFoundException;
+use App\User\Application\Exception\WrongPasswordException;
 use App\User\Application\Query\FindUsersByRoleQuery;
 use App\User\Domain\Entity\User;
 use App\User\Domain\Repository\UserRepository;
@@ -279,6 +280,7 @@ final class UserService
      * @param UpdateUserCommand $command
      * @param User $user
      * @return User
+     * @throws WrongPasswordException
      */
     private function validateSelfUpdate(UpdateUserCommand $command, User $user)
     {
@@ -287,6 +289,12 @@ final class UserService
             && password_verify($command->getOldPassword(), $user->getPassword())) {
             $newHashedPassword = password_hash($command->getNewPassword(), PASSWORD_BCRYPT);
             $user->setPassword($newHashedPassword);
+        }
+
+        if (!is_null($command->getNewPassword())
+            && !is_null($command->getOldPassword())
+            && !(password_verify($command->getOldPassword(), $user->getPassword()))) {
+            throw new WrongPasswordException();
         }
 
         return $user;
