@@ -39,7 +39,6 @@ use App\Core\Infrastructure\Storaged\AWS\S3;
 use App\User\Domain\Entity\User;
 use App\User\Domain\Repository\UserRepository;
 use Carbon\Carbon;
-use Carbon\CarbonInterval;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Exception;
@@ -334,16 +333,17 @@ class RequestService
      * @return string
      * @throws Exception
      */
-    public static function calculateSla(Request $request): string
+    public function calculateSla(Request $request): string
     {
+        $logs = new ArrayCollection($request->getLogs()->getValues());
+        if($logs->last()->getCommand() == Log::cancel
+            || $logs->last()->getCommand() == Log::approve){
+            return '0';
+        }
         // Separate important logs for sla count
         $importantLogs = new ArrayCollection();
-
         foreach ($request->getLogs()->getValues() as $log) {
             switch ($log->getCommand()) {
-                case Log::cancel:
-                case Log::approve:
-                    return '0';
                 case Log::init:
                     $importantLogs->add(['command' => 'start', 'datetime' => $log->getCreatedAt()]);
                     break;
@@ -354,7 +354,12 @@ class RequestService
                     break;
             }
         }
+        $last = $importantLogs->last();
 
+        if($last['command'] == 'stop'){
+            $this->verifyResponseTime($last, $request);
+            return '0';
+        }
         $pairs = new ArrayCollection();
         $lastCommand = null;
 
@@ -370,7 +375,7 @@ class RequestService
 
         if ($lastLog['command'] == 'start') {
             $now = Carbon::now()->timezone('America/Sao_Paulo');
-            $pairs->add(['command' => 'stop', 'datetime' => (new \DateTime($now))]);
+            $pairs->add(['command' => 'stop', 'datetime' => (new DateTime($now))]);
         }
 
         $pairs = $pairs->toArray();
@@ -381,6 +386,27 @@ class RequestService
         $interval = ($start->addHour($request->getPriority()))->diff($stop);
 
         return $interval->format('%R %dd %hh %im');
+    }
+
+    /**
+     * @param array $last
+     * @param Request $request
+     * @throws Exception
+     */
+    private function verifyResponseTime(array $last, Request $request)
+    {
+        $now = Carbon::now()->timezone('America/Sao_Paulo');
+        $last = new Carbon($last['datetime']);
+        $interval = ($last)->diff($now);
+        if($interval->d >= 7){
+            $log = new Log(null, 'Chamado finalizado por falta de resposta por parte do usuário'
+                , Carbon::now()->timezone('America/Sao_Paulo'), Log::approve);
+            $status = $this->statusRepository->fromId(Status::approved);
+            $request->getLogs()->add($log);
+            $request->setStatus($status);
+            $request->setUpdatedAt(Carbon::now()->timezone('America/Sao_Paulo'));
+            $this->requestRepository->update($request);
+        }
     }
 
     /**
@@ -712,10 +738,10 @@ class RequestService
         $mpdf->WriteHTML('<h1 style="text-align: center">CALL2R PDF</h1>');
         $mpdf->WriteHTML('<table style="width:100%;" >');
         $mpdf->WriteHTML('<tr>');
-        $mpdf->WriteHTML('<th style="text-align: left">Title</th>');
-        $mpdf->WriteHTML('<th style="text-align: left">Priority</th>');
-        $mpdf->WriteHTML('<th style="text-align: left">section</th>');
-        $mpdf->WriteHTML('<th style="text-align: left">Last update</th>');
+        $mpdf->WriteHTML('<th style="text-align: left">Título</th>');
+        $mpdf->WriteHTML('<th style="text-align: left">Prioridade</th>');
+        $mpdf->WriteHTML('<th style="text-align: left">Área</th>');
+        $mpdf->WriteHTML('<th style="text-align: left">Última atualização</th>');
         $mpdf->WriteHTML('</tr>');
         foreach ($result as $r) {
             $mpdf->WriteHTML('<tr><td>' . $r->getTitle() . '</td><td>' . $r->getPriority() . '</td><td>' . $r->getSection() . '</td><td>' . new Carbon($r->getUpdatedAt()) . '</td></tr>');
