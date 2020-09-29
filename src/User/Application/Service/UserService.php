@@ -98,6 +98,10 @@ final class UserService
             throw new InvalidCredentialsException();
         }
 
+        if(!$user->isActive()){
+            throw new InvalidCredentialsException();
+        }
+
         $isPasswordValid = password_verify($command->getPassword(), $user->getPassword());
 
         if (!$isPasswordValid) {
