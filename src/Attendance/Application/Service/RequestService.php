@@ -357,8 +357,9 @@ class RequestService
         $last = $importantLogs->last();
 
         if($last['command'] == 'stop'){
-            $this->verifyResponseTime($last, $request);
-            return '0';
+            if($this->verifyResponseTime($last, $request)){
+                return '0';
+            }
         }
         $pairs = new ArrayCollection();
         $lastCommand = null;
@@ -406,7 +407,9 @@ class RequestService
             $request->setStatus($status);
             $request->setUpdatedAt(Carbon::now()->timezone('America/Sao_Paulo'));
             $this->requestRepository->update($request);
+            return true;
         }
+        return false;
     }
 
     /**
