@@ -16,6 +16,7 @@ use App\User\Application\Command\UpdateUserCommand;
 use App\User\Application\Command\UpdateUserImageCommand;
 use App\User\Application\Exception\CreateUserException;
 use App\User\Application\Exception\DuplicateCpfException;
+use App\User\Application\Exception\CannotCreateDisableUser;
 use App\User\Application\Exception\DuplicateEmailException;
 use App\User\Application\Exception\FromIdException;
 use App\User\Application\Exception\InvalidCredentialsException;
@@ -180,6 +181,10 @@ final class UserService
 
         if (!is_null($this->userRepository->fromEmail($command->getEmail()))) {
             throw new DuplicateEmailException();
+        }
+
+        if($command->isActive() == false){
+            throw new CannotCreateDisableUser();
         }
 
         $this->validateCreateUser($command, $user);
