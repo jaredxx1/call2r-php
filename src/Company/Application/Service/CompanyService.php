@@ -7,6 +7,7 @@ namespace App\Company\Application\Service;
 use App\Company\Application\Command\CreateCompanyCommand;
 use App\Company\Application\Command\UpdateCompanyCommand;
 use App\Company\Application\Exception\CannotCreateCompanyWithoutException;
+use App\Company\Application\Exception\CannotUpdateSlaToMotherCompany;
 use App\Company\Application\Exception\CompanyNotFoundException;
 use App\Company\Application\Exception\NonUniqueMotherCompanyException;
 use App\Company\Application\Exception\SectionNotFoundException;
@@ -160,6 +161,7 @@ class CompanyService
     /**
      * @param UpdateCompanyCommand $command
      * @return Company|null
+     * @throws CannotUpdateSlaToMotherCompany
      * @throws CompanyNotFoundException
      * @throws SlaNotFoundException
      */
@@ -183,7 +185,11 @@ class CompanyService
             $company->setActive($command->getActive());
         }
 
+
         if (!is_null($command->getSla())) {
+            if($company->isMother()){
+                throw new CannotUpdateSlaToMotherCompany();
+            }
             $sla = $this->slaRepository->fromId($company->getSla()->getId());
             if (is_null($sla)) {
                 throw new SlaNotFoundException();
