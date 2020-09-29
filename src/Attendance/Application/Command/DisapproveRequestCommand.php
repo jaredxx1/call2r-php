@@ -86,8 +86,10 @@ class DisapproveRequestCommand implements CommandInterface
      */
     private static function validateRequest(Request $request, User $user)
     {
-        if ($request->getRequestedBy() != $user->getId()) {
-            throw new UnauthorizedDisapproveRequestException();
+        if(!($user->getRole() == User::managerClient)) {
+            if ($request->getRequestedBy() != $user->getId()) {
+                throw new UnauthorizedDisapproveRequestException();
+            }
         }
     }
 
