@@ -6,6 +6,7 @@ namespace App\Company\Application\Service;
 
 use App\Company\Application\Command\CreateCompanyCommand;
 use App\Company\Application\Command\UpdateCompanyCommand;
+use App\Company\Application\Exception\CannotCreateCompanyWithoutException;
 use App\Company\Application\Exception\CompanyNotFoundException;
 use App\Company\Application\Exception\NonUniqueMotherCompanyException;
 use App\Company\Application\Exception\SectionNotFoundException;
@@ -71,6 +72,7 @@ class CompanyService
     /**
      * @param CreateCompanyCommand $command
      * @return Company|null
+     * @throws CannotCreateCompanyWithoutException
      * @throws NonUniqueMotherCompanyException
      */
     public function create(CreateCompanyCommand $command): ?Company
@@ -84,6 +86,11 @@ class CompanyService
             $command->getSla()['p4'],
             $command->getSla()['p5']
         );
+
+
+        if($command->getSections() == []){
+            throw new CannotCreateCompanyWithoutException();
+        }
 
         $sections = $this->createSectionsObjects($command);
 
