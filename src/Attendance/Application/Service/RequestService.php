@@ -335,11 +335,7 @@ class RequestService
      */
     public function calculateSla(Request $request): string
     {
-        $logs = new ArrayCollection($request->getLogs()->getValues());
-        if($logs->last()->getCommand() == Log::cancel
-            || $logs->last()->getCommand() == Log::approve){
-            return '0';
-        }
+
         // Separate important logs for sla count
         $importantLogs = new ArrayCollection();
         foreach ($request->getLogs()->getValues() as $log) {
@@ -486,7 +482,6 @@ class RequestService
         $log = new Log(null, 'Chamado em atendimento'
             . ' <br><br> Por : ' . $user->getName()
             . ' <br> Trabalha em : ' . $companyUser->getName()
-            . ' <br> Mensagem : ' . $message
             , Carbon::now()->timezone('America/Sao_Paulo'), Log::inAttendance);
         $status = $this->statusRepository->fromId(Status::inAttendance);
 
@@ -881,7 +876,6 @@ class RequestService
         $log = new Log(null, 'Chamado aprovado pelo suporte'
             . ' <br><br> Por : ' . $user->getName()
             . ' <br> Trabalha em: ' . $companyUser->getName()
-            . ' <br> Mensagem: ' . $command->getMessage()
             , Carbon::now()->timezone('America/Sao_Paulo'), Log::awaitingResponse);
 
         $status = $this->statusRepository->fromId(Status::awaitingResponse);
