@@ -294,18 +294,15 @@ final class UserService
     private function validateSelfUpdate(UpdateUserCommand $command, User $user)
     {
         if (!is_null($command->getNewPassword())
-            && !is_null($command->getOldPassword())
-            && password_verify($command->getOldPassword(), $user->getPassword())) {
-            $newHashedPassword = password_hash($command->getNewPassword(), PASSWORD_BCRYPT);
-            $user->setPassword($newHashedPassword);
+            && !is_null($command->getOldPassword())){
+            if(!password_verify($command->getOldPassword(), $user->getPassword())){
+                throw new WrongPasswordException();
+            }else{
+                dump($command->getNewPassword());
+                $newHashedPassword = password_hash($command->getNewPassword(), PASSWORD_BCRYPT);
+                $user->setPassword($newHashedPassword);
+            }
         }
-
-        if (!is_null($command->getNewPassword())
-            && !is_null($command->getOldPassword())
-            && !(password_verify($command->getOldPassword(), $user->getPassword()))) {
-            throw new WrongPasswordException();
-        }
-
         return $user;
     }
 
