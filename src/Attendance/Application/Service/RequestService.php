@@ -15,6 +15,7 @@ use App\Attendance\Application\Command\TransferCompanyCommand;
 use App\Attendance\Application\Command\UpdateRequestCommand;
 use App\Attendance\Application\Exception\RequestNotFoundException;
 use App\Attendance\Application\Exception\SectionNotFromCompanyException;
+use App\Attendance\Application\Exception\TransferRequestToYourOwnCompany;
 use App\Attendance\Application\Exception\UnauthorizedDisapproveRequestException;
 use App\Attendance\Application\Exception\UnauthorizedMoveToInAttendanceException;
 use App\Attendance\Application\Exception\UnauthorizedTransferCompanyException;
@@ -629,11 +630,12 @@ class RequestService
     /**
      * @param TransferCompanyCommand|null $command
      * @param User $user
-     * @return Request
+     * @return Request|null
      * @throws CompanyNotFoundException
      * @throws RequestNotFoundException
      * @throws SectionNotFoundException
      * @throws SectionNotFromCompanyException
+     * @throws TransferRequestToYourOwnCompany
      * @throws UnauthorizedStatusChangeException
      * @throws UnauthorizedTransferCompanyException
      */
@@ -677,6 +679,10 @@ class RequestService
         if (is_null($command)) {
             $command = TransferCompanyCommand::fromArray([]);
             $command->setMessage("");
+        }
+
+        if($command->getCompanyId() == $user->getCompanyId()){
+            throw new TransferRequestToYourOwnCompany();
         }
 
         $log = new Log(null, 'Chamado transferido'
