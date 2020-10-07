@@ -5,6 +5,7 @@ namespace App\User\Application\Service;
 
 
 use App\Company\Application\Exception\CompanyNotFoundException;
+use App\Company\Domain\Entity\Company;
 use App\Company\Domain\Repository\CompanyRepository;
 use App\Core\Infrastructure\Container\Application\Exception\EmailSendException;
 use App\Core\Infrastructure\Email\EmailService;
@@ -182,6 +183,15 @@ final class UserService
         if (!is_null($this->userRepository->fromEmail($command->getEmail()))) {
             throw new DuplicateEmailException();
         }
+
+        if($command->getRole() == User::managerSupport && $company->isMother()){
+            throw new CreateUserException();
+        }
+
+        if($command->getRole() == User::managerClient && !$company->isMother()){
+            throw new CreateUserException();
+        }
+
 
         if($command->isActive() == false){
             throw new CannotCreateDisableUser();
