@@ -338,12 +338,20 @@ class RequestService
     {
 
         // Separate important logs for sla count
+
         $importantLogs = new ArrayCollection();
         foreach ($request->getLogs()->getValues() as $log) {
+
             switch ($log->getCommand()) {
+                case Log::inAttendance:
+                case Log::awaitingSupport:
+                case Log::disapprove:
+                case Log::transfer:
                 case Log::init:
                     $importantLogs->add(['command' => 'start', 'datetime' => $log->getCreatedAt()]);
                     break;
+                case Log::cancel;
+                case Log::approve;
                 case Log::awaitingResponse:
                     $importantLogs->add(['command' => 'stop', 'datetime' => $log->getCreatedAt()]);
                     break;
@@ -352,43 +360,31 @@ class RequestService
             }
         }
         $last = $importantLogs->last();
-
         if($last['command'] == 'stop'){
             if($this->verifyResponseTime($last, $request)){
                 return '0';
             }
         }
         $pairs = new ArrayCollection();
-        $lastCommand = null;
-
-        foreach ($importantLogs as $log) {
-            if ($log['command'] == $lastCommand) {
-                break;
-            }
-            $pairs->add($log);
-            $lastCommand = $log['command'];
-        }
+        $pairs->add($importantLogs->first());
+        $pairs->add($importantLogs->last());
 
         $lastLog = $pairs->last();
-
         if ($lastLog['command'] == 'start') {
             $now = Carbon::now()->timezone('America/Sao_Paulo');
             $pairs->add(['command' => 'stop', 'datetime' => (new DateTime($now))]);
         }
 
-        $pairs = $pairs->toArray();
-
-        $start = new Carbon($pairs[0]['datetime']);
-        $stop = new Carbon($pairs[1]['datetime']);
-
+        $start = new Carbon($pairs->first()['datetime']);
+        $stop = new Carbon($pairs->last()['datetime']);
         $interval = ($start->addHour($request->getPriority()))->diff($stop);
-
-        return $interval->format('%R %dd %hh %im');
+        return $interval->format('%R %dd %hh %im %ss');
     }
 
     /**
      * @param array $last
      * @param Request $request
+     * @return bool
      * @throws Exception
      */
     private function verifyResponseTime(array $last, Request $request)
