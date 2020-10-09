@@ -5,8 +5,8 @@ namespace App\Company\Application\Exception;
 
 
 use Exception;
-use Throwable;
 use Symfony\Component\HttpFoundation\Response;
+use Throwable;
 
 /**
  * Class InvalidCnpjException

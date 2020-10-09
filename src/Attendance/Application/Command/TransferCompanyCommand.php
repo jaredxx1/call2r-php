@@ -85,7 +85,7 @@ class TransferCompanyCommand implements CommandInterface
             Assert::stringNotEmpty($data['message'], 'Field message cannot be empty.');
         }
 
-        if(key_exists('request', $data) && (key_exists('user', $data))){
+        if (key_exists('request', $data) && (key_exists('user', $data))) {
             self::validateRequest($data['request'], $data['user']);
         }
 
@@ -155,6 +155,14 @@ class TransferCompanyCommand implements CommandInterface
     }
 
     /**
+     * @param string|null $message
+     */
+    public function setMessage(?string $message): void
+    {
+        $this->message = $message;
+    }
+
+    /**
      * @return Request
      */
     public function getRequest(): Request
@@ -168,14 +176,6 @@ class TransferCompanyCommand implements CommandInterface
     public function getUser(): User
     {
         return $this->user;
-    }
-
-    /**
-     * @param string|null $message
-     */
-    public function setMessage(?string $message): void
-    {
-        $this->message = $message;
     }
 
 }

@@ -47,7 +47,7 @@ class ApproveRequestAction extends AbstractAction
             $request = $this->service->findById($requestId);
             $data['requestId'] = $requestId;
             $command = ApproveRequestCommand::fromArray($data);
-            $request = $this->service->moveToApproved($command,$request, $user);
+            $request = $this->service->moveToApproved($command, $request, $user);
         } catch (Exception $exception) {
             return $this->errorResponse($exception->getMessage(), $exception->getCode() ? $exception->getCode() : Response::HTTP_BAD_REQUEST);
         } catch (Throwable $exception) {

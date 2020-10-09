@@ -18,11 +18,11 @@ use App\Attendance\Application\Exception\SectionNotFromCompanyException;
 use App\Attendance\Application\Exception\TransferRequestToYourOwnCompany;
 use App\Attendance\Application\Exception\UnauthorizedDisapproveRequestException;
 use App\Attendance\Application\Exception\UnauthorizedMoveToInAttendanceException;
-use App\Attendance\Application\Exception\UnauthorizedTransferCompanyException;
 use App\Attendance\Application\Exception\UnauthorizedRequestException;
 use App\Attendance\Application\Exception\UnauthorizedRequestUpdateException;
 use App\Attendance\Application\Exception\UnauthorizedStatusChangeException;
 use App\Attendance\Application\Exception\UnauthorizedStatusUpdateException;
+use App\Attendance\Application\Exception\UnauthorizedTransferCompanyException;
 use App\Attendance\Application\Query\ExportRequestsToPdfQuery;
 use App\Attendance\Application\Query\FindRequestByIdQuery;
 use App\Attendance\Application\Query\FindRequestsQuery;
@@ -40,7 +40,8 @@ use App\Core\Infrastructure\Storaged\AWS\S3;
 use App\User\Domain\Entity\User;
 use App\User\Domain\Repository\UserRepository;
 use Carbon\Carbon;
-use DateTime;
+use Carbon\CarbonInterval;
+use DateTimeZone;
 use Doctrine\Common\Collections\ArrayCollection;
 use Exception;
 use Mpdf\Mpdf;
@@ -201,23 +202,6 @@ class RequestService
         return $this->requestRepository->update($request);
     }
 
-
-    /**
-     * @param int $id
-     * @return Request
-     * @throws RequestNotFoundException
-     */
-    public function findById(int $id)
-    {
-        $request = $this->requestRepository->fromId($id);
-
-        if (is_null($request)) {
-            throw new RequestNotFoundException();
-        }
-
-        return $request;
-    }
-
     /**
      * @param ApproveRequestCommand $command
      * @param Request $request
@@ -229,7 +213,7 @@ class RequestService
     public function moveToApproved(ApproveRequestCommand $command, Request $request, User $user): Request
     {
         if (
-            !($request->getStatus()->getId() == Status::awaitingResponse)
+        !($request->getStatus()->getId() == Status::awaitingResponse)
         ) {
             throw new UnauthorizedStatusChangeException();
         }
@@ -318,7 +302,7 @@ class RequestService
             default:
                 $requests = [];
         }
-        //dd($requests);
+
         /**
          * @var $request Request
          */
@@ -336,73 +320,73 @@ class RequestService
      */
     public function calculateSla(Request $request): string
     {
-
-        // Separate important logs for sla count
-
-        $importantLogs = new ArrayCollection();
+        $startTime = null;
+        $awaitingResponseControl = 0;
+        $diff = new Carbon(0, 'America/Sao_Paulo');
+        $totalSla = (new Carbon(0, 'America/Sao_Paulo'))->addHour($request->getPriority());
+        $timezone = new DateTimeZone('America/Sao_Paulo');
         foreach ($request->getLogs()->getValues() as $log) {
+            $awaitingResponseControl = 0;
             switch ($log->getCommand()) {
+                case Log::init:
                 case Log::inAttendance:
                 case Log::awaitingSupport:
                 case Log::disapprove:
                 case Log::transfer:
-                case Log::init:
-                    $importantLogs->add(['command' => 'start', 'datetime' => $log->getCreatedAt()]);
+                    if (is_null($startTime)) {
+                        $startTime = (new Carbon($log->getCreatedAt()->setTimezone($timezone)))->addHour(3);
+                    }
                     break;
                 case Log::cancel;
                 case Log::approve;
                 case Log::awaitingResponse:
-                    $importantLogs->add(['command' => 'stop', 'datetime' => $log->getCreatedAt()]);
+                    $log->getCreatedAt()->setTimezone($timezone);
+                    $stopTime = (new Carbon($log->getCreatedAt()))->addHour(3);
+                    if (!is_null($startTime)) {
+                        $result = new CarbonInterval(($startTime)->diff($stopTime));
+                        $diff->add($result);
+                        $startTime = null;
+                    }
                     break;
                 default:
                     break;
             }
-        }
-        $last = $importantLogs->last();
-        if($last['command'] == 'stop'){
-            if($this->verifyResponseTime($last, $request)){
-                return '0';
+
+            if ($log->getCommand() == Log::awaitingResponse) {
+                $awaitingResponseControl = 1;
             }
         }
 
-        $pairs = new ArrayCollection();
-        $pairs->add($importantLogs->first());
-        $pairs->add($importantLogs->last());
-
-        $lastLog = $pairs->last();
-        if ($lastLog['command'] == 'start') {
+        if (!is_null($startTime)) {
             $now = Carbon::now()->timezone('America/Sao_Paulo');
-            $pairs->add(['command' => 'stop', 'datetime' => (new DateTime($now))]);
+            $result = new CarbonInterval(($startTime)->diff($now));
+            $diff->add($result);
         }
 
-        $start = new Carbon($pairs->first()['datetime']);
-        $stop = new Carbon($pairs->last()['datetime']);
-        $interval = ($start->addHour($request->getPriority()))->diff($stop);
-        return $interval->format('%R %dd %hh %im');
+        $finalSla = $totalSla->diff($diff);
+        if ($awaitingResponseControl) {
+            $days = ($finalSla->d) + ($finalSla->m * 30) + ($finalSla->y * 365);
+            if ($days > 7) {
+                $this->verifyResponseTime($request);
+            }
+        }
+
+        return $finalSla->format('%R %dd %hh %im %ss');
     }
 
     /**
-     * @param array $last
      * @param Request $request
-     * @return bool
-     * @throws Exception
      */
-    private function verifyResponseTime(array $last, Request $request)
+    private function verifyResponseTime(Request $request)
     {
-        $now = Carbon::now()->timezone('America/Sao_Paulo');
-        $last = new Carbon($last['datetime']);
-        $interval = ($last)->diff($now);
-        if($interval->d >= 7){
-            $log = new Log(null, 'Chamado finalizado por falta de resposta por parte do usuário'
-                , Carbon::now()->timezone('America/Sao_Paulo'), Log::approve);
-            $status = $this->statusRepository->fromId(Status::approved);
-            $request->getLogs()->add($log);
-            $request->setStatus($status);
-            $request->setUpdatedAt(Carbon::now()->timezone('America/Sao_Paulo'));
-            $this->requestRepository->update($request);
-            return true;
-        }
-        return false;
+        $log = new Log(null, 'Chamado finalizado por falta de resposta por parte do usuário'
+            , Carbon::now()->timezone('America/Sao_Paulo'), Log::approve);
+        $status = $this->statusRepository->fromId(Status::approved);
+        $request->getLogs()->add($log);
+        $request->setStatus($status);
+        $request->setUpdatedAt(Carbon::now()->timezone('America/Sao_Paulo'));
+        $this->requestRepository->update($request);
+
     }
 
     /**
@@ -446,6 +430,22 @@ class RequestService
         $request->setUpdatedAt(Carbon::now()->timezone('America/Sao_Paulo'));
 
         return $this->requestRepository->update($request);
+    }
+
+    /**
+     * @param int $id
+     * @return Request
+     * @throws RequestNotFoundException
+     */
+    public function findById(int $id)
+    {
+        $request = $this->requestRepository->fromId($id);
+
+        if (is_null($request)) {
+            throw new RequestNotFoundException();
+        }
+
+        return $request;
     }
 
     /**
@@ -677,7 +677,7 @@ class RequestService
             $command->setMessage("");
         }
 
-        if($command->getCompanyId() == $user->getCompanyId()){
+        if ($command->getCompanyId() == $user->getCompanyId()) {
             throw new TransferRequestToYourOwnCompany();
         }
 
@@ -764,7 +764,6 @@ class RequestService
     public function fromId(FindRequestByIdQuery $query, User $user)
     {
         $request = $this->findById($query->getId());
-
         if (is_null($request)) {
             throw new RequestNotFoundException();
         }

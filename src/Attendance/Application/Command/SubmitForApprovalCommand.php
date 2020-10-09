@@ -55,7 +55,7 @@ class SubmitForApprovalCommand implements CommandInterface
             Assert::stringNotEmpty($data['message'], 'Field message cannot be empty.');
         }
 
-        if(key_exists('request', $data) && (key_exists('user', $data))){
+        if (key_exists('request', $data) && (key_exists('user', $data))) {
             self::validateRequest($data['request'], $data['user']);
         }
 

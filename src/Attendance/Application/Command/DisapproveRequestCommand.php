@@ -67,7 +67,7 @@ class DisapproveRequestCommand implements CommandInterface
         Assert::string($data['message'], 'Field message is not a string.');
         Assert::integer($data['requestId'], 'Field requestId not an integer.');
 
-        if(key_exists('request', $data) && (key_exists('user', $data))){
+        if (key_exists('request', $data) && (key_exists('user', $data))) {
             self::validateRequest($data['request'], $data['user']);
         }
 
@@ -86,7 +86,7 @@ class DisapproveRequestCommand implements CommandInterface
      */
     private static function validateRequest(Request $request, User $user)
     {
-        if(!($user->getRole() == User::managerClient)) {
+        if (!($user->getRole() == User::managerClient)) {
             if ($request->getRequestedBy() != $user->getId()) {
                 throw new UnauthorizedDisapproveRequestException();
             }

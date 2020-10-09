@@ -12,7 +12,7 @@ use Throwable;
  * Class TransferRequestToYourOwnCompany
  * @package App\Attendance\Application\Exception
  */
-class TransferRequestToYourOwnCompany  extends Exception
+class TransferRequestToYourOwnCompany extends Exception
 {
     /**
      * TransferRequestToYourOwnCompany constructor.

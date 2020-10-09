@@ -12,7 +12,7 @@ use Throwable;
  * Class WrongPasswordException
  * @package App\User\Application\Exception
  */
-class WrongPasswordException  extends Exception
+class WrongPasswordException extends Exception
 {
     /**
      * WrongPasswordException constructor.

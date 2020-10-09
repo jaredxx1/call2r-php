@@ -8,7 +8,7 @@ use Exception;
 use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
-class CannotUpdateSlaToMotherCompany  extends Exception
+class CannotUpdateSlaToMotherCompany extends Exception
 {
     /**
      * CompanyNotFoundException constructor.

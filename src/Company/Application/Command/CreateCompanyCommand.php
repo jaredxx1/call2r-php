@@ -100,7 +100,7 @@ class CreateCompanyCommand implements CommandInterface
         Assert::stringNotEmpty($data['name'], 'Field name is empty');
         Assert::stringNotEmpty($data['cnpj'], 'Field CNPJ is empty');
 
-        if(!CNPJ::validate($data['cnpj'])){
+        if (!CNPJ::validate($data['cnpj'])) {
             throw new InvalidCnpjException();
         }
 

@@ -8,7 +8,7 @@ use Exception;
 use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
-class CannotCreateCompanyWithoutException  extends Exception
+class CannotCreateCompanyWithoutException extends Exception
 {
     /**
      * CompanyNotFoundException constructor.

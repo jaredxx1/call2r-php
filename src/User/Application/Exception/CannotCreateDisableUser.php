@@ -12,7 +12,7 @@ use Throwable;
  * Class CannotCreateDisableUser
  * @package App\User\Application\Exception
  */
-class CannotCreateDisableUser  extends Exception
+class CannotCreateDisableUser extends Exception
 {
     /**
      * CannotCreateDisableUser constructor.

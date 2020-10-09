@@ -5,7 +5,6 @@ namespace App\User\Application\Service;
 
 
 use App\Company\Application\Exception\CompanyNotFoundException;
-use App\Company\Domain\Entity\Company;
 use App\Company\Domain\Repository\CompanyRepository;
 use App\Core\Infrastructure\Container\Application\Exception\EmailSendException;
 use App\Core\Infrastructure\Email\EmailService;
@@ -15,9 +14,9 @@ use App\User\Application\Command\LoginCommand;
 use App\User\Application\Command\ResetPasswordCommand;
 use App\User\Application\Command\UpdateUserCommand;
 use App\User\Application\Command\UpdateUserImageCommand;
+use App\User\Application\Exception\CannotCreateDisableUser;
 use App\User\Application\Exception\CreateUserException;
 use App\User\Application\Exception\DuplicateCpfException;
-use App\User\Application\Exception\CannotCreateDisableUser;
 use App\User\Application\Exception\DuplicateEmailException;
 use App\User\Application\Exception\FromIdException;
 use App\User\Application\Exception\InvalidCredentialsException;
@@ -100,7 +99,7 @@ final class UserService
             throw new InvalidCredentialsException();
         }
 
-        if(!$user->isActive()){
+        if (!$user->isActive()) {
             throw new InvalidCredentialsException();
         }
 
@@ -184,16 +183,16 @@ final class UserService
             throw new DuplicateEmailException();
         }
 
-        if($command->getRole() == User::managerSupport && $company->isMother()){
+        if ($command->getRole() == User::managerSupport && $company->isMother()) {
             throw new CreateUserException();
         }
 
-        if($command->getRole() == User::managerClient && !$company->isMother()){
+        if ($command->getRole() == User::managerClient && !$company->isMother()) {
             throw new CreateUserException();
         }
 
 
-        if($command->isActive() == false){
+        if ($command->isActive() == false) {
             throw new CannotCreateDisableUser();
         }
 
@@ -304,10 +303,10 @@ final class UserService
     private function validateSelfUpdate(UpdateUserCommand $command, User $user)
     {
         if (!is_null($command->getNewPassword())
-            && !is_null($command->getOldPassword())){
-            if(!password_verify($command->getOldPassword(), $user->getPassword())){
+            && !is_null($command->getOldPassword())) {
+            if (!password_verify($command->getOldPassword(), $user->getPassword())) {
                 throw new WrongPasswordException();
-            }else{
+            } else {
                 dump($command->getNewPassword());
                 $newHashedPassword = password_hash($command->getNewPassword(), PASSWORD_BCRYPT);
                 $user->setPassword($newHashedPassword);

@@ -233,7 +233,7 @@ class DoctrineRequestRepository implements RequestRepository
 
         if (isset($title)) {
             $query->andWhere('r.title LIKE :title')
-            ->setParameter(':title','%'. $title.'%');
+                ->setParameter(':title', '%' . $title . '%');
         }
 
         if ((isset($finalDate)) && (isset($initialDate))) {

@@ -89,7 +89,7 @@ class CompanyService
         );
 
 
-        if($command->getSections() == []){
+        if ($command->getSections() == []) {
             throw new CannotCreateCompanyWithoutException();
         }
 
@@ -187,7 +187,7 @@ class CompanyService
 
 
         if (!is_null($command->getSla())) {
-            if($company->isMother()){
+            if ($company->isMother()) {
                 throw new CannotUpdateSlaToMotherCompany();
             }
             $sla = $this->slaRepository->fromId($company->getSla()->getId());
