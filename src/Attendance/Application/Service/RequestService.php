@@ -341,7 +341,6 @@ class RequestService
 
         $importantLogs = new ArrayCollection();
         foreach ($request->getLogs()->getValues() as $log) {
-
             switch ($log->getCommand()) {
                 case Log::inAttendance:
                 case Log::awaitingSupport:
@@ -365,6 +364,7 @@ class RequestService
                 return '0';
             }
         }
+
         $pairs = new ArrayCollection();
         $pairs->add($importantLogs->first());
         $pairs->add($importantLogs->last());
@@ -378,7 +378,7 @@ class RequestService
         $start = new Carbon($pairs->first()['datetime']);
         $stop = new Carbon($pairs->last()['datetime']);
         $interval = ($start->addHour($request->getPriority()))->diff($stop);
-        return $interval->format('%R %dd %hh %im %ss');
+        return $interval->format('%R %dd %hh %im');
     }
 
     /**
