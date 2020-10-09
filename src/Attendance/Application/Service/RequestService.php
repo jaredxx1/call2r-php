@@ -371,7 +371,7 @@ class RequestService
             }
         }
 
-        return $finalSla->format('%R %dd %hh %im %ss');
+        return $finalSla->format('%R %dd %hh %im');
     }
 
     /**
