@@ -141,6 +141,24 @@ class RequestService
         }
 
         $logs = new ArrayCollection();
+        $sla = 0;
+        switch ($command->getPriority()){
+            case 1:
+                $sla = $company->getSla()->getP1();
+                break;
+            case 2:
+                $sla = $company->getSla()->getP2();
+                break;
+            case 3:
+                $sla = $company->getSla()->getP3();
+                break;
+            case 4:
+                $sla = $company->getSla()->getP4();
+                break;
+            case 5:
+                $sla = $company->getSla()->getP5();
+                break;
+        }
 
         $logs->add(new Log(null, 'O chamado foi criado'
             . ' <br><br> Por : ' . $user->getName()
@@ -152,7 +170,7 @@ class RequestService
             $command->getCompanyId(),
             $command->getTitle(),
             $command->getDescription(),
-            $command->getPriority(),
+            $sla,
             $section->getName(),
             null,
             $user->getId(),
