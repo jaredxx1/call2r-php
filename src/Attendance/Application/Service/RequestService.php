@@ -390,7 +390,6 @@ class RequestService
             $result = new CarbonInterval(($lastStartLogCarbonFormat)->diff($now));
 
             $days = ($result->d) + ($result->m * 30) + ($result->y * 365);
-            dump($days);
             if ($days >= 70) {
                 $this->verifyResponseTime($request);
             }
