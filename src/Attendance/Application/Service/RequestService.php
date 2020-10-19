@@ -339,8 +339,11 @@ class RequestService
     public function calculateSla(Request $request): string
     {
         $startTime = null;
+        $stopTime = null;
+        $result = null;
+        $temp = null;
         $awaitingResponseControl = 0;
-        $diff = new Carbon(0, 'America/Sao_Paulo');
+        $sumTimeFractions = new Carbon(0, 'America/Sao_Paulo');
         $totalSla = (new Carbon(0, 'America/Sao_Paulo'))->addHour($request->getPriority());
         $timezone = new DateTimeZone('America/Sao_Paulo');
         foreach ($request->getLogs()->getValues() as $log) {
@@ -349,8 +352,6 @@ class RequestService
                 case Log::init:
                 case Log::inAttendance:
                 case Log::awaitingSupport:
-                case Log::disapprove:
-                case Log::transfer:
                     if (is_null($startTime)) {
                         $startTime = (new Carbon($log->getCreatedAt()->setTimezone($timezone)))->addHour(3);
                     }
@@ -362,14 +363,13 @@ class RequestService
                     $stopTime = (new Carbon($log->getCreatedAt()))->addHour(3);
                     if (!is_null($startTime)) {
                         $result = new CarbonInterval(($startTime)->diff($stopTime));
-                        $diff->add($result);
+                        $sumTimeFractions->add($result);
                         $startTime = null;
                     }
                     break;
                 default:
                     break;
             }
-
             if ($log->getCommand() == Log::awaitingResponse) {
                 $awaitingResponseControl = 1;
             }
@@ -378,13 +378,20 @@ class RequestService
         if (!is_null($startTime)) {
             $now = Carbon::now()->timezone('America/Sao_Paulo');
             $result = new CarbonInterval(($startTime)->diff($now));
-            $diff->add($result);
+            $sumTimeFractions->add($result);
         }
 
-        $finalSla = $totalSla->diff($diff);
+        $finalSla = $totalSla->diff($sumTimeFractions);
         if ($awaitingResponseControl) {
-            $days = ($finalSla->d) + ($finalSla->m * 30) + ($finalSla->y * 365);
-            if ($days > 7) {
+
+            $lastStartLog = $request->getLogs()->get(sizeof($request->getLogs()->getValues())-2);
+            $lastStartLogCarbonFormat = (new Carbon($lastStartLog->getCreatedAt()))->addHour(3);
+            $now = Carbon::now()->timezone('America/Sao_Paulo');
+            $result = new CarbonInterval(($lastStartLogCarbonFormat)->diff($now));
+
+            $days = ($result->d) + ($result->m * 30) + ($result->y * 365);
+            dump($days);
+            if ($days >= 70) {
                 $this->verifyResponseTime($request);
             }
         }
