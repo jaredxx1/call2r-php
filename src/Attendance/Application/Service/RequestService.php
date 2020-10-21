@@ -727,10 +727,10 @@ class RequestService
      */
     public function ExportsRequestsToPdf(ExportRequestsToPdfQuery $query, User $user)
     {
-        $result = [];
+        $requests = [];
 
         if ($user->getRole() == User::managerSupport) {
-            $result = $this->requestRepository->searchRequests(
+            $requests = $this->requestRepository->searchRequests(
                 $query->getTitle(),
                 $query->getInitialDate(),
                 $query->getFinalDate(),
@@ -742,7 +742,7 @@ class RequestService
         }
 
         if ($user->getRole() == User::managerClient) {
-            $result = $this->requestRepository->searchRequests(
+            $requests = $this->requestRepository->searchRequests(
                 $query->getTitle(),
                 $query->getInitialDate(),
                 $query->getFinalDate(),
@@ -753,24 +753,49 @@ class RequestService
             );
         }
 
-        if ($result == []) {
+        if ($requests == []) {
             return [];
         }
 
+        foreach ($requests as $request) {
+            $request->setSla(self::calculateSla($request));
+        }
+        $now = (Carbon::now()->timezone('America/Sao_Paulo'))->format('d/m/Y H:m:s');
         $mpdf = new Mpdf();
         $uuid = Uuid::uuid4();
-        $mpdf->WriteHTML('<h1 style="text-align: center">CALL2R PDF</h1>');
+        $mpdf->SetDefaultBodyCSS('font-family','"Open Sans", sans-serif');
+        $mpdf->WriteHTML('<table style="width:100%;" ><tr><td style="text-align: left;"> <h1 style="color: #e64066">CALL2R PDF</h1> </td><td style="text-align: right";> <bold>Exportado em: ' . $now . '</bold></td></tr></table><hr style="margin: 15px 0 15px 0">');
         $mpdf->WriteHTML('<table style="width:100%;" >');
         $mpdf->WriteHTML('<tr>');
-        $mpdf->WriteHTML('<th style="text-align: left">Título</th>');
-        $mpdf->WriteHTML('<th style="text-align: left">Prioridade</th>');
-        $mpdf->WriteHTML('<th style="text-align: left">Área</th>');
-        $mpdf->WriteHTML('<th style="text-align: left">Última atualização</th>');
+        $mpdf->WriteHTML('<th style="text-align: left; color: #e64066">Título</th>');
+        $mpdf->WriteHTML('<th style="text-align: left; padding-right: 15px; color: #e64066">Prioridade</th>');
+        $mpdf->WriteHTML('<th style="text-align: left; padding-right: 15px; color: #e64066">Área</th>');
+        $mpdf->WriteHTML('<th style="text-align: left; padding-left: 15px;color: #e64066">Sla Final</th>');
         $mpdf->WriteHTML('</tr>');
-        foreach ($result as $r) {
-            $mpdf->WriteHTML('<tr><td>' . $r->getTitle() . '</td><td>' . $r->getPriority() . '</td><td>' . $r->getSection() . '</td><td>' . new Carbon($r->getUpdatedAt()) . '</td></tr>');
+        foreach ($requests as $request) {
+            $priority = null;
+            switch ($request->getPriority()){
+                case 1:
+                    $priority = "Altíssima";
+                    break;
+                case 2:
+                    $priority = "Alta";
+                    break;
+                case 3:
+                    $priority = "Média";
+                    break;
+                case 4:
+                    $priority = "Baixa";
+                    break;
+                case 5:
+                    $priority = "Baixíssima";
+                    break;
+            }
+
+            $mpdf->WriteHTML('<tr><td>' . $request->getTitle() . '</td><td>' . $priority . '</td><td>' . $request->getSection() . '</td><td style="text-align: right;">' . $request->getSla() . '</td></tr>');
         }
         $mpdf->WriteHTML('</table>');
+
         $uuid = $uuid->serialize();
         $mpdf->Output($uuid . '.pdf', Destination::FILE);
         $url = $this->s3->sendFile('request', $uuid, $uuid . '.pdf', 'requestsFile.pdf', 'application/pdf');

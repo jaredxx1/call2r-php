@@ -93,7 +93,8 @@ class DoctrineRequestRepository implements RequestRepository
 
         $query
             ->andWhere('r.requestedBy = :userId')
-            ->setParameter('userId', $user->getId());
+            ->setParameter('userId', $user->getId())
+            ->orderBy('r.id','DESC');
 
         return $query->getQuery()->getResult();
     }
@@ -162,7 +163,8 @@ class DoctrineRequestRepository implements RequestRepository
             ->andWhere('r.companyId = :companyId')
             ->andWhere('r.assignedTo = :userId or r.assignedTo IS NULL')
             ->setParameter('companyId', $user->getCompanyId())
-            ->setParameter('userId', $user->getId());
+            ->setParameter('userId', $user->getId())
+            ->orderBy('r.id','DESC');
 
         return $query->getQuery()->getResult();
     }
@@ -185,6 +187,8 @@ class DoctrineRequestRepository implements RequestRepository
 
         $query = $this->listRequestsParameters($awaitingSupport, $query, $inAttendance, $awaitingResponse, $canceled, $approved, $active);
 
+
+        $query->orderBy('r.id','DESC');
         return $query->getQuery()->getResult();
     }
 
@@ -209,7 +213,8 @@ class DoctrineRequestRepository implements RequestRepository
 
         $query
             ->andWhere('r.companyId = :companyId')
-            ->setParameter('companyId', $user->getCompanyId());
+            ->setParameter('companyId', $user->getCompanyId())
+            ->orderBy('r.id','DESC');
 
         return $query->getQuery()->getResult();
     }
@@ -262,6 +267,7 @@ class DoctrineRequestRepository implements RequestRepository
                 ->setParameter('companyId', $companyId);
         }
 
+        $query->orderBy('r.id','DESC');
         return $query->getQuery()->getResult();
 
     }
