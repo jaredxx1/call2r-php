@@ -760,7 +760,7 @@ class RequestService
         foreach ($requests as $request) {
             $request->setSla(self::calculateSla($request));
         }
-        $now = (Carbon::now()->timezone('America/Sao_Paulo'))->format('d/m/Y H:mm:s');
+        $now = (Carbon::now()->timezone('America/Sao_Paulo'))->format('d/m/Y H:i:s');
         $mpdf = new Mpdf();
         $uuid = Uuid::uuid4();
         $mpdf->SetDefaultBodyCSS('font-family','"Open Sans", sans-serif');
